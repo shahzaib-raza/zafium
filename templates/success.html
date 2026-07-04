@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/success.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="success-section">
+
+    <div class="container">
+
+        <div class="success-card card">
+
+            <!-- ✅ ICON -->
+            <div class="success-icon">
+                ✓
+            </div>
+
+            <!-- 🎉 MESSAGE -->
+            <h1 class="gradient-text">Order Successfully Placed</h1>
+
+            <p class="success-subtext">
+                Thank you! Your project request has been received.
+                Our team will contact you shortly.
+            </p>
+
+            <!-- 📦 OPTIONAL ORDER INFO -->
+            {% if order %}
+            <div class="order-meta">
+                <p><strong>Order ID:</strong> {{ order.id }}</p>
+                <p><strong>Total:</strong> ${{ order.total }}</p>
+            </div>
+            {% endif %}
+
+            <!-- 🚀 ACTIONS -->
+            <div class="success-actions">
+                <a href="/" class="btn-secondary">Go Home</a>
+                <a href="/order/" class="btn-primary">Place Another Order</a>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,25 @@
+{% for project in projects %}
+
+<article class="portfolio-card">
+
+    <a href="{% url 'core:portfolio_detail' project.category.slug project.slug %}">
+
+        <div class="card-image">
+            <img src="{{ project.cover_image.url }}" alt="{{ project.title }}">
+            <div class="card-overlay"></div>
+        </div>
+
+        <div class="card-content">
+            <h3>{{ project.title }}</h3>
+            <p>{{ project.short_description|truncatechars:110 }}</p>
+
+            <div class="card-meta">
+                <span>View Case Study →</span>
+            </div>
+        </div>
+
+    </a>
+
+</article>
+
+{% endfor %}

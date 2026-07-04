@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}About Zafium{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/about.css' %}">
+{% endblock %}
+
+{% block body_class %}about-page{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="about-hero">
+    <div class="container">
+        <h1>
+            Any Domains. One Vision. <br>
+            <span class="gradient-text">Infinite Possibilities.</span>
+        </h1>
+
+        <p>
+            Zafium is where any realm converge to build
+            real-world solutions — not just deliverables.
+        </p>
+    </div>
+</section>
+
+<!-- STORY -->
+<section>
+    <div class="container story">
+        <div class="section-heading">
+            <span>OUR JOURNEY</span>
+            <h2>Built From Real Problems</h2>
+        </div>
+
+        <div class="card">
+            <p>
+                Zafium didn’t start as a company — it started as frustration.
+            </p>
+
+            <p>
+                A design lead stuck with complex vector tracing.  
+                A data scientist spending hours analyzing unreliable markets.  
+                An automation expert solving repetitive workflows manually.
+            </p>
+
+            <p class="highlight">
+                Different domains. Same problem — inefficiency.
+            </p>
+
+            <p>
+                So we stopped adapting to broken systems… and started building our own.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- PRODUCTS -->
+<section>
+    <div class="container">
+        <div class="section-heading">
+            <span>OUR PRODUCTS</span>
+            <h2>Solutions Born From Experience</h2>
+        </div>
+
+        <div class="grid-2">
+
+            <div class="card product">
+                <h3 class="gradient-text">LayerForge</h3>
+                <p>
+                    Built when traditional design tools failed under pressure.
+                    A fast, practical solution for raster-to-vector conversion.
+                </p>
+                <p class="muted-small">
+                    Used for logos, simple vectors, and rapid turnaround work.
+                </p>
+            </div>
+
+            <div class="card product">
+                <h3 class="gradient-text">AutoLytics</h3>
+                <p>
+                    A data-driven answer to chaotic used car markets.
+                    Real-time scraping + analytics = reliable decisions.
+                </p>
+                <p class="muted-small">
+                    Turns guesswork into measurable insights.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- CAPABILITIES (THIS IS THE BIG UPGRADE) -->
+<section class="capabilities">
+    <div class="container">
+
+        <div class="section-heading">
+            <span>WHAT WE DO</span>
+            <h2>Beyond Projects — We Build Systems</h2>
+        </div>
+
+        <div class="grid-3">
+
+            <div class="card capability">
+                <h3>Design</h3>
+                <p>
+                    From branding to visual systems, we craft design that communicates clearly and converts effectively.
+                </p>
+            </div>
+
+            <div class="card capability">
+                <h3>Data & Research</h3>
+                <p>
+                    We extract, structure, and analyze data to uncover insights that drive smarter decisions.
+                </p>
+            </div>
+
+            <div class="card capability">
+                <h3>Automation</h3>
+                <p>
+                    We eliminate repetitive work through intelligent workflows, bots, and integrations.
+                </p>
+            </div>
+
+            <div class="card capability">
+                <h3>Artificial Intelligence</h3>
+                <p>
+                    Custom AI systems including detection models, neural networks, and data-driven applications.
+                </p>
+            </div>
+
+            <div class="card capability">
+                <h3>Web Development</h3>
+                <p>
+                    Scalable Django-based applications, dashboards, and AI-powered platforms.
+                </p>
+            </div>
+
+            <div class="card capability">
+                <h3>Media & Training</h3>
+                <p>
+                    From video production to technical training, we help individuals and teams scale their skills.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- VISION -->
+<section class="vision">
+    <div class="container">
+        <h2>We Build Tools That Become Platforms</h2>
+        <p>
+            Our goal is not just to complete projects —
+            but to create scalable systems that evolve into products, investments, and long-term value.
+        </p>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+    <div class="container">
+        <h2>Let’s Turn Your Idea Into Reality</h2>
+        <p>
+            Whether you need design, data, automation, or AI —
+            Zafium is built to deliver results that scale.
+        </p>
+
+        <div class="cta-buttons">
+            <a href="/order/" class="btn-primary">Start a Project</a>
+            <a href="/services/" class="btn-secondary">View Services</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,309 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/portfolio.css' %}">
+{% endblock %}
+
+{% block content %}
+
+
+<!-- =========================
+     HERO SECTION
+========================= -->
+<section class="portfolio-hero">
+
+    <div class="container">
+
+        <div class="hero-badge">
+            PORTFOLIO
+        </div>
+
+        <h1 class="hero-title">
+            {{ category|title }}
+        </h1>
+
+        <p class="hero-subtitle">
+            Explore our {{ category|title }} projects crafted with precision,
+            performance, and modern engineering standards.
+        </p>
+
+        <div class="hero-stats">
+
+            <div class="stat-card">
+                <h3 class="counter" data-target="{{ projects.paginator.count }}">0</h3>
+                <p>Projects Completed</p>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     FEATURED PROJECT
+========================= -->
+
+{% with featured=projects|dictsortreversed:"featured"|first %}
+
+{% if featured and featured.featured %}
+
+<section class="featured-section">
+
+    <div class="container">
+
+        <div class="section-label">FEATURED CASE STUDY</div>
+
+        <div class="featured-card">
+
+            <div class="featured-image">
+                <img src="{{ featured.cover_image.url }}" alt="{{ featured.title }}">
+            </div>
+
+            <div class="featured-content">
+
+                <h2>{{ featured.title }}</h2>
+
+                <p>{{ featured.short_description }}</p>
+
+                <div class="featured-actions">
+
+                    <a href="{% url 'portfolio_detail' featured.slug %}" class="btn-primary">
+                        View Case Study
+                    </a>
+
+                    {% if featured.live_url %}
+                    <a href="{{ featured.live_url }}" target="_blank" class="btn-secondary">
+                        Visit Live
+                    </a>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+{% endwith %}
+
+
+<!-- =========================
+     PROJECT GRID
+========================= -->
+
+<section class="portfolio-grid-section">
+
+    <div class="container">
+
+        <div class="section-header">
+
+            <h2>All Projects</h2>
+
+            <p>Selected work from our {{ category|title }} portfolio</p>
+
+        </div>
+
+        {% if projects %}
+
+        <div class="portfolio-filter">
+
+            <form method="get" id="filterForm">
+
+                <select name="sub" onchange="this.form.submit()">
+
+                    <option value="all">All Portfolios</option>
+
+                    {% for sub in subcategories %}
+                        <option value="{{ sub.slug }}"
+                            {% if selected_sub == sub.slug %}selected{% endif %}>
+                            {{ sub.name }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+
+            </form>
+
+        </div>
+
+        <div id="portfolioGrid" class="portfolio-grid">
+
+            {% include "includes/portfolio_cards.html" %}
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <h3>No projects found</h3>
+            <p>We are currently adding new {{ category|title }} projects.</p>
+
+        </div>
+
+        {% endif %}
+
+        {% if projects.has_next %}
+
+        <div class="load-more-wrapper">
+
+            <button id="loadMoreBtn"
+                    data-page="2"
+                    class="btn-secondary">
+
+                Load More
+
+            </button>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     CTA SECTION
+========================= -->
+
+<section class="portfolio-cta">
+
+    <div class="container">
+
+        <div class="cta-card">
+
+            <h2>Have a similar project in mind?</h2>
+
+            <p>
+                Let’s build something powerful together.
+                We turn ideas into scalable digital systems.
+            </p>
+
+            <a href="/contact/" class="btn-primary">
+                Start a Project
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+console.log("COUNTER SCRIPT LOADED");
+(function () {
+
+    let countersInitialized = false;
+
+    function initCounters() {
+
+        const section = document.querySelector(".portfolio-hero");
+        if (!section || countersInitialized) return;
+
+        const counters = section.querySelectorAll(".counter");
+
+        const animateCounters = () => {
+
+            counters.forEach(counter => {
+
+                const target = parseInt(counter.getAttribute("data-target")) || 0;
+                let count = 0;
+
+                const duration = 1500; // total animation time in ms
+                const stepTime = Math.max(Math.floor(duration / target), 10);
+
+                const timer = setInterval(() => {
+                    count += Math.ceil(target / (duration / stepTime));
+
+                    if (count >= target) {
+                        counter.innerText = target + "+";
+                        clearInterval(timer);
+                    } else {
+                        counter.innerText = count;
+                    }
+                }, stepTime);
+
+            });
+
+            countersInitialized = true;
+        };
+
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    obs.disconnect(); // 🔥 ensures it runs only once
+                }
+            });
+        }, {
+            threshold: 0.5
+        });
+
+        observer.observe(section);
+    }
+
+    // ✅ Run on initial page load
+    document.addEventListener("DOMContentLoaded", function () {
+        initCounters();
+    });
+
+
+    // ==========================
+    // AJAX LOAD MORE HANDLER
+    // ==========================
+
+    let loadMoreBtn = document.getElementById("loadMoreBtn");
+
+    if (loadMoreBtn) {
+
+        loadMoreBtn.addEventListener("click", function () {
+
+            let page = this.getAttribute("data-page");
+
+            let url = new URL(window.location.href);
+            url.searchParams.set("page", page);
+
+            fetch(url, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+
+                document.getElementById("portfolioGrid")
+                    .insertAdjacentHTML("beforeend", data.html);
+
+                // 🔥 Re-check counters (safe, won't re-run animation)
+                initCounters();
+
+                if (data.has_next) {
+                    loadMoreBtn.setAttribute("data-page", parseInt(page) + 1);
+                } else {
+                    loadMoreBtn.remove();
+                }
+
+            })
+            .catch(err => console.error("ERROR:", err));
+
+        });
+
+    }
+
+})();
+</script>
+{% endblock %}

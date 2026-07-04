@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body_class %}autolytics-page{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/autolytics.css' %}">
+{% endblock %}
+
+{% block content %}
+
+
+<h2 class="app-title">
+    AutoLytics
+    <span class="byline">by zafium</span>
+</h2>
+
+<div class="autolytics-page container">
+
+    <div id="alert" class="alert"></div>
+
+    <div class="mainDiv">
+
+        <form method="GET" action="{% url 'core:autolytics_search' %}">
+            {% csrf_token %}
+
+            <label for="make">Make</label>
+            <select id="make" name="make" onchange="get_model('make', 'model')" required>
+                <option></option>
+                <option value="toyota">Toyota</option>
+                <option value="suzuki">Suzuki</option>
+                <option value="honda">Honda</option>
+                <option value="daihatsu">Daihatsu</option>
+                <option value="kia">Kia</option>
+                <option value="audi">Audi</option>
+                <option value="bmw">BMW</option>
+                <option value="byd">BYD</option>
+                <option value="changan">Changan</option>
+                <option value="chery">Chery</option>
+                <option value="chevrolet">Chevrolet</option>
+                <option value="deepal">Deepal</option>
+                <option value="faw">Faw</option>
+                <option value="haval">Haval</option>
+                <option value="hyundai">Hyundai</option>
+                <option value="jaecoo">Jaecoo</option>
+                <option value="jeep">Jeep</option>
+                <option value="jetour">Jetour</option>
+                <option value="jac">JAC</option>
+                <option value="lexus">Lexus</option>
+                <option value="mg">MG</option>
+                <option value="mazda">Mazda</option>
+                <option value="mercedes-benz">Mercedes Benz</option>
+                <option value="mitsubishi">Mitsubishi</option>
+                <option value="nissan">Nissan</option>
+                <option value="peugeot">Peugeot</option>
+                <option value="prince">Prince</option>
+                <option value="proton">Proton</option>
+            </select>
+
+            <label for="model">Model</label>
+            <select id="model" name="model" required></select>
+
+            <label for="city">City</label>
+            <select id="city" name="city" required>
+                <option value="karachi">Karachi</option>
+                <option value="lahore">Lahore</option>
+                <option value="islamabad">Islamabad</option>
+                <option value="quetta">Quetta</option>
+                <option value="peshawar">Peshawar</option>
+                <option value="rawalpindi">Rawalpindi</option>
+                <option value="hyderabad">Hyderabad</option>
+            </select>
+            <center>
+                <button type="submit" class="btn-primary" onclick="showAlert()">
+                    Search
+                </button>
+            </center>
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/autolytics.js' %}"></script>
+
+<script>
+function showAlert() {
+    const alertBox = document.getElementById("alert");
+    alertBox.style.display = "block";
+    alertBox.innerText = "Sometimes it takes time to scrape data. Please be patient...";
+}
+</script>
+{% endblock %}

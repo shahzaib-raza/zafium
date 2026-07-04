@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/checkout.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="order-section">
+
+<div class="container">
+
+    <div class="section-heading">
+        <span>Checkout</span>
+        <h2 class="gradient-text">Review & Complete Your Order</h2>
+        <p>Please review your order before proceeding to payment.</p>
+    </div>
+
+    <form method="POST" action="{% url 'core:place_order' %}">
+        {% csrf_token %}
+
+        <div class="checkout-layout">
+
+            <!-- LEFT SIDE -->
+            <div>
+
+                <!-- ORDER SUMMARY -->
+                <div class="card">
+
+                    <h3>Order Summary</h3>
+
+                    <table class="checkout-table">
+
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                        {% for item in items %}
+
+                            <tr>
+                                <td>{{ item.subcategory }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>${{ item.price }}</td>
+                                <td>${{ item.total }}</td>
+                            </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- CUSTOMER -->
+                <div class="card customer-card">
+
+                    <h3>Customer Information</h3>
+
+                    <div class="customer-grid">
+
+                        <div>
+                            <label>Name</label>
+                            <p>{{ customer.name }}</p>
+                        </div>
+
+                        <div>
+                            <label>Email</label>
+                            <p>{{ customer.email }}</p>
+                        </div>
+
+                        <div>
+                            <label>Phone</label>
+                            <p>{{ customer.phone }}</p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- PAYMENT -->
+                <div class="card">
+
+                    <h3>Select Payment Method</h3>
+
+                    <label class="payment-option">
+                        <input type="radio" name="payment_method" value="card" required>
+                        <span>💳 Credit / Debit Card (Visa • Mastercard)</span>
+                    </label>
+
+                    <label class="payment-option">
+                        <input type="radio" name="payment_method" value="paypal">
+                        <span>🅿 PayPal</span>
+                    </label>
+
+                    <label class="payment-option">
+                        <input type="radio" name="payment_method" value="jazzcash">
+                        <span>📱 JazzCash</span>
+                    </label>
+
+                    <label class="payment-option">
+                        <input type="radio" name="payment_method" value="easypaisa">
+                        <span>📱 Easypaisa</span>
+                    </label>
+
+                    <label class="payment-option">
+                        <input type="radio" name="payment_method" value="bank">
+                        <span>🏦 Bank Transfer</span>
+                    </label>
+
+                </div>
+
+            </div>
+
+            <!-- RIGHT -->
+            <div>
+
+                <div class="card checkout-sidebar">
+
+                    <h3>Payment Summary</h3>
+
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span>${{ total }}</span>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Tax</span>
+                        <span>$0.00</span>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Discount</span>
+                        <span>$0.00</span>
+                    </div>
+
+                    <div class="summary-total">
+
+                        <span>Total</span>
+
+                        <h2>${{ total }}</h2>
+
+                    </div>
+
+                    <button class="btn-primary submit-btn">
+                        Proceed to Payment →
+                    </button>
+
+                    <p class="secure-note">
+                        🔒 Payments are securely processed by our payment partners.
+                        Your card details are never stored on our servers.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+</section>
+
+{% endblock %}

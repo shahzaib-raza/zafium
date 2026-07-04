@@ -1,0 +1,262 @@
+/* ==========================
+   HERO
+========================== */
+
+.services-hero {
+
+    min-height: 70vh;
+
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.services-hero .container {
+    max-width: 850px;
+}
+
+.hero-badge {
+
+    display: inline-block;
+
+    padding: 8px 18px;
+
+    border-radius: 999px;
+
+    background: rgba(255,255,255,0.05);
+
+    border: 1px solid var(--border);
+
+    color: var(--accent-2);
+
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+
+    margin-bottom: 24px;
+}
+
+.services-hero h1 {
+    margin-bottom: 24px;
+}
+
+.services-hero p {
+    font-size: 1.1rem;
+}
+
+/* ==========================
+   SERVICE BAND
+========================== */
+
+.service-band {
+
+    position: relative;
+
+    min-height: 500px;
+
+    display: flex;
+    align-items: center;
+
+    background-size: cover;
+    background-position: center;
+
+    background-attachment: fixed;
+
+    overflow: hidden;
+}
+
+.overlay {
+
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            rgba(2, 6, 23, 0.45),
+            rgba(2, 6, 23, 0.45)
+        );
+
+    backdrop-filter: blur(2px);
+}
+
+.service-content {
+
+    position: relative;
+    z-index: 2;
+
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+
+    gap: 80px;
+
+    align-items: center;
+}
+
+/* ==========================
+   TITLE
+========================== */
+
+.service-title {
+
+    position: relative;
+}
+
+.service-title::before {
+
+    content: attr(data-title);
+
+    position: absolute;
+
+    top: -60px;
+    left: 0;
+
+    font-size: 7rem;
+    font-weight: 900;
+
+    color: rgba(255,255,255,.03);
+
+    pointer-events: none;
+}
+
+.service-title span {
+
+    color: var(--accent-2);
+
+    font-size: .8rem;
+
+    letter-spacing: 2px;
+    font-weight: 700;
+}
+
+.service-title h2 {
+
+    font-size: 4rem;
+
+    margin: 10px 0 20px;
+}
+
+.service-title p {
+    max-width: 450px;
+}
+
+/* ==========================
+   TAGS
+========================== */
+
+.service-tags {
+
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 16px;
+}
+
+.service-tags span {
+
+    padding: 14px 22px;
+
+    border-radius: 999px;
+
+    background: rgba(255,255,255,0.05);
+
+    border: 1px solid var(--border);
+
+    backdrop-filter: blur(15px);
+
+    color: var(--text);
+
+    transition: var(--transition);
+}
+
+.service-tags span:hover {
+
+    transform: translateY(-5px);
+
+    border-color: var(--accent-2);
+
+    background: rgba(99, 101, 241, 0.034);
+
+    box-shadow:
+        0 10px 30px rgba(99,102,241,.15);
+}
+
+/* ==========================
+   BACKGROUNDS
+========================== */
+
+.design-bg {
+    background-image: url("../images/services/design.jpg");
+}
+
+.scraping-bg {
+    background-image: url("../images/services/scraping.jpg");
+}
+
+.research-bg {
+    background-image: url("../images/services/research.png");
+}
+
+.entry-bg {
+    background-image: url("../images/services/data_entry_2.jpg");
+}
+
+.automation-bg {
+    background-image: url("../images/services/automation.jpg");
+}
+
+.ai-bg {
+    background-image: url("../images/services/ai.jpg");
+}
+
+.web-bg {
+    background-image: url("../images/services/web_development.png");
+}
+
+.video-bg {
+    background-image: url("../images/services/video.jpg");
+}
+
+.training-bg {
+    background-image: url("../images/services/training_and_dev.jpg");
+}
+
+/* ==========================
+   MOBILE
+========================== */
+
+@media (max-width: 992px) {
+
+    .service-content {
+
+        grid-template-columns: 1fr;
+
+        gap: 40px;
+
+        text-align: center;
+    }
+
+    .service-title h2 {
+        font-size: 2.8rem;
+    }
+
+    .service-title p {
+        margin: auto;
+    }
+
+    .service-tags {
+        justify-content: center;
+    }
+
+    .service-band {
+        min-height: auto;
+        padding: 120px 0;
+    }
+
+    .service-title::before {
+        display: none;
+    }
+
+    .service-band {
+        background-attachment: scroll;
+    }
+}

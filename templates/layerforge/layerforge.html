@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body_class %}layerforge-page{% endblock %}
+
+{% block title %}zafium | AI, Data, Design & Automation Solutions{% endblock %}
+
+
+
+{% block content %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/layerforge.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+
+<h2 class="app-title">
+    LayerForge
+    <span class="byline">by zafium</span>
+</h2>
+
+<div class="app">
+
+    <!-- CONTROLS -->
+    <div class="controls">
+        <div class="control">
+            <label>Upload Image</label>
+            <input type="file" id="imageUpload" accept="image/png,image/jpeg">
+        </div>
+
+        <hr>
+
+        <div class="control">
+            <label>K_MIN <span class="value" id="k_min_val">4</span></label>
+            <input type="range" id="k_min" min="2" max="8" value="4">
+        </div>
+
+        <div class="control">
+            <label>K_MAX <span class="value" id="k_max_val">6</span></label>
+            <input type="range" id="k_max" min="6" max="20" value="6">
+        </div>
+
+        <div class="control">
+            <label>Cluster Scale <span class="value" id="cluster_scale_val">0.5</span></label>
+            <input type="range" id="cluster_scale" min="0.2" max="1" step="0.05" value="0.5">
+        </div>
+
+        <div class="control">
+            <label>Min Area Ratio <span class="value" id="min_area_ratio_val">0.0003</span></label>
+            <input type="range" id="min_area_ratio" min="0.0001" max="0.001" step="0.0001" value="0.0003">
+        </div>
+
+        <div class="control">
+            <label>
+                Smooth SVG (More Anchor Points!)
+                <input type="checkbox" id="smoothToggle">
+            </label>
+        </div>
+
+        <button id="downloadBtn" class="btn-primary" disabled>Download SVG</button>
+    </div>
+
+    <!-- OUTPUT -->
+    <div class="output">
+        <div class="zoom-controls">
+            <button id="zoomOut">−</button>
+            <button id="zoomReset"><i class="fa fa-refresh fa-spin" style="font-size:14px"></i></button>
+            <button id="zoomIn">+</button>
+        </div>
+
+        <div id="preview">
+            <div id="svgWrapper"></div>
+
+            <div id="loader" class="hidden">
+                <div class="spinner"></div>
+                <div>Generating layers…</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% block extra_js %}
+<script src="{% static 'js/layerforge.js' %}"></script>
+{% endblock %}
+
+
+{% endblock %}

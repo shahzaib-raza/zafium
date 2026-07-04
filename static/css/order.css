@@ -1,0 +1,209 @@
+.order-section {
+    padding-top: 140px;
+}
+
+#order-items {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.order-total {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.order-total h2 {
+    font-size: 2.5rem;
+    margin-top: 10px;
+}
+
+.submit-btn {
+    margin-top: 30px;
+    width: 100%;
+}
+
+
+
+/* =========================
+   FORM STYLING (PREMIUM)
+========================= */
+
+.client-info {
+    margin-top: 50px;
+    padding: 32px;
+    gap: 24px;
+}
+
+.form-title {
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+/* INPUT GROUP (FLOATING LABEL) */
+.input-group {
+    position: relative;
+}
+
+/* INPUT FIELD */
+.input-group input {
+
+    width: 100%;
+    padding: 16px 14px;
+
+    border-radius: 12px;
+
+    border: 1px solid var(--border);
+
+    background: rgba(255,255,255,0.04);
+
+    color: var(--text);
+    font-size: 0.95rem;
+
+    outline: none;
+
+    transition: var(--transition);
+}
+
+/* LABEL */
+.input-group label {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    color: var(--muted);
+    font-size: 0.9rem;
+
+    pointer-events: none;
+
+    transition: 0.2s ease;
+}
+
+/* FOCUS STATE */
+.input-group input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    background: rgba(255,255,255,0.06);
+}
+
+/* FLOAT LABEL WHEN ACTIVE */
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+
+    top: -8px;
+    left: 10px;
+
+    background: var(--bg);
+    padding: 0 6px;
+
+    font-size: 0.75rem;
+    color: var(--accent);
+}
+
+
+/* LAYOUT */
+.order-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+/* STICKY SUMMARY */
+.order-summary {
+    position: sticky;
+    top: 120px;
+}
+
+/* ORDER ITEM CARD */
+.order-item {
+    display: grid;
+    grid-template-columns: 1fr 1fr 80px auto;
+    gap: 12px;
+    align-items: center;
+
+    padding: 18px;
+    border-radius: 14px;
+
+    transition: var(--transition);
+}
+
+.order-item:hover {
+    transform: scale(1.01);
+}
+
+/* REMOVE BUTTON */
+.remove-btn {
+    cursor: pointer;
+    color: #ef4444;
+    font-size: 14px;
+}
+
+/* SUMMARY ITEMS */
+#summary-items {
+    margin-top: 20px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    color: var(--muted);
+}
+
+.summary-total {
+    margin-top: 20px;
+    border-top: 1px solid var(--border);
+    padding-top: 15px;
+}
+
+/* ANIMATION */
+.order-item {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================
+   MOBILE LAYOUT
+========================= */
+@media (max-width: 768px) {
+
+    .order-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    /* Remove sticky behavior on mobile */
+    .order-summary {
+        position: static;
+        order: 2;
+    }
+
+    /* Builder comes first */
+    .order-builder {
+        order: 1;
+    }
+
+    /* Make each order item stack nicely */
+    .order-item {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .order-item select,
+    .order-item input {
+        width: 100%;
+    }
+}

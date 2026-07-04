@@ -1,0 +1,343 @@
+/* ==========================================
+PORTFOLIO DETAIL — PREMIUM EXPERIENCE
+========================================== */
+
+/* =========================
+HERO — IMMERSIVE
+========================= */
+
+.pd-hero-immersive {
+position: relative;
+padding: 160px 0 120px;
+overflow: hidden;
+}
+
+.pd-hero-bg {
+position: absolute;
+inset: 0;
+z-index: -1;
+}
+
+.pd-hero-bg img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+
+
+filter: blur(5px) brightness(0.35);
+transform: scale(1.1);
+
+
+}
+
+.pd-hero-content {
+max-width: 800px;
+margin: auto;
+text-align: center;
+
+
+background: rgba(15, 23, 42, 0.45);
+backdrop-filter: blur(5px);
+
+padding: 40px;
+border-radius: 20px;
+border: 1px solid var(--border);
+transition: 0.2s ease-in-out;
+
+}
+
+.pd-hero-content:hover{
+    backdrop-filter: blur(20px);
+}
+
+.pd-title {
+font-size: 3.2rem;
+font-weight: 800;
+}
+
+.pd-subtitle {
+margin-top: 15px;
+color: var(--muted);
+}
+
+.pd-tags {
+margin-top: 20px;
+display: flex;
+justify-content: center;
+gap: 10px;
+}
+
+/* =========================
+SHOWCASE
+========================= */
+
+.pd-showcase {
+padding: 60px 0;
+}
+
+.pd-cover-card {
+    height: 480px;        /* 🔥 you control visual size here */
+    width: auto;          /* allow width to adapt */
+
+    margin: 0 auto;       /* center horizontally */
+
+    overflow: hidden;
+    border-radius: 20px;
+
+
+}
+
+.pd-cover-card img {
+    height: 100%;
+    width: auto;          /* 🔥 THIS preserves aspect ratio */
+
+    object-fit: contain;  /* or 'cover' if you want crop */
+    display: block;
+}
+
+.pd-cover-card.interactive:hover {
+transform: scale(1.03);
+box-shadow: var(--shadow-lg);
+transition: 0.3s ease;
+}
+
+/* =========================
+LAYOUT GRID
+========================= */
+
+.grid {
+display: grid;
+grid-template-columns: 2fr 1fr;
+gap: 40px;
+}
+
+.grid > * {
+min-width: 0;
+}
+
+/* =========================
+CARDS
+========================= */
+
+.pd-card {
+background: var(--card);
+border: 1px solid var(--border);
+padding: 28px;
+border-radius: var(--radius);
+
+
+backdrop-filter: blur(12px);
+
+margin-bottom: 20px;
+
+transition: all 0.3s ease;
+
+
+}
+
+.pd-card:hover {
+transform: translateY(-6px);
+border-color: var(--accent);
+}
+
+/* =========================
+HIGHLIGHT CARD
+========================= */
+
+.highlight {
+border: 1px solid var(--accent);
+box-shadow: 0 0 40px rgba(99,102,241,0.15);
+}
+
+/* =========================
+MEDIA GRID (WOW SECTION)
+========================= */
+
+.media-grid {
+column-count: 2;
+column-gap: 20px;
+}
+
+.media-item {
+position: relative;
+overflow: hidden;
+border-radius: 16px;
+margin-bottom: 20px;
+
+
+transition: 0.4s ease;
+
+
+}
+
+.media-item:hover {
+transform: scale(1.05);
+z-index: 2;
+}
+
+.media-item img,
+.media-item video {
+width: 100%;
+height: 100%;
+object-fit: fill;
+}
+
+/* Overlay glow */
+.media-item::after {
+content: "";
+position: absolute;
+inset: 0;
+
+
+background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.7),
+    transparent
+);
+
+opacity: 0;
+transition: 0.3s;
+
+
+}
+
+.media-item:hover::after {
+opacity: 1;
+}
+
+/* Caption reveal */
+.caption {
+position: absolute;
+bottom: 12px;
+left: 15px;
+right: 15px;
+
+
+color: #fff;
+font-size: 0.9rem;
+
+opacity: 0;
+transform: translateY(10px);
+
+transition: 0.3s;
+
+
+}
+
+.media-item:hover .caption {
+opacity: 1;
+transform: translateY(0);
+}
+
+/* =========================
+RESULT BOX
+========================= */
+
+.result-box ul {
+margin-top: 15px;
+padding-left: 20px;
+}
+
+.result-box li {
+margin-bottom: 10px;
+}
+
+/* =========================
+SIDEBAR
+========================= */
+
+.pd-side {
+position: relative;
+}
+
+.pd-side .sticky {
+position: sticky;
+top: 120px;
+}
+
+.urgency {
+border: 1px solid var(--accent);
+}
+
+/* =========================
+PROOF SECTION
+========================= */
+
+.pd-proof {
+padding: 80px 0;
+text-align: center;
+}
+
+.proof-grid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 30px;
+}
+
+.proof-item {
+background: var(--card);
+padding: 30px;
+border-radius: 16px;
+border: 1px solid var(--border);
+
+
+transition: 0.3s;
+
+
+}
+
+.proof-item:hover {
+transform: translateY(-6px);
+border-color: var(--accent);
+}
+
+.proof-item h3 {
+font-size: 2rem;
+color: var(--accent);
+}
+
+/* =========================
+CTA
+========================= */
+
+.pd-cta {
+padding: 100px 0;
+}
+
+.cta-box {
+text-align: center;
+padding: 60px;
+
+
+background: var(--gradient-glow);
+border: 1px solid var(--border);
+border-radius: 24px;
+
+
+}
+
+/* =========================
+RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+
+
+.grid {
+    grid-template-columns: 1fr;
+}
+
+.proof-grid {
+    grid-template-columns: 1fr;
+}
+
+.media-grid {
+    column-count: 1;
+}
+
+.pd-title {
+    font-size: 2.3rem;
+}
+
+
+}

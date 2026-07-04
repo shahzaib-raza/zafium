@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body_class %}autolytics-page{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/autolytics_results.css' %}">
+<style>
+    .sorry-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 70vh;
+    }
+
+    .sorry-card {
+        max-width: 520px;
+        text-align: center;
+        padding: 40px;
+    }
+
+    .sorry-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        display: inline-block;
+
+        background: var(--gradient-primary);
+
+        background-clip: text;
+        -webkit-background-clip: text;
+
+        color: transparent;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .sorry-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: var(--text);
+    }
+
+    .sorry-text {
+        color: var(--muted);
+        margin-bottom: 25px;
+        line-height: 1.6;
+    }
+
+    .sorry-actions {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="container sorry-wrapper">
+
+    <div class="card sorry-card">
+
+        <div class="sorry-icon">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+                <!-- Glow background -->
+                <defs>
+                    <linearGradient id="zafiumGradient" x1="0" y1="0" x2="64" y2="64">
+                        <stop offset="0%" stop-color="#6366f1"/>
+                        <stop offset="100%" stop-color="#22d3ee"/>
+                    </linearGradient>
+
+                    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="3" result="blur"/>
+                        <feColorMatrix type="matrix"
+                            values="1 0 0 0 0
+                                    0 1 0 0 0
+                                    0 0 1 0 0
+                                    0 0 0 0.6 0"/>
+                        <feMerge>
+                            <feMergeNode in="blur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+
+                <!-- Outer ring -->
+                <circle cx="32" cy="32" r="28"
+                    stroke="url(#zafiumGradient)"
+                    stroke-width="2"
+                    opacity="0.9"
+                    filter="url(#softGlow)"
+                />
+
+                <!-- Warning triangle -->
+                <path d="M32 16L50 48H14L32 16Z"
+                    stroke="url(#zafiumGradient)"
+                    stroke-width="2.5"
+                    fill="rgba(99, 102, 241, 0.08)"
+                    stroke-linejoin="round"
+                />
+
+                <!-- Exclamation mark -->
+                <line x1="32" y1="26" x2="32" y2="38"
+                    stroke="url(#zafiumGradient)"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                />
+
+                <circle cx="32" cy="44" r="1.8"
+                    fill="#22d3ee"
+                />
+
+            </svg>
+        </div>
+
+        <h2 class="sorry-title">Something Went Wrong</h2>
+
+        <p class="sorry-text">
+            We couldn’t complete your request right now. This could be due to missing data,
+            a server issue, or an invalid query.
+            <br><br>
+            Please try again or return to the search page.
+        </p>
+
+        <div class="sorry-actions">
+
+            <a href="{% url 'core:autolytics' %}" class="btn-primary">
+                Retry Search
+            </a>
+
+            <a href="{% url 'core:autolytics' %}" class="btn-secondary">
+                ← Back to Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+{{ project.title }} | zafium Portfolio
+{% endblock %}
+
+{% block body_class %}
+category-{{ project.category.slug }}
+{% endblock %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{% static 'css/portfolio_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- =========================
+        IMMERSIVE HERO
+========================= -->
+
+<section class="pd-hero-immersive">
+
+
+{% if project.cover_image %}
+<div class="pd-hero-bg">
+    <img src="{{ project.cover_image.url }}" alt="">
+</div>
+{% endif %}
+
+<div class="container">
+
+    <div class="pd-hero-content">
+
+        <div class="pd-breadcrumb">
+            <a href="/portfolio/">Portfolio</a>
+            <span>/</span>
+            <a href="/portfolio/{{ project.category.slug }}/">
+                {{ project.category.name }}
+            </a>
+        </div>
+
+        <h1 class="pd-title">{{ project.title }}</h1>
+
+        <p class="pd-subtitle">
+            {{ project.short_description }}
+        </p>
+
+        <div class="pd-tags">
+            <span class="tag">{{ project.category.name }}</span>
+
+            {% if project.live_url %}
+                <a href="{{ project.live_url }}" target="_blank" class="tag-link">
+                    Live ↗
+                </a>
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
+
+
+</section>
+
+<!-- =========================
+        FEATURE SHOWCASE
+========================= -->
+
+{% if project.cover_image %}
+
+<section class="pd-showcase">
+
+
+<div class="container">
+
+    <div class="pd-cover-card interactive" style="aspect-ratio: {{ project.cover_ratio }}">
+        <img src="{{ project.cover_image.url }}" alt="{{ project.title }}" style="aspect-ratio: {{ project.cover_ratio }}">
+    </div>
+
+</div>
+
+
+</section>
+{% endif %}
+
+<!-- =========================
+        MAIN CONTENT
+========================= -->
+
+<section class="pd-content">
+
+
+<div class="container grid">
+
+    <!-- LEFT -->
+    <div class="pd-main">
+
+        <!-- CHALLENGE -->
+        <div class="pd-card highlight">
+            <h2>The Challenge</h2>
+            <p>{{ project.description }}</p>
+        </div>
+
+        <!-- MEDIA (VISUAL FIRST IMPACT) -->
+        <div class="pd-card media-showcase">
+
+            <h2>Project Showcase</h2>
+
+            <div class="media-grid">
+
+                {% for media in project.media.all %}
+
+                    {% if media.media_type == "image" and media.image %}
+                        <div class="media-item" style="aspect-ratio: {{ media.aspect_ratio }}">
+                            <img src="{{ media.image.url }}" alt="" style="aspect-ratio: {{ media.aspect_ratio }}">
+                            {% if media.caption %}
+                                <p class="caption">{{ media.caption }}</p>
+                            {% endif %}
+                        </div>
+
+                    {% elif media.media_type == "video" and media.video %}
+                        <div class="media-item" style="aspect-ratio: {{ media.aspect_ratio }}">
+                            <video controls>
+                                <source src="{{ media.video.url }}">
+                            </video>
+                            {% if media.caption %}
+                                <p class="caption">{{ media.caption }}</p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                {% empty %}
+                    <p class="muted">No media uploaded yet.</p>
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        <!-- SOLUTION -->
+        <div class="pd-card solution">
+
+            <h2>Solution</h2>
+
+            {% if project.category.slug == "ai" %}
+                <p>We engineered an intelligent system combining automation, predictive modeling, and decision optimization.</p>
+
+            {% elif project.category.slug == "data-scraping" %}
+                <p>Built scalable scraping pipelines with structured extraction, cleaning, and automation workflows.</p>
+
+            {% elif project.category.slug == "web-development" %}
+                <p>Developed a modern, scalable web platform with optimized UX and robust backend architecture.</p>
+
+            {% elif project.category.slug == "automation" %}
+                <p>Automated complex workflows to eliminate manual effort and significantly boost efficiency.</p>
+
+            {% elif project.category.slug == "video" %}
+                <p>Created high-impact visual storytelling content optimized for engagement and retention.</p>
+
+            {% elif project.category.slug == "research" %}
+                <p>Delivered deep research insights with structured analysis and actionable intelligence.</p>
+
+            {% else %}
+                <p>Delivered a tailored solution aligned with business goals and performance outcomes.</p>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="pd-side">
+
+        <div class="pd-card sticky">
+
+            <h3>Project Details</h3>
+
+            <p><strong>Category:</strong> {{ project.category.name }}</p>
+            <p><strong>Status:</strong> Completed</p>
+            <p><strong>Type:</strong> Service Project</p>
+
+        </div>
+
+        <div class="pd-card urgency">
+
+            <h3>Want this for your business?</h3>
+            <p>We can build a similar solution tailored to your needs.</p>
+
+            {% if project.live_url %}
+                <a class="btn" href="{{ project.live_url }}" target="_blank">
+                    View Live
+                </a>
+            {% endif %}
+
+            <a class="btn-primary" href="/contact/">
+                Get This Solution
+            </a>
+
+        </div>
+
+    </aside>
+
+</div>
+
+
+</section>
+
+<!-- =========================
+        SOCIAL PROOF
+========================= -->
+
+<section class="pd-proof">
+
+
+<div class="container proof-grid">
+
+    <div class="proof-item">
+        <h3 class="counter" data-target="{{ total_projects }}">0</h3>
+        <p>Projects Delivered</p>
+    </div>
+
+    <div class="proof-item">
+        <h3>
+            <span class="counter" data-target="100">0</span>%
+        </h3>
+        <p>Client Satisfaction</p>
+    </div>
+
+    <div class="proof-item">
+        <h3>
+            <span class="counter" data-target="24">0</span>h
+        </h3>
+        <p>Response Time</p>
+    </div>
+
+</div>
+
+
+</section>
+
+<!-- =========================
+        CTA
+========================= -->
+
+<section class="pd-cta">
+
+
+<div class="container">
+
+    <div class="cta-box">
+
+        <h2>Let’s build your next competitive advantage</h2>
+        <p>We don’t just build projects — we deliver results.</p>
+
+        <a href="/contact/" class="btn-primary">
+            Start Your Project
+        </a>
+
+    </div>
+
+</div>
+
+
+</section>
+
+
+{% block extra_js %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const counters = document.querySelectorAll(".counter");
+    let hasAnimated = false;
+
+    const animateCounters = () => {
+        if (hasAnimated) return;
+
+        counters.forEach(counter => {
+            const target = +counter.getAttribute("data-target");
+            let count = 0;
+
+            const increment = target / 150; // speed control
+
+            const updateCount = () => {
+                if (count < target) {
+                    count += increment;
+                    counter.innerText = Math.ceil(count);
+                    requestAnimationFrame(updateCount);
+                } else {
+                    counter.innerText = target;
+                }
+            };
+
+            updateCount();
+        });
+
+        hasAnimated = true;
+    };
+
+    // 👇 Trigger when section comes into view
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCounters();
+            }
+        });
+    }, {
+        threshold: 0.5 // trigger when 50% visible
+    });
+
+    const section = document.querySelector(".proof-grid");
+    if (section) {
+        observer.observe(section);
+    }
+
+});
+</script>
+
+{% endblock %}
+
+
+{% endblock %}

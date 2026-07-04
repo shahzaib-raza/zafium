@@ -1,0 +1,61 @@
+<style>
+    .wrapper {
+        text-align: center;
+        padding: 40px;
+        max-width: 600px;
+    }
+
+    .card {
+        background: rgba(15, 23, 42, 0.65);
+        border: 1px solid rgba(148, 163, 184, 0.12);
+        backdrop-filter: blur(12px);
+        border-radius: 16px;
+        padding: 40px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+
+    p {
+        color: var(--muted);
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .highlight {
+        color: var(--accent);
+        font-weight: 600;
+    }
+
+    .footer-note {
+        margin-top: 18px;
+        font-size: 0.85rem;
+        color: var(--muted);
+        opacity: 0.8;
+    }
+</style>
+
+
+
+<div class="wrapper">
+
+    <div class="card">
+
+        <h1>SVG Generation Constraint</h1>
+
+        <p>
+            reduce <span class="highlight">K_MIN</span> or increase
+            <span class="highlight">K_MAX</span> to generate SVG.
+        </p>
+
+        <div class="footer-note">
+            Request could not be processed with current parameter bounds.
+        </div>
+
+    </div>
+
+</div>

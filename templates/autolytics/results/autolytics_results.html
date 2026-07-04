@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body_class %}autolytics-page{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/autolytics_results.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="results-page container">
+
+    <!-- HEADER -->
+    <div class="results-header">
+        <h2 class="app-title">AutoLytics Analysis</h1>
+
+        <a href="{% url 'core:autolytics' %}" class="btn-secondary">
+            ← Back to Search
+        </a>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid">
+
+        <div class="card stat-card">
+            <h3>Min Price</h3>
+            <p>{{ min_price }}</p>
+        </div>
+
+        <div class="card stat-card highlight">
+            <h3>Avg Price</h3>
+            <p>{{ avg_price }}</p>
+        </div>
+
+        <div class="card stat-card">
+            <h3>Max Price</h3>
+            <p>{{ max_price }}</p>
+        </div>
+
+    </div>
+
+    <!-- PLOT -->
+    <div class="card plot-card">
+
+        {% autoescape off %}
+            {{ plot_div }}
+        {% endautoescape %}
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/order.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="order-section">
+
+<form id="order-form" action="{% url 'core:checkout' %}" method="POST">
+    {% csrf_token %}
+    <div class="container">
+
+        <input type="hidden" name="items" id="items-input">
+
+        <!-- 🔥 HERO -->
+        <div class="section-heading">
+            <span>Start Your Project</span>
+            <h2 class="gradient-text">Build Your Custom Order</h2>
+            <p>Choose services, set quantities, and get instant pricing.</p>
+        </div>
+
+        <div class="order-layout">
+
+            <!-- LEFT SIDE -->
+            <div class="order-builder">
+
+                <div id="order-items"></div>
+
+                <button type="button" id="add-item" class="btn-secondary">
+                    + Add Service
+                </button>
+
+                <!-- CLIENT INFO -->
+                <div class="card client-info">
+                    <h3>Your Details</h3>
+
+                    <div class="input-group">
+                        <input type="text" name="name" required placeholder=" ">
+                        <label>Your Name</label>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="email" name="email" required placeholder=" ">
+                        <label>Email</label>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="text" name="phone" required placeholder=" ">
+                        <label>Phone</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary submit-btn">
+                    Continue to Checkout →
+                </button>
+
+            </div>
+
+            <!-- RIGHT SIDE (🔥 LIVE PANEL) -->
+            <div class="order-summary card">
+
+                <h3>Order Summary</h3>
+
+                <div id="summary-items"></div>
+
+                <div class="summary-total">
+                    <span>Total</span>
+                    <h2 id="total">0</h2>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</form>
+
+
+</section>
+
+{% block extra_js_2 %}
+
+<script>
+
+const subcategories = {
+    {% for cat in categories %}
+        {% for sub in cat.subcategories.all %}
+            "{{sub.id}}": {
+                name: "{{sub.name}}",
+                price: {{sub.price}},
+                category: "{{cat.id}}"
+            },
+        {% endfor %}
+    {% endfor %}
+};
+
+const categories = {
+    {% for cat in categories %}
+        "{{cat.id}}": {
+            name: "{{cat.name}}"
+        },
+    {% endfor %}
+};
+
+function createItem() {
+
+    const div = document.createElement("div");
+    div.classList.add("order-item", "card");
+
+    div.innerHTML = `
+        <select class="category">
+            <option>Select Category</option>
+            ${Object.entries(categories).map(([id, c]) =>
+                `<option value="${id}">${c.name}</option>`
+            ).join("")}
+        </select>
+
+        <select class="subcategory"></select>
+
+        <input type="number" class="qty" value="1" min="1">
+
+        <span class="price">0</span>
+
+        <span class="remove-btn" style="cursor:pointer; margin-left:10px;">✕</span>
+    `;
+
+    document.getElementById("order-items").appendChild(div);
+
+    attachEvents(div);
+}
+
+function collectItems() {
+    const items = [];
+
+    document.querySelectorAll(".order-item").forEach(item => {
+        const subId = item.querySelector(".subcategory").value;
+        const qty = item.querySelector(".qty").value;
+
+        if (!subId) return;
+
+        items.push(`${subId}|${qty}`);
+    });
+
+    document.getElementById("items-input").value = JSON.stringify(items);
+}
+
+function attachEvents(item) {
+
+    const catSelect = item.querySelector(".category");
+    const subSelect = item.querySelector(".subcategory");
+    const qtyInput = item.querySelector(".qty");
+    const removeBtn = item.querySelector(".remove-btn");
+
+    catSelect.addEventListener("change", () => {
+
+        const catId = catSelect.value;
+
+        const filtered = Object.entries(subcategories)
+            .filter(([id, s]) => s.category == catId);
+
+        subSelect.innerHTML = filtered.map(([id, s]) =>
+            `<option value="${id}">${s.name} ($${s.price})</option>`
+        ).join("");
+
+        update(item);
+    });
+
+    subSelect.addEventListener("change", () => update(item));
+    qtyInput.addEventListener("input", () => update(item));
+
+    // ✅ REMOVE ITEM
+    removeBtn.addEventListener("click", () => {
+        item.remove();
+        updateTotal();
+    });
+}
+
+function update(item) {
+
+    const subId = item.querySelector(".subcategory").value;
+    const qty = parseInt(item.querySelector(".qty").value || 0);
+
+    if (!subId) return;
+
+    const price = subcategories[subId].price * qty;
+
+    item.querySelector(".price").innerText = price;
+
+    updateTotal();
+}
+
+function updateTotal() {
+
+    let total = 0;
+    const summary = document.getElementById("summary-items");
+
+    summary.innerHTML = "";
+
+    document.querySelectorAll(".order-item").forEach(item => {
+
+        const subId = item.querySelector(".subcategory").value;
+        const qty = item.querySelector(".qty").value;
+        const price = parseFloat(item.querySelector(".price").innerText || 0);
+
+        if (!subId) return;
+
+        total += price;
+
+        const row = document.createElement("div");
+        row.classList.add("summary-row");
+
+        row.innerHTML = `
+            <span>${subcategories[subId].name} x ${qty}</span>
+            <span>$${price}</span>
+        `;
+
+        summary.appendChild(row);
+    });
+
+    document.getElementById("total").innerText = `$${total}`;
+}
+
+// INIT
+document.getElementById("add-item").addEventListener("click", createItem);
+
+// Add first item automatically
+createItem();
+
+document.getElementById("order-form").addEventListener("submit", function () {
+    collectItems();
+});
+
+</script>
+
+{% endblock %}
+
+
+{% endblock %}
+
+

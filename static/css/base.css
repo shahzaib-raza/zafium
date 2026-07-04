@@ -1,0 +1,546 @@
+/* ==========================================
+   zafium MODERN AI DESIGN SYSTEM
+========================================== */
+
+/* =========================
+   ROOT DESIGN TOKENS
+========================= */
+
+:root {
+
+    /* =========================
+       CORE BACKGROUND SYSTEM
+    ========================= */
+
+    --bg: #020617;          /* primary app background (deep slate) */
+    --bg-soft: #0b1220;     /* elevated sections / subtle contrast */
+
+    /* =========================
+       SURFACES (GLASS + PANELS)
+    ========================= */
+
+    --card: rgba(15, 23, 42, 0.65);       /* glass panel base */
+    --card-hover: rgba(15, 23, 42, 0.85);  /* hover elevation */
+    --surface: rgba(2, 6, 23, 0.7);        /* deeper overlay layers */
+
+    /* =========================
+       BORDERS (SUBTLE MODERN UI)
+    ========================= */
+
+    --border: rgba(148, 163, 184, 0.12);   /* soft slate border */
+    --border-strong: rgba(148, 163, 184, 0.22);
+
+    /* =========================
+       BRAND (PRIMARY ACCENT SYSTEM)
+    ========================= */
+
+    --accent: #6366f1;     /* primary indigo (modern SaaS standard) */
+    --accent-2: #22d3ee;   /* optional cyan highlight (data/AI feel) */
+
+    /* =========================
+       TEXT SYSTEM
+    ========================= */
+
+    --text: #e5e7eb;       /* primary readable text */
+    --muted: #94a3b8;      /* secondary / descriptions */
+    --faint: #64748b;      /* disabled / low emphasis */
+
+    /* =========================
+       UI EFFECTS
+    ========================= */
+
+    --radius: 16px;
+
+    --shadow-sm: 0 10px 25px rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 20px 50px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 35px 80px rgba(0, 0, 0, 0.5);
+
+    --transition: all 0.2s ease;
+
+    /* =========================
+       GRADIENT SYSTEM (MODERN SaaS)
+    ========================= */
+
+    --gradient-primary: linear-gradient(
+        135deg,
+        var(--accent),
+        var(--accent-2)
+    );
+
+    --gradient-glow: radial-gradient(
+        circle at top,
+        rgba(99, 102, 241, 0.25),
+        transparent 60%
+    );
+
+}
+
+/* =========================
+   RESET
+========================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+
+    font-family: Inter, Segoe UI, sans-serif;
+
+    background:
+        radial-gradient(circle at top, #111827, var(--bg));
+
+    color: var(--text);
+
+    line-height: 1.7;
+    overflow-x: hidden;
+}
+
+/* =========================
+   BACKGROUND AMBIENCE
+========================= */
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+
+    background:
+        radial-gradient(circle at 20% 20%, rgba(37,99,235,0.15), transparent 40%),
+        radial-gradient(circle at 80% 30%, rgba(6,182,212,0.12), transparent 40%);
+
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* GLOBAL DROPDOWN DARK THEME */
+
+select {
+    background: rgba(255,255,255,0.05);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+/* THIS targets dropdown options */
+select option {
+    background-color: #0b1220;   /* dark background */
+    color: #e5e7eb;              /* readable text */
+}
+
+/* Optional: hover/selected state (limited browser support) */
+select option:checked {
+    background-color: #1e293b;
+}
+
+/* =========================
+   LAYOUT
+========================= */
+
+.container {
+    width: min(1200px, 90%);
+    margin: auto;
+}
+
+section {
+    padding: 110px 0;
+    position: relative;
+    z-index: 1;
+}
+
+/* =========================
+   TYPOGRAPHY
+========================= */
+
+h1 {
+    font-size: 4rem;
+    line-height: 1.1;
+    font-weight: 800;
+}
+
+h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+p {
+    color: var(--muted);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* =========================
+   BUTTONS (SaaS STYLE)
+========================= */
+
+.btn-primary {
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 14px 28px;
+    margin-top: 8px;
+
+    border-radius: 999px;
+
+    background: linear-gradient(90deg, var(--blue), var(--cyan));
+    color: white;
+
+    font-weight: 600;
+
+    transition: var(--transition);
+
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.25);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 50px rgba(6, 182, 212, 0.25);
+}
+
+.btn-secondary {
+
+    display: inline-flex;
+
+    padding: 14px 28px;
+    margin-top: 8px;
+
+    border-radius: 999px;
+
+    border: 1px solid var(--border);
+
+    background: rgba(255,255,255,0.03);
+
+    color: var(--text);
+
+    transition: var(--transition);
+}
+
+.btn-secondary:hover {
+    border-color: var(--blue);
+    transform: translateY(-2px);
+}
+
+/* =========================
+   HEADER (GLASSMORPHISM)
+========================= */
+
+.site-header {
+
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(18px);
+
+    border-bottom: 1px solid var(--border);
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap; /* IMPORTANT */
+}
+
+@media (max-width: 992px) {
+
+    .navbar {
+        flex-direction: row !important;  /* FORCE horizontal */
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+}
+
+.logo {
+
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+
+    background: linear-gradient(90deg, var(--blue), var(--cyan));
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.nav-links {
+
+    display: flex;
+    gap: 28px;
+
+    list-style: none;
+}
+
+.nav-links a {
+
+    color: var(--muted);
+    font-weight: 500;
+
+    transition: var(--transition);
+}
+
+.nav-links a:hover {
+    color: var(--text);
+}
+
+
+/* =========================
+   HAMBURGER BUTTON (ANIMATED)
+========================= */
+
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+
+    width: 40px;
+    height: 40px;
+
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.menu-toggle span {
+    width: 26px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: 0.3s ease;
+}
+
+/* ACTIVE STATE → X animation */
+.menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+}
+
+
+@media (max-width: 992px) {
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    .nav-links {
+
+        position: absolute;
+        top: 80px;
+        left: 0;
+        right: 0;
+
+        flex-direction: column;
+        gap: 18px;
+
+        padding: 25px 10px;
+
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(20px);
+
+        border-bottom: 1px solid var(--border);
+
+        transform: translateY(-10px);
+        opacity: 0;
+        pointer-events: none;
+
+        transition: 0.25s ease;
+    }
+
+    .logo{
+        padding-left: 10px;
+    }
+
+    .nav-links.active {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+/* =========================
+   FOOTER (DARK PREMIUM)
+========================= */
+
+.site-footer {
+
+    background: #070b1460;
+    color: var(--text);
+    backdrop-filter: blur(5px);
+    padding-top: 80px;
+}
+
+.site-footer a{
+    transition: var(--transition);
+}
+
+.site-footer a:hover {
+    color: var(--text);
+}
+
+.footer-grid {
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+}
+
+.footer-grid h3,
+.footer-grid h4 {
+    margin-bottom: 18px;
+}
+
+.footer-grid p,
+.footer-grid li {
+
+    color: var(--muted);
+    margin-bottom: 10px;
+
+    list-style: none;
+}
+
+.footer-bottom {
+
+    margin-top: 60px;
+    padding: 25px 0;
+
+    border-top: 1px solid var(--border);
+
+    text-align: center;
+
+    color: var(--muted);
+}
+
+/* =========================
+   SECTION HEADINGS
+========================= */
+
+.section-heading {
+
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-heading span {
+
+    color: var(--cyan);
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.section-heading h2 {
+    margin-top: 10px;
+}
+
+/* =========================
+   CARDS (GLASS + GLOW)
+========================= */
+
+.card {
+
+    background: var(--card);
+    border: 1px solid var(--border);
+
+    backdrop-filter: blur(12px);
+
+    border-radius: var(--radius);
+
+    padding: 28px;
+
+    transition: var(--transition);
+}
+
+.card:hover {
+
+    transform: translateY(-8px);
+
+    background: var(--card-hover);
+
+    border-color: rgba(37, 99, 235, 0.4);
+
+    box-shadow: var(--shadow);
+}
+
+/* =========================
+   GRADIENT TEXT (FIXED + PREMIUM)
+========================= */
+
+.gradient-text {
+    display: inline-block !important;
+
+    background: linear-gradient(90deg, #2563EB, #06B6D4);
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+/* =========================
+   UTILITY
+========================= */
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 992px) {
+
+    h1 {
+        font-size: 2.8rem;
+    }
+
+    .navbar {
+
+        flex-direction: column;
+        height: auto;
+
+        padding: 16px 0;
+    }
+
+    .nav-links {
+
+        flex-wrap: wrap;
+        justify-content: center;
+
+        margin-top: 10px;
+    }
+}

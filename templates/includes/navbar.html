@@ -1,0 +1,63 @@
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css"/>
+<link rel="stylesheet" href="{% static 'css/navbar.css' %}"/>
+{% endblock %}
+
+<header class="site-header">
+
+    <div class="container navbar">
+
+        <a href="/" class="logo">Zafium</a>
+
+        <!-- HAMBURGER BUTTON -->
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <!-- NAV -->
+        <ul class="nav-links" id="navLinks">
+
+            <li><a href="/">Home</a></li>
+            <li><a href="/services/">Services</a></li>
+            <li class="dropdown">
+                <a href="#">Portfolio</a>
+
+                <ul class="dropdown-menu">
+
+                    {% for category in portfolio_categories %}
+
+                        <li>
+                            <a href="/portfolio/{{ category.slug }}/">
+
+                                {% if category.icon %}
+                                    <i class="{{ category.icon }}"></i>
+                                {% endif %}
+
+                                <span>{{ category.name }}</span>
+
+                            </a>
+                        </li>
+
+                    {% endfor %}
+
+                </ul>
+            </li>
+            <li><a href="/about/">About</a></li>
+            <li class="dropdown">
+                <a href="#">Projects</a>
+                <ul class="dropdown-menu">
+                    <li><a href="/layerforge/">LayerForge</a></li>
+                    <li><a href="/autolytics/">AutoLytics</a></li>
+                </ul>
+            </li>
+            <li><a href="/order/">Order</a></li>
+
+        </ul>
+
+    </div>
+
+</header>

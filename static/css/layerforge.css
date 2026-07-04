@@ -1,0 +1,230 @@
+/* ==========================================
+   LAYERFORGE
+========================================== */
+
+main {
+    padding: 24px;
+}
+
+body.layerforge-page {
+    background-image: linear-gradient(rgba(15, 23, 42, 0.384), rgba(15, 23, 42, 0.384)), url("/static/images/layerforge_bg.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* Title */
+
+.app-title {
+    margin: 0 0 20px;
+    font-size: 28px;
+    font-weight: 600;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.app-title .byline {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+}
+
+/* Layout */
+
+.app {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 24px;
+    position: relative;
+    z-index: 1;
+}
+
+.site-footer {
+    margin-top: 50px;
+}
+
+.app > * {
+    min-width: 0;
+}
+
+@media (max-width: 900px) {
+    .app {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Panels */
+
+.controls,
+.output {
+    background: var(--card);
+    backdrop-filter: blur(8px);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 18px;
+    box-shadow: var(--shadow-md);
+    min-width: 0;
+}
+
+.control {
+    margin-bottom: 16px;
+}
+
+/* Form Elements */
+
+.control label,
+label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.value {
+    color: var(--muted);
+}
+
+input[type="file"],
+input[type="range"] {
+    width: 100%;
+    margin-top: 6px;
+}
+
+input[type="checkbox"] {
+    transform: scale(1.2);
+    accent-color: var(--accent);
+}
+
+hr {
+    border: none;
+    height: 1px;
+    background: var(--border);
+    margin: 18px 0;
+}
+
+/* Main Action Button */
+
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Zoom Controls */
+
+.zoom-controls {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-bottom: 8px;
+}
+
+.zoom-controls button {
+    width: 40px;
+    height: 32px;
+    padding: 0;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: rgba(17, 24, 39, 0.9);
+    color: var(--text);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.zoom-controls button:hover {
+    border-color: var(--accent);
+}
+
+/* Preview */
+
+#preview {
+    position: relative;
+    width: 100%;
+    height: 560px;
+    background: var(--bg);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    overflow: auto;
+    min-width: 0;
+}
+
+#svgWrapper {
+    display: inline-block;
+    transform-origin: top left;
+    pointer-events: auto;
+}
+
+#preview svg {
+    width: auto;
+    height: auto;
+    max-width: none;
+    max-height: none;
+    display: block;
+}
+
+/* SVG Hover */
+
+.svg-layer {
+    pointer-events: visiblePainted;
+    transition: opacity 0.15s ease, filter 0.15s ease;
+}
+
+.svg-layer:hover {
+    opacity: 0.85;
+    filter: drop-shadow(0 0 6px rgba(99, 102, 241, 0.7));
+    cursor: pointer;
+}
+
+/* Loader */
+
+#loader {
+    position: absolute;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.75);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+#loader.hidden {
+    display: none;
+}
+
+.spinner {
+    width: 46px;
+    height: 46px;
+    border: 4px solid #1f2937;
+    border-top: 4px solid var(--accent);
+    border-radius: 50%;
+    animation: layerforge-spin 0.9s linear infinite;
+    margin-bottom: 12px;
+}
+
+@keyframes layerforge-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
