@@ -2,6 +2,42 @@
    NAV DROPDOWN
 ========================= */
 
+.logo {
+    display: inline-flex;
+    align-items: center;      /* Vertically centers logo and text */
+    gap: 0px;
+}
+
+.logo img {
+    width: 50px;
+    height: auto;
+}
+
+.logo-text{
+    margin-bottom: -1px;
+    font-size:2rem;
+    font-weight:700;
+    font-family:'Space Grotesk', sans-serif;
+    letter-spacing:2px;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    margin-top: 5px;
+
+    background:linear-gradient(
+        90deg,
+        #6D5EF9,
+        #38BDF8,
+        #22D3EE
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    text-transform:uppercase;
+}
+
 .dropdown {
     position: relative;
 }

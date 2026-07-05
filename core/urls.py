@@ -67,5 +67,7 @@ urlpatterns = [
     ),
 
     path("success/", success_page, name="success_page"),
+
+    path("robots.txt", robots_txt),
     
 ]

@@ -494,7 +494,12 @@ a {
 .gradient-text {
     display: inline-block !important;
 
-    background: linear-gradient(90deg, #2563EB, #06B6D4);
+    background:linear-gradient(
+        90deg,
+        #6D5EF9,
+        #38BDF8,
+        #22D3EE
+    );
     -webkit-background-clip: text;
     background-clip: text;
 

@@ -94,6 +94,13 @@ def portfolio_detail(request, category, slug):
         "total_projects": total_projects
     })
 
+def robots_txt(request):
+    return render(
+        request,
+        "robots.txt",
+        content_type="text/plain"
+    )
+
 # ____________________________________________________________________________________________________________
 
 def success_page(request):

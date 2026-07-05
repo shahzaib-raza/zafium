@@ -1,0 +1,9 @@
+User-agent: *
+
+Allow: /
+
+Disallow: /admin/
+Disallow: /accounts/
+Disallow: /media/private/
+
+Sitemap: https://www.zafium.com/sitemap.xml
