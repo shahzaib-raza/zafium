@@ -61,6 +61,13 @@
                 </ul>
             </li>
             <li><a href="/order/">Order</a></li>
+            {% if dashboard_token %}
+            <li>
+                <a href="{% url 'core:dashboard' dashboard_token %}">
+                    Client Dashboard
+                </a>
+            </li>
+            {% endif %}
 
         </ul>
 

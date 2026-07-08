@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="portfolio-hero">
+  <div class="container">
+    <div class="hero-badge">CLIENT DASHBOARD</div>
+    <h1 class="hero-title">My Orders</h1>
+    <p class="hero-subtitle">Track your active and completed orders.</p>
+
+    <form method="get" class="dashboard-search">
+      <input type="email" name="email" placeholder="Enter your order email" value="{{ email }}" required>
+      <button class="btn-primary" type="submit">View Orders</button>
+    </form>
+
+    {% if email %}
+    <div class="hero-stats">
+      <div class="stat-card">
+        <h3>{{ active_orders|length }}</h3>
+        <p>Active Orders</p>
+      </div>
+      <div class="stat-card">
+        <h3>{{ completed_orders|length }}</h3>
+        <p>Completed Orders</p>
+      </div>
+      <div class="stat-card">
+        <h3>{{ orders|length }}</h3>
+        <p>Total Orders</p>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="portfolio-grid-section">
+<div class="container">
+<div class="section-header">
+<h2>Active Orders</h2>
+<p>Your ongoing work.</p>
+</div>
+
+{% if active_orders %}
+<div class="portfolio-grid">
+{% for order in active_orders %}
+<div class="portfolio-card">
+<div class="card-content">
+<h3>Order #{{ order.id }}</h3>
+<p>Status: {{ order.get_project_status_display }}</p>
+<p>Progress: {{ order.progress }}%</p>
+
+<div style="height:10px;background:rgba(255,255,255,.08);border-radius:999px;margin:16px 0;">
+<div style="width:{{ order.progress }}%;height:100%;background:var(--gradient-primary);border-radius:999px;"></div>
+</div>
+
+<p><strong>Total:</strong> ${{ order.total_amount }}</p>
+
+{% if order.latest_update %}
+<p>{{ order.latest_update }}</p>
+{% endif %}
+
+<a class="btn-primary" href="{% url 'core:order_detail' dashboard_token order.id %}">View Order</a>
+</div>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+<h3>No active orders</h3>
+<p>We couldn't find any active orders for this email.</p>
+</div>
+{% endif %}
+
+<!-- =========================
+     COMPLETED ORDERS
+========================= -->
+
+<div class="section-header" style="margin-top:90px;">
+
+    <h2>Completed Orders</h2>
+
+    <p>
+        Orders that have been successfully delivered.
+    </p>
+
+</div>
+
+{% if completed_orders %}
+
+<div class="portfolio-grid">
+
+    {% for order in completed_orders %}
+
+    <div class="portfolio-card">
+
+        <div class="card-content">
+
+            <div class="card-meta">
+
+                Order #{{ order.id }}
+
+            </div>
+
+            <h3 style="margin-top:10px;">
+                Completed Order
+            </h3>
+
+            <p>
+                Completed on:
+                {% if order.completed_at %}
+                    {{ order.completed_at|date:"F d, Y" }}
+                {% else %}
+                    —
+                {% endif %}
+            </p>
+
+            <p>
+
+                Total Amount
+
+                <strong>
+
+                    ${{ order.total_amount }}
+
+                </strong>
+
+            </p>
+
+            <p>
+
+                Services Ordered
+
+                {{ order.items.count }}
+
+            </p>
+
+            <div style="margin-top:20px;">
+
+                {% if order.review %}
+
+                <p style="margin-bottom:12px;">
+
+                    ⭐ {{ order.review.rating }}/5
+
+                </p>
+
+                <a
+                    href="{% url 'core:order_detail' dashboard_token order.id %}"
+                    class="btn-secondary">
+
+                    View Review
+
+                </a>
+
+                {% else %}
+
+                <a
+                    href="{{% url 'core:order_detail' dashboard_token order.id %}}"
+                    class="btn-primary">
+
+                    Leave Review
+
+                </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="empty-state">
+
+    <h3>
+
+        No completed orders yet
+
+    </h3>
+
+    <p>
+
+        Once your orders are delivered,
+        they'll appear here.
+
+    </p>
+
+</div>
+
+{% endif %}
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     CTA
+========================= -->
+
+<section class="portfolio-cta">
+
+    <div class="container">
+
+        <div class="cta-card">
+
+            <h2>
+
+                Need another service?
+
+            </h2>
+
+            <p>
+
+                Start a new order and we'll
+                help bring your next idea to life.
+
+            </p>
+
+            <a
+                href="{% url 'core:order' %}"
+                class="btn-primary">
+
+                Place New Order
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+<script src="{% static 'js/dashboard.js' %}"></script>

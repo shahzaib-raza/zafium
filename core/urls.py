@@ -69,5 +69,23 @@ urlpatterns = [
     path("success/", success_page, name="success_page"),
 
     path("robots.txt", robots_txt),
+
+    path(
+        "dashboard/<uuid:token>/",
+        dashboard,
+        name="dashboard"
+    ),
+
+    path(
+        "dashboard/<uuid:token>/order/<int:order_id>/",
+        order_detail,
+        name="order_detail"
+    ),
+
+    path(
+        "dashboard/<uuid:token>/order/<int:order_id>/review/",
+        submit_review,
+        name="submit_review"
+    ),
     
 ]

@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
+import uuid
 
 # Create your models here.
 
@@ -146,12 +148,46 @@ class PortfolioMedia(models.Model):
     
 
 
+class Client(models.Model):
+
+    name = models.CharField(max_length=150)
+
+    email = models.EmailField(unique=True)
+
+    phone = models.CharField(max_length=20)
+
+    country = models.CharField(max_length=100, blank=True)
+
+    company = models.CharField(max_length=150, blank=True)
+
+    access_token = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        editable=False
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.email})"
+
+
 class Order(models.Model):
 
     class Status(models.TextChoices):
         PENDING = "pending", "Pending"
         PAID = "paid", "Paid"
         FAILED = "failed", "Failed"
+        CANCELLED = "cancelled", "Cancelled"
+
+    class ProjectStatus(models.TextChoices):
+        NEW = "new", "New"
+        PLANNING = "planning", "Planning"
+        IN_PROGRESS = "in_progress", "In Progress"
+        TESTING = "testing", "Testing"
+        REVISION = "revision", "Revision"
+        COMPLETED = "completed", "Completed"
+        DELIVERED = "delivered", "Delivered"
         CANCELLED = "cancelled", "Cancelled"
 
     class PaymentMethod(models.TextChoices):
@@ -161,12 +197,11 @@ class Order(models.Model):
         JAZZCASH = "jazzcash", "JazzCash"
         EASYPAISA = "easypaisa", "Easypaisa"
 
-    name = models.CharField(max_length=150)
-    email = models.EmailField()
-    phone = models.CharField(max_length=20)
-
-    country = models.CharField(max_length=100, blank=True)
-    company = models.CharField(max_length=150, blank=True)
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.CASCADE,
+        related_name="orders"
+    )
     notes = models.TextField(blank=True)
 
     payment_method = models.CharField(
@@ -181,6 +216,36 @@ class Order(models.Model):
         default=Status.PENDING
     )
 
+    project_status = models.CharField(
+        max_length=20,
+        choices=ProjectStatus.choices,
+        default=ProjectStatus.NEW
+    )
+
+    progress = models.PositiveSmallIntegerField(
+        default=0,
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(100)
+        ],
+        help_text="Project completion percentage."
+    )
+
+    latest_update = models.TextField(
+        blank=True,
+        help_text="Latest progress update visible to the customer."
+    )
+
+    estimated_delivery = models.DateField(
+        null=True,
+        blank=True
+    )
+
+    completed_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
     transaction_id = models.CharField(
         max_length=200,
         blank=True
@@ -191,6 +256,16 @@ class Order(models.Model):
     @property
     def total_amount(self):
         return sum(item.total_price() for item in self.items.all())
+
+    @property
+    def is_completed(self):
+        return self.project_status in (
+            self.ProjectStatus.COMPLETED,
+            self.ProjectStatus.DELIVERED
+        )
+
+    def __str__(self):
+        return f"Order #{self.pk} - {self.client.name}"
 
 
 class OrderItem(models.Model):
@@ -209,3 +284,39 @@ class OrderItem(models.Model):
 
     def total_price(self):
         return self.price * self.quantity
+
+
+class OrderReview(models.Model):
+
+    order = models.OneToOneField(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="review"
+    )
+
+    rating = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(5)
+        ]
+    )
+
+    title = models.CharField(
+        max_length=150
+    )
+
+    review = models.TextField()
+
+    approved = models.BooleanField(
+        default=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.order.client.name} ({self.rating}/5)"

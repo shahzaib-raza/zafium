@@ -1,7 +1,15 @@
 from django.contrib import admin
 
-from .models import PortfolioItem, PortfolioMedia, PortfolioCategory, PortfolioSubCategory, Order, OrderItem
-
+from .models import (
+    Client,
+    PortfolioItem,
+    PortfolioMedia,
+    PortfolioCategory,
+    PortfolioSubCategory,
+    Order,
+    OrderItem,
+    OrderReview,
+)
 
 class PortfolioMediaInline(admin.TabularInline):
     model = PortfolioMedia
@@ -18,13 +26,93 @@ class PortfolioSubCategoryAdmin(admin.ModelAdmin):
     list_display = ("name", "category")
     prepopulated_fields = {"slug": ("name",)}
 
+@admin.register(Client)
+class ClientAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "name",
+        "email",
+        "phone",
+        "created_at",
+    )
+
+    search_fields = (
+        "name",
+        "email",
+        "phone",
+    )
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ("name", "email", "phone", "created_at", "total_amount")
+
+    list_display = (
+        "id",
+        "client",
+        "project_status",
+        "progress",
+        "payment_status",
+        "created_at",
+        "total_amount",
+    )
+
+    list_editable = (
+        "project_status",
+        "progress",
+        "payment_status",
+    )
+
+    list_filter = (
+        "project_status",
+        "payment_status",
+        "created_at",
+    )
+
+    search_fields = (
+        "client__name",
+        "client__email",
+        "client__phone",
+    )
+
+    autocomplete_fields = (
+        "client",
+    )
+
+    readonly_fields = (
+        "created_at",
+    )
+
+    def __str__(self):
+        return f"Order #{self.id} - {self.client.name} "
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
     list_display = ("order", "category", "subcategory", "quantity", "price", "total_price")
+
+
+@admin.register(OrderReview)
+class OrderReviewAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "order",
+        "rating",
+        "approved",
+        "created_at",
+    )
+
+    list_filter = (
+        "rating",
+        "approved",
+    )
+
+    search_fields = (
+        "order__name",
+        "order__email",
+        "title",
+    )
+
+    list_editable = (
+        "approved",
+    )
 
 
 @admin.register(PortfolioItem)
