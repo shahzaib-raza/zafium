@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 import uuid
+from django.utils import timezone
 
 # Create your models here.
 
@@ -320,3 +321,63 @@ class OrderReview(models.Model):
 
     def __str__(self):
         return f"{self.order.client.name} ({self.rating}/5)"
+    
+
+class OrderDelivery(models.Model):
+
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="deliveries"
+    )
+
+    title = models.CharField(
+        max_length=200,
+        help_text="Example: Final Website, Source Code, Documentation"
+    )
+
+    description = models.TextField(
+        blank=True
+    )
+
+    file = models.FileField(
+        upload_to="deliveries/%Y/%m/"
+    )
+
+    visible_to_client = models.BooleanField(
+        default=True
+    )
+
+    uploaded_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        ordering = ["-uploaded_at"]
+
+    def __str__(self):
+        return f"{self.order} - {self.title}"
+
+    def save(self, *args, **kwargs):
+
+        is_new = self.pk is None
+
+        super().save(*args, **kwargs)
+
+        # Automatically mark the project as delivered
+        if is_new:
+
+            self.order.project_status = Order.ProjectStatus.DELIVERED
+
+            if not self.order.completed_at:
+                self.order.completed_at = timezone.now()
+
+            self.order.progress = 100
+
+            self.order.save(
+                update_fields=[
+                    "project_status",
+                    "completed_at",
+                    "progress",
+                ]
+            )

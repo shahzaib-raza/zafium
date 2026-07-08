@@ -1,0 +1,454 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/contact.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- ===========================================
+                HERO SECTION
+=========================================== -->
+
+<section class="portfolio-hero">
+
+    <div class="container">
+
+        <div class="hero-badge">
+            CONTACT
+        </div>
+
+        <h1 class="hero-title">
+            Let's Build Something Amazing
+        </h1>
+
+        <p class="hero-subtitle">
+
+            Whether you're starting a new project or need assistance
+            with an existing order, we'd love to hear from you.
+
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===========================================
+                CONTACT SECTION
+=========================================== -->
+
+<section class="contact-section">
+
+    <div class="container">
+
+        <div class="contact-layout">
+
+            <!-- ===========================
+                    CONTACT FORM
+            ============================ -->
+
+            <div class="contact-card">
+
+                <div class="section-header">
+
+                    <span class="section-label">
+                        SEND MESSAGE
+                    </span>
+
+                    <h2>Contact Us</h2>
+
+                    <p>
+
+                        Fill out the form below and our team will
+                        get back to you as soon as possible.
+
+                    </p>
+
+                </div>
+
+
+                <!-- Inquiry Type -->
+
+                <div class="inquiry-selector">
+
+                    <label class="inquiry-option active">
+
+                        <input
+                            type="radio"
+                            name="inquiry_type"
+                            value="new"
+                            checked
+                            hidden
+                        >
+
+                        <div class="option-icon">
+                            🚀
+                        </div>
+
+                        <h3>New Project</h3>
+
+                        <p>
+                            I haven't placed an order yet and I'd like to discuss a project.
+                        </p>
+
+                    </label>
+
+
+                    <label class="inquiry-option">
+
+                        <input
+                            type="radio"
+                            name="inquiry_type"
+                            value="existing"
+                            hidden
+                        >
+
+                        <div class="option-icon">
+                            📦
+                        </div>
+
+                        <h3>Existing Order</h3>
+
+                        <p>
+                            I already have an order and need support or have a question.
+                        </p>
+
+                    </label>
+
+                </div>
+
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+                    <div class="form-grid">
+
+                        <div class="input-group">
+
+                            <label>Your Name</label>
+
+                            <input
+                                type="text"
+                                name="name"
+                                placeholder="John Doe"
+                            >
+
+                        </div>
+
+                        <div class="input-group">
+
+                            <label>Email Address</label>
+
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder="john@example.com"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+                        <div class="input-group">
+
+                            <label>Phone</label>
+
+                            <input
+                                type="text"
+                                name="phone"
+                                placeholder="+1 555 555 555"
+                            >
+
+                        </div>
+
+                        <div
+                            class="input-group"
+                            id="order-id-group"
+                            style="display:none;"
+                        >
+
+                            <label>Order ID</label>
+
+                            <input
+                                type="number"
+                                name="order_id"
+                                placeholder="123"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label>Subject</label>
+
+                        <input
+                            type="text"
+                            name="subject"
+                            placeholder="How can we help?"
+                        >
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label>Message</label>
+
+                        <textarea
+                            rows="8"
+                            name="message"
+                            placeholder="Tell us about your project or question..."
+                        ></textarea>
+
+                    </div>
+
+
+                    <button
+                        class="btn-primary submit-btn"
+                        type="submit"
+                    >
+
+                        Send Message
+
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- ===========================
+                    SIDEBAR
+            ============================ -->
+
+            <aside class="contact-sidebar">
+
+
+                <div class="info-card">
+
+                    <h3>Contact Information</h3>
+
+                    <ul>
+
+                        <li>
+
+                            📧
+
+                            <div>
+
+                                <strong>Email</strong>
+
+                                <span>
+
+                                    support@triaxis.com
+
+                                </span>
+
+                            </div>
+
+                        </li>
+
+                        <li>
+
+                            🕒
+
+                            <div>
+
+                                <strong>Business Hours</strong>
+
+                                <span>
+
+                                    Monday – Friday
+
+                                    <br>
+
+                                    9:00 AM – 6:00 PM
+
+                                </span>
+
+                            </div>
+
+                        </li>
+
+                        <li>
+
+                            ⚡
+
+                            <div>
+
+                                <strong>Average Response</strong>
+
+                                <span>
+
+                                    Within 24 Hours
+
+                                </span>
+
+                            </div>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+
+                <div class="info-card">
+
+                    <h3>Why Contact TriAxis?</h3>
+
+                    <ul class="features">
+
+                        <li>
+
+                            ✔ Free consultation
+
+                        </li>
+
+                        <li>
+
+                            ✔ Fast response time
+
+                        </li>
+
+                        <li>
+
+                            ✔ Transparent communication
+
+                        </li>
+
+                        <li>
+
+                            ✔ Secure client portal
+
+                        </li>
+
+                        <li>
+
+                            ✔ Professional software solutions
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+
+                <div class="info-card gradient-card">
+
+                    <h3>
+
+                        Need a Custom Solution?
+
+                    </h3>
+
+                    <p>
+
+                        Tell us about your project and we'll help
+                        you choose the best technology stack and
+                        development plan.
+
+                    </p>
+
+                    <a
+                        href="{% url 'core:order' %}"
+                        class="btn-secondary"
+                    >
+
+                        Start a Project
+
+                    </a>
+
+                </div>
+
+
+            </aside>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const radios = document.querySelectorAll(
+        'input[name="inquiry_type"]'
+    );
+
+    const orderField = document.getElementById(
+        "order-id-group"
+    );
+
+    const inquiryOptions = document.querySelectorAll(
+        ".inquiry-option"
+    );
+
+    function updateInquiryUI() {
+
+        const selected = document.querySelector(
+            'input[name="inquiry_type"]:checked'
+        ).value;
+
+        // Show / Hide Order ID
+        if (selected === "existing") {
+
+            orderField.style.display = "block";
+
+        } else {
+
+            orderField.style.display = "none";
+
+            const orderInput = orderField.querySelector("input");
+
+            if (orderInput) {
+                orderInput.value = "";
+            }
+
+        }
+
+        // Active card styling
+        inquiryOptions.forEach(option => {
+
+            option.classList.remove("active");
+
+            if (option.querySelector("input").checked) {
+                option.classList.add("active");
+            }
+
+        });
+
+    }
+
+    radios.forEach(radio => {
+
+        radio.addEventListener(
+            "change",
+            updateInquiryUI
+        );
+
+    });
+
+    updateInquiryUI();
+
+});
+
+</script>
+{% endblock %}

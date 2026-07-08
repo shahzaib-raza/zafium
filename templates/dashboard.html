@@ -13,11 +13,18 @@
     <p class="hero-subtitle">Track your active and completed orders.</p>
 
     <form method="get" class="dashboard-search">
-      <input type="email" name="email" placeholder="Enter your order email" value="{{ email }}" required>
-      <button class="btn-primary" type="submit">View Orders</button>
+        <!-- type="number" -->
+        <input
+            name="order_id"
+            placeholder="Enter Order ID (e.g. 123)"
+            value="{{ request.GET.order_id }}"
+        >
+
+        <button class="btn-primary" type="submit">
+            Search
+        </button>
     </form>
 
-    {% if email %}
     <div class="hero-stats">
       <div class="stat-card">
         <h3>{{ active_orders|length }}</h3>
@@ -32,7 +39,6 @@
         <p>Total Orders</p>
       </div>
     </div>
-    {% endif %}
   </div>
 </section>
 
@@ -158,7 +164,7 @@
                 {% else %}
 
                 <a
-                    href="{{% url 'core:order_detail' dashboard_token order.id %}}"
+                    href="{% url 'core:order_detail' dashboard_token order.id %}"
                     class="btn-primary">
 
                     Leave Review

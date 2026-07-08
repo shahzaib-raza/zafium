@@ -1198,3 +1198,33 @@ opacity:1;
 transform:translateY(0);
 
 }
+
+.delivery-list{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    margin-top:20px;
+}
+
+.delivery-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:18px;
+
+    background:var(--card);
+
+    border:1px solid var(--border);
+
+    border-radius:14px;
+}
+
+.delivery-item p{
+    margin:6px 0;
+    color:var(--muted);
+}
+
+.delivery-item small{
+    color:var(--muted);
+}

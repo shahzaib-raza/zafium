@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/orders_activity.css' %}">
+{% endblock %}
+{% block content %}
+<section class="portfolio-hero">
+<div class="container">
+<div class="hero-badge">LIVE PROJECT ACTIVITY</div>
+<h1 class="hero-title">Project Activity</h1>
+<p class="hero-subtitle">Follow our ongoing work and browse verified client reviews.</p>
+<div class="hero-stats">
+<div class="stat-card"><h3 class="counter" data-target="{{ active_count }}">0</h3><p>Ongoing Orders</p></div>
+<div class="stat-card"><h3 class="counter" data-target="{{ completed_count }}">0</h3><p>Completed Orders</p></div>
+</div>
+</div>
+</section>
+
+<section class="featured-section">
+<div class="container">
+<div class="section-label">LATEST ACTIVITY</div>
+
+{% if featured_review %}
+<div class="featured-card">
+<div class="featured-content">
+<div style="font-size:30px;color:#fbbf24;">
+{% for i in "12345" %}{% if forloop.counter <= featured_review.rating %}★{% else %}☆{% endif %}{% endfor %}
+</div>
+<h2>{{ featured_review.title }}</h2>
+<p>"{{ featured_review.review }}"</p>
+
+<div style="margin:20px 0;">
+{% for item in featured_review.order.items.all %}
+<span class="btn-secondary" style="margin-right:8px;">{{ item.subcategory.name }}</span>
+{% endfor %}
+</div>
+
+<div class="card-meta">
+Order #{{ featured_review.order.id }} • {{ featured_review.created_at|date:"F d, Y" }}
+</div>
+</div>
+</div>
+{% endif %}
+</div>
+</section>
+
+<section class="portfolio-grid-section">
+<div class="container">
+<div class="section-header">
+<h2>Verified Client Reviews</h2>
+<p>Newest approved reviews first.</p>
+</div>
+
+{% if reviews %}
+<div class="portfolio-grid">
+{% for review in reviews %}
+<div class="portfolio-card">
+<div class="card-content">
+
+<div style="display:flex;justify-content:space-between;">
+<strong>Order #{{ review.order.id }}</strong>
+<span style="color:#fbbf24;">
+{% for i in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %}
+</span>
+</div>
+
+<h3 style="margin:16px 0 10px;">{{ review.title }}</h3>
+
+<p>{{ review.review }}</p>
+
+<div style="margin:18px 0;">
+{% for item in review.order.items.all %}
+<span class="btn-secondary" style="margin:4px;">{{ item.subcategory.name }}</span>
+{% endfor %}
+</div>
+
+<div class="card-meta">
+{{ review.created_at|date:"F d, Y" }}
+</div>
+
+</div>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+<h3>No public reviews yet</h3>
+<p>Check back soon for completed orders feedback.</p>
+</div>
+{% endif %}
+</div>
+</section>
+
+<section class="portfolio-cta">
+<div class="container">
+<div class="cta-card">
+<h2>Ready to Build Something Great?</h2>
+<p>Your project could be the next success story featured here.</p>
+<a href="{% url 'core:order' %}" class="btn-primary">Start Your Project</a>
+</div>
+</div>
+</section>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+console.log("COUNTER SCRIPT LOADED");
+(function () {
+
+    let countersInitialized = false;
+
+    function initCounters() {
+
+        const section = document.querySelector(".portfolio-hero");
+        if (!section || countersInitialized) return;
+
+        const counters = section.querySelectorAll(".counter");
+
+        const animateCounters = () => {
+
+            counters.forEach(counter => {
+
+                const target = parseInt(counter.getAttribute("data-target")) || 0;
+                let count = 0;
+
+                const duration = 1500; // total animation time in ms
+                const stepTime = Math.max(Math.floor(duration / target), 10);
+
+                const timer = setInterval(() => {
+                    count += Math.ceil(target / (duration / stepTime));
+
+                    if (count >= target) {
+                        counter.innerText = target + "+";
+                        clearInterval(timer);
+                    } else {
+                        counter.innerText = count;
+                    }
+                }, stepTime);
+
+            });
+
+            countersInitialized = true;
+        };
+
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    obs.disconnect(); // 🔥 ensures it runs only once
+                }
+            });
+        }, {
+            threshold: 0.5
+        });
+
+        observer.observe(section);
+    }
+
+    // ✅ Run on initial page load
+    document.addEventListener("DOMContentLoaded", function () {
+        initCounters();
+    });
+
+})();
+</script>
+{% endblock %}

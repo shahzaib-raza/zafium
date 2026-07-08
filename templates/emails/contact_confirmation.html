@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+
+<body style="margin:0;background:#f3f5f7;font-family:Arial,Helvetica,sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
+<tr>
+<td align="center">
+
+<table width="650" cellpadding="0" cellspacing="0"
+style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,.08);">
+
+<tr>
+<td style="background:#1f2937;padding:30px;text-align:center;">
+
+<h1 style="margin:0;color:#fff;font-size:32px;">
+ZAFIUM
+</h1>
+
+<p style="margin-top:10px;color:#cbd5e1;">
+We've Received Your Message
+</p>
+
+</td>
+</tr>
+
+<tr>
+<td style="padding:40px;">
+
+<h2 style="margin-top:0;">
+Hi {{ name }},
+</h2>
+
+<p>
+Thank you for contacting <strong>ZAFIUM</strong>.
+</p>
+
+<p>
+We've successfully received your message and one of our team members will review it shortly.
+</p>
+
+{% if inquiry_type == "existing" %}
+
+<div style="background:#eff6ff;padding:20px;border-left:4px solid #2563eb;border-radius:8px;margin:30px 0;">
+
+<strong>Order Reference</strong>
+
+<br><br>
+
+Order #{{ order_id }}
+
+</div>
+
+{% endif %}
+
+<h3>Your Subject</h3>
+
+<div style="background:#f8fafc;padding:18px;border-radius:8px;">
+{{ subject }}
+</div>
+
+<h3 style="margin-top:35px;">What happens next?</h3>
+
+<ul style="line-height:1.9;padding-left:20px;">
+
+<li>Your inquiry has been received successfully.</li>
+
+<li>Our team will review your message.</li>
+
+<li>We'll reply as soon as possible, usually within one business day.</li>
+
+</ul>
+
+<div style="margin-top:45px;text-align:center;">
+
+<a href="https://www.zafium.com"
+style="
+background:#2563eb;
+color:white;
+text-decoration:none;
+padding:15px 35px;
+display:inline-block;
+border-radius:8px;
+font-weight:bold;
+">
+
+Visit Zafium
+
+</a>
+
+</div>
+
+</td>
+</tr>
+
+<tr>
+<td style="background:#f8fafc;padding:30px;text-align:center;color:#64748b;font-size:13px;">
+
+Thank you for choosing <strong>Zafium</strong>.
+
+<br><br>
+
+If you have additional information to provide, simply reply to this email and we'll continue the conversation.
+
+</td>
+</tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>

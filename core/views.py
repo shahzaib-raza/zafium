@@ -21,6 +21,9 @@ from .models import PortfolioItem, PortfolioCategory, PortfolioSubCategory, Orde
 
 from django.views.decorators.http import require_POST
 
+from .forms import ContactForm
+from .helpers import send_contact_email
+
 import cv2
 import numpy as np
 from collections import defaultdict, Counter
@@ -104,11 +107,103 @@ def robots_txt(request):
         content_type="text/plain"
     )
 
+
+def contact(request):
+
+    if request.method == "POST":
+
+        form = ContactForm(request.POST)
+
+        if form.is_valid():
+
+            send_contact_email(form)
+
+            messages.success(
+                request,
+                "Your message has been sent successfully. We'll get back to you as soon as possible."
+            )
+
+            return redirect("core:contact")
+
+    else:
+
+        form = ContactForm()
+
+    return render(
+        request,
+        "contact.html",
+        {
+            "form": form,
+        },
+    )
+
+def orders_activity(request):
+    # Active projects (everything except completed, delivered and cancelled)
+    # Active projects
+    active_count = Order.objects.filter(
+        project_status__in=[
+            Order.ProjectStatus.NEW,
+            Order.ProjectStatus.PLANNING,
+            Order.ProjectStatus.IN_PROGRESS,
+            Order.ProjectStatus.TESTING,
+            Order.ProjectStatus.REVISION,
+        ]
+    ).count()
+
+    print("active_count:", active_count)
+
+    # Completed projects
+    completed_count = Order.objects.filter(
+        project_status__in=[
+            Order.ProjectStatus.COMPLETED,
+            Order.ProjectStatus.DELIVERED,
+        ]
+    ).count()
+
+    print("completed_count:", completed_count)
+
+    # Latest featured 5-star review
+    featured_review = (
+        OrderReview.objects
+        .select_related(
+            "order",
+            "order__client",
+        )
+        .filter(
+            approved=True,
+            rating=5,
+        )
+        .order_by("-created_at")
+        .first()
+    )
+
+    # All approved reviews
+    reviews = (
+        OrderReview.objects
+        .select_related(
+            "order",
+            "order__client",
+        )
+        .filter(
+            approved=True,
+        )
+        .order_by("-order__created_at")
+    )
+
+    context = {
+        "active_count": active_count,
+        "completed_count": completed_count,
+        "featured_review": featured_review,
+        "reviews": reviews,
+    }
+
+    return render(
+        request,
+        "orders_activity.html",
+        context,
+    )
+
 # ____________________________________________________________________________________________________________
-
-def success_page(request):
-    return render(request, "success.html")
-
 
 def dashboard(request, token):
 
@@ -125,6 +220,13 @@ def dashboard(request, token):
         )
         .order_by("-created_at")
     )
+
+    order_id = request.GET.get("order_id")
+
+    orders = Order.objects.filter(client=client)
+
+    if order_id:
+        orders = orders.filter(id=order_id)
 
     if not orders.exists():
         raise Http404("Dashboard not found.")
@@ -167,7 +269,8 @@ def order_detail(request, token, order_id):
     order = get_object_or_404(
         client.orders.prefetch_related(
             "items__subcategory",
-            "review"
+            "review",
+            "deliveries",
         ),
         id=order_id
     )
@@ -241,123 +344,97 @@ def submit_review(request, token, order_id):
         order_id=order.id
     )
 
+# ____________________________________________________________________________________________________________
 
-def create_order(request):
+def success_page(request):
+    return render(request, "success.html")
 
-    print("METHOD:", request.method)
-    print("POST:", request.POST)
+def order(request):
+    categories = PortfolioCategory.objects.prefetch_related(
+        "subcategories"
+    )
 
-    categories = PortfolioCategory.objects.prefetch_related("subcategories")
+    return render(
+        request,
+        "order.html",
+        {
+            "categories": categories,
+        },
+    )
 
-    if request.method == "POST":
 
-        name = request.POST.get("name")
-        email = request.POST.get("email")
-        phone = request.POST.get("phone")
+def send_order_emails(order):
 
-        client, created = Client.objects.get_or_create(
-            email=email,
-            defaults={
-                "name": name,
-                "phone": phone,
-            }
+    client = order.client
+
+    order_summary = ""
+
+    for item in order.items.select_related("subcategory"):
+        order_summary += (
+            f"{item.subcategory.name} "
+            f"x {item.quantity} "
+            f"= ${item.total_price()}\n"
         )
 
-        order = Order.objects.create(
-            client=client,
-            payment_method=payment_method,
-        )
+    # -------------------------
+    # Admin Email
+    # -------------------------
+    send_mail(
+        subject=f"New Order #{order.id}",
+        message=f"""
+        New Order Received
 
-        items = json.loads(request.POST.get("items", "[]"))
+        Client: {client.name}
+        Email: {client.email}
+        Phone: {client.phone}
 
-        order_summary = ""
+        Items:
 
-        for item in items:
-            # format: subcategory_id|quantity
-            sub_id, qty = item.split("|")
+        {order_summary}
 
-            sub = PortfolioSubCategory.objects.get(id=sub_id)
+        Status:
+        {order.get_project_status_display()}
 
-            order_item = OrderItem.objects.create(
-                order=order,
-                category=sub.category,
-                subcategory=sub,
-                quantity=int(qty),
-                price=sub.price
-            )
+        Progress:
+        {order.progress}%
 
-            order_summary += f"{sub.name} x {qty} = {order_item.total_price()}\n"
+        Total:
+        ${order.total_amount}
+        
+        Client Access Token: { client.access_token }
+        Client Dashboard URL: https://www.zafium.com/dashboard/{ client.access_token }/
+        """,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[settings.DEFAULT_FROM_EMAIL],
+        fail_silently=False,
+    )
+    
 
-        # ✅ SEND EMAIL HERE (AFTER LOOP)
-        send_mail(
-            subject=f"New Order #{order.id}",
-            message=f"""
-                New Order Received
+    # -------------------------
+    # Customer HTML Email
+    # -------------------------
+    context = {
+        "order": order,
+        "items": order.items.select_related("subcategory"),
+        "order_summary": order_summary,
+    }
 
-                Client: {name}
-                Email: {email}
-                Phone: {phone}
+    html_content = render_to_string(
+        "order_confirmation.html",
+        context,
+    )
 
-                Items:
-                {order_summary}
+    text_content = strip_tags(html_content)
 
-                Status: {order.get_project_status_display()}
+    email = EmailMultiAlternatives(
+        subject=f"Thank you for your order #{order.id}",
+        body=text_content,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[client.email],
+    )
 
-                Progress: {order.progress}%
-
-                Total: {order.total_amount}
-            """,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[settings.DEFAULT_FROM_EMAIL],
-            fail_silently=False
-        )
-
-        send_mail(
-            subject=f"Thank you for your order #{order.id}",
-            message=f"""
-                Hi {name},
-
-                Thank you for placing your order with us.
-
-                We have successfully received your request and our team will start processing it shortly.
-
-                -------------------------
-                ORDER DETAILS
-                -------------------------
-
-                Order ID: #{order.id}
-
-                Items:
-                {order_summary}
-
-                Current Status:
-                {order.get_project_status_display()}
-
-                Current Progress:
-                {order.progress}%
-
-                Total:
-                {order.total_amount}
-
-                Manage your orders: https://zafium.com/dashboard/{{ client.access_token }}/
-
-                We will contact you soon if we need any further details.
-
-                If you have any questions, feel free to reply to this email.
-
-                Best regards,  
-                Team zafium
-            """,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
-            fail_silently=False
-        )
-
-        return redirect("core:success_page")
-
-    return render(request, "order.html", {
-        "categories": categories
-    })
+    email.attach_alternative(html_content, "text/html")
+    email.send()
 
 
 def checkout(request):
@@ -459,23 +536,12 @@ def place_order(request):
         messages.error(request, "Please select a payment method.")
         return redirect("core:checkout")
 
-    # Create Order
-    """
-    order = Order.objects.create(
-        name=customer["name"],
-        email=customer["email"],
-        phone=customer["phone"],
-        payment_method=payment_method,
-        payment_status="pending",
-    )
-    """
-
     name=customer["name"]
     email=customer["email"]
     phone=customer["phone"]
     payment_method=payment_method
 
-    client, created = Client.objects.get_or_create(
+    client, _ = Client.objects.get_or_create(
         email=email,
         defaults={
             "name": name,
@@ -503,109 +569,25 @@ def place_order(request):
             price=item["price"],
         )
 
-    # Store order id in session
     request.session["order_id"] = order.id
 
-    # Clear checkout session
     del request.session["checkout"]
 
-    # Redirect according to payment method
-
-    if payment_method == "card":
-        return redirect("core:payment_success", order_id=order.id)
-
-    elif payment_method == "paypal":
-        return redirect("core:payment_success", order_id=order.id)
-
-    elif payment_method == "jazzcash":
-        return redirect("core:payment_success", order_id=order.id)
-
-    elif payment_method == "easypaisa":
-        return redirect("core:payment_success", order_id=order.id)
-
-    elif payment_method == "bank":
-        return redirect("core:payment_success", order_id=order.id)
-
-    messages.error(request, "Invalid payment method.")
-    return redirect("core:checkout")
+    return redirect(
+        "core:payment_success",
+        order_id=order.id
+    )
 
 
 def payment_success(request, order_id):
 
     order = get_object_or_404(Order, pk=order_id)
 
-    name = request.POST.get("name")
-    email = request.POST.get("email")
-    phone = request.POST.get("phone")
-
     order.payment_status = "paid"
     order.save()
-    order_summary = ""
 
-    # ✅ SEND EMAIL HERE (AFTER LOOP)
-    send_mail(
-        subject=f"New Order #{order.id}",
-        message=f"""
-            New Order Received
+    send_order_emails(order)
 
-            Client: {name}
-            Email: {email}
-            Phone: {phone}
-
-            Items:
-            {order_summary}
-
-            Status: {order.get_project_status_display()}
-
-            Progress: {order.progress}%
-
-            Total: {order.total_amount}
-        """,
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[settings.DEFAULT_FROM_EMAIL],
-        fail_silently=False
-    )
-
-    send_mail(
-        subject=f"Thank you for your order #{order.id}",
-        message=f"""
-            Hi {name},
-
-            Thank you for placing your order with us.
-
-            We have successfully received your request and our team will start processing it shortly.
-
-            -------------------------
-            ORDER DETAILS
-            -------------------------
-
-            Order ID: #{order.id}
-
-            Items:
-            {order_summary}
-
-            Current Status:
-            {order.get_project_status_display()}
-
-            Current Progress:
-            {order.progress}%
-
-            Total:
-            {order.total_amount}
-
-            Manage your orders: https://zafium.com/dashboard/{{ client.access_token }}/
-
-            We will contact you soon if we need any further details.
-
-            If you have any questions, feel free to reply to this email.
-
-            Best regards,  
-            Team zafium
-        """,
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[email],
-        fail_silently=False
-    )
     return redirect("core:success_page")
 
 # ____________________________________________________________________________________________________________

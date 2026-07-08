@@ -27,7 +27,7 @@ Order #{{ order.id }} | zafium
 
             <span>/</span>
 
-            <a href="{% url 'core:dashboard' dashboard_token %}?email={{ order.email }}">
+            <a href="{% url 'core:dashboard' dashboard_token %}?email={{ order.client.email }}">
                 My Orders
             </a>
 
@@ -125,7 +125,7 @@ Order #{{ order.id }} | zafium
 
                         <strong>
 
-                            {{ order.name }}
+                            {{ order.client.name }}
 
                         </strong>
 
@@ -141,7 +141,7 @@ Order #{{ order.id }} | zafium
 
                         <strong>
 
-                            {{ order.email }}
+                            {{ order.client.email }}
 
                         </strong>
 
@@ -491,6 +491,82 @@ Order #{{ order.id }} | zafium
 
     </div>
 
+    <div class="order-card">
+
+        <div class="card-heading">
+
+            <h2>
+
+                Order Deliverables
+
+            </h2>
+
+        </div>
+
+        {% if order.deliveries.exists %}
+
+        <div class="dashboard-card">
+
+            <h3>Project Deliverables</h3>
+
+            <p>
+                Your completed project files are available below.
+            </p>
+
+            <div class="delivery-list">
+
+                {% for delivery in order.deliveries.all %}
+
+                    {% if delivery.visible_to_client %}
+
+                    <div class="delivery-item">
+
+                        <div>
+
+                            <strong>{{ delivery.title }}</strong>
+
+                            {% if delivery.description %}
+                                <p>{{ delivery.description }}</p>
+                            {% endif %}
+
+                            <small>
+                                Uploaded {{ delivery.uploaded_at|date:"F d, Y" }}
+                            </small>
+
+                        </div>
+
+                        <a
+                            href="{{ delivery.file.url }}"
+                            class="btn-primary"
+                            download
+                        >
+                            Download
+                        </a>
+
+                    </div>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% else %}
+
+            <p class="muted">
+
+                No deliverables have been uploaded yet.
+
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+
 
     <!-- =====================
             ORDER ITEMS
@@ -622,32 +698,18 @@ Order #{{ order.id }} | zafium
 
                 <div class="summary-item">
                     <span>Customer</span>
-                    <strong>{{ order.name }}</strong>
+                    <strong>{{ order.client.name }}</strong>
                 </div>
 
                 <div class="summary-item">
                     <span>Email</span>
-                    <strong>{{ order.email }}</strong>
+                    <strong>{{ order.client.email }}</strong>
                 </div>
 
                 {% if order.phone %}
                 <div class="summary-item">
                     <span>Phone</span>
-                    <strong>{{ order.phone }}</strong>
-                </div>
-                {% endif %}
-
-                {% if order.company %}
-                <div class="summary-item">
-                    <span>Company</span>
-                    <strong>{{ order.company }}</strong>
-                </div>
-                {% endif %}
-
-                {% if order.country %}
-                <div class="summary-item">
-                    <span>Country</span>
-                    <strong>{{ order.country }}</strong>
+                    <strong>{{ order.client.phone }}</strong>
                 </div>
                 {% endif %}
 

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+
+<body style="margin:0;background:#f3f5f7;font-family:Arial,Helvetica,sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
+<tr>
+<td align="center">
+
+<table width="650" cellpadding="0" cellspacing="0"
+style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,.08);">
+
+<tr>
+<td style="background:#1f2937;padding:30px;text-align:center;">
+
+<h1 style="margin:0;color:#fff;font-size:32px;">
+ZAFIUM
+</h1>
+
+<p style="margin-top:10px;color:#cbd5e1;">
+New Contact Form Submission
+</p>
+
+</td>
+</tr>
+
+<tr>
+<td style="padding:40px;">
+
+<h2 style="margin-top:0;">
+New Inquiry Received
+</h2>
+
+<p>
+A visitor has submitted the contact form.
+</p>
+
+<hr style="margin:30px 0;">
+
+<table width="100%" cellpadding="8">
+
+<tr>
+<td width="180"><strong>Inquiry Type</strong></td>
+<td>
+{% if inquiry_type == "existing" %}
+Existing Customer
+{% else %}
+New Customer
+{% endif %}
+</td>
+</tr>
+
+<tr>
+<td><strong>Name</strong></td>
+<td>{{ name }}</td>
+</tr>
+
+<tr>
+<td><strong>Email</strong></td>
+<td>{{ email }}</td>
+</tr>
+
+{% if phone %}
+<tr>
+<td><strong>Phone</strong></td>
+<td>{{ phone }}</td>
+</tr>
+{% endif %}
+
+{% if order_id %}
+<tr>
+<td><strong>Order ID</strong></td>
+<td>#{{ order_id }}</td>
+</tr>
+{% endif %}
+
+<tr>
+<td><strong>Subject</strong></td>
+<td>{{ subject }}</td>
+</tr>
+
+</table>
+
+<hr style="margin:30px 0;">
+
+<h3>Message</h3>
+
+<div style="background:#f8fafc;padding:20px;border-radius:10px;line-height:1.7;">
+{{ message|linebreaks }}
+</div>
+
+</td>
+</tr>
+
+<tr>
+<td style="background:#f8fafc;padding:25px;text-align:center;color:#64748b;font-size:13px;">
+
+This email was automatically generated from the Zafium contact form.
+
+</td>
+</tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>

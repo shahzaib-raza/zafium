@@ -51,22 +51,42 @@ urlpatterns = [
     ),
 
     path(
-        'order/',
-        create_order,
-        name='order'
+        "contact/",
+        contact,
+        name="contact",
+    ),
+
+    path(
+        "order/",
+        order,
+        name="order",
+    ),
+
+    path(
+        "live-activity/",
+        orders_activity,
+        name="orders_activity",
     ),
 
     path("checkout/", checkout, name="checkout"),
 
-    path("place-order/", place_order, name="place_order"),
-
     path(
-        'order/success/<int:order_id>/',
-        payment_success,
-        name='payment_success'
+        "place-order/",
+        place_order,
+        name="place_order",
     ),
 
-    path("success/", success_page, name="success_page"),
+    path(
+        "order/success/<int:order_id>/",
+        payment_success,
+        name="payment_success",
+    ),
+
+    path(
+        "success/",
+        success_page,
+        name="success_page",
+    ),
 
     path("robots.txt", robots_txt),
 

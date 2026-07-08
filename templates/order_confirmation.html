@@ -32,7 +32,7 @@
             color:white;
             font-size:32px;
             ">
-            TRIAXIS
+            ZAFIUM
             </h1>
 
             <p
@@ -51,7 +51,7 @@
             <td style="padding:40px;">
 
             <h2 style="margin-top:0;">
-            Hi {{ order.name }},
+            Hi {{ order.client.name }},
             </h2>
 
             <p>
@@ -108,6 +108,17 @@
 
             </tr>
 
+            <tr>
+                <td>
+                    Client Access Token: {{ order.client.access_token }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Manage your orders at: https://www.zafium.com/dashboard/{{ order.client.access_token }}
+                </td>
+            </tr>
+
             </table>
 
             <div
@@ -117,7 +128,7 @@
             ">
 
             <a
-            href="https://triaxis.com"
+            href="https://www.zafium.com"
             style="
             background:#2563eb;
             color:white;
@@ -127,7 +138,7 @@
             display:inline-block;
             font-weight:bold;
             ">
-            Visit TriAxis
+            Visit Zafium
             </a>
 
             </div>
@@ -147,7 +158,7 @@
             font-size:13px;
             ">
 
-            Thank you for choosing <strong>TriAxis</strong>.
+            Thank you for choosing <strong>Zafium</strong>.
 
             <br><br>
 
