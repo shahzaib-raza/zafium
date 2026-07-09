@@ -64,7 +64,7 @@ def send_contact_email(form):
     )
 
     user_email = EmailMultiAlternatives(
-        subject=f"Thanks for contacting TriAxis - {subject}",
+        subject=f"Thanks for contacting Zafium - {subject}",
         body="Thank you for contacting us.",
         from_email=settings.DEFAULT_FROM_EMAIL,
         to=[email],
