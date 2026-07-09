@@ -120,13 +120,17 @@ def contact(request):
 
             messages.success(
                 request,
-                "Your message has been sent successfully. We'll get back to you as soon as possible."
+                "Your message has been sent successfully. We'll get back to you within 24 hours."
             )
 
             return redirect("core:contact")
 
-    else:
+        # Form is invalid
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(request, error)
 
+    else:
         form = ContactForm()
 
     return render(
@@ -136,6 +140,7 @@ def contact(request):
             "form": form,
         },
     )
+
 
 def orders_activity(request):
     # Active projects (everything except completed, delivered and cancelled)

@@ -68,61 +68,60 @@
 
                 </div>
 
-
-                <!-- Inquiry Type -->
-
-                <div class="inquiry-selector">
-
-                    <label class="inquiry-option active">
-
-                        <input
-                            type="radio"
-                            name="inquiry_type"
-                            value="new"
-                            checked
-                            hidden
-                        >
-
-                        <div class="option-icon">
-                            🚀
-                        </div>
-
-                        <h3>New Project</h3>
-
-                        <p>
-                            I haven't placed an order yet and I'd like to discuss a project.
-                        </p>
-
-                    </label>
-
-
-                    <label class="inquiry-option">
-
-                        <input
-                            type="radio"
-                            name="inquiry_type"
-                            value="existing"
-                            hidden
-                        >
-
-                        <div class="option-icon">
-                            📦
-                        </div>
-
-                        <h3>Existing Order</h3>
-
-                        <p>
-                            I already have an order and need support or have a question.
-                        </p>
-
-                    </label>
-
-                </div>
-
-
-                <form method="POST">
+                <form method="POST" action="{% url 'core:contact' %}">
 
                     {% csrf_token %}
+
+
+                    <!-- Inquiry Type -->
+
+                    <div class="inquiry-selector">
+
+                        <label class="inquiry-option active">
+
+                            <input
+                                type="radio"
+                                name="inquiry_type"
+                                value="new"
+                                checked
+                                hidden
+                            >
+
+                            <div class="option-icon">
+                                🚀
+                            </div>
+
+                            <h3>New Project</h3>
+
+                            <p>
+                                I haven't placed an order yet and I'd like to discuss a project.
+                            </p>
+
+                        </label>
+
+
+                        <label class="inquiry-option">
+
+                            <input
+                                type="radio"
+                                name="inquiry_type"
+                                value="existing"
+                                hidden
+                            >
+
+                            <div class="option-icon">
+                                📦
+                            </div>
+
+                            <h3>Existing Order</h3>
+
+                            <p>
+                                I already have an order and need support or have a question.
+                            </p>
+
+                        </label>
+
+                    </div>
 
                     <div class="form-grid">
 
@@ -220,10 +219,9 @@
                         Send Message
 
                     </button>
-
-                </form>
-
-            </div>
+            
+                </div>
+            </form>
 
 
             <!-- ===========================
@@ -451,4 +449,37 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 </script>
+
+{% if messages %}
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    {% for message in messages %}
+
+    Swal.fire({
+
+        icon: "{% if message.tags == 'success' %}success{% else %}error{% endif %}",
+
+        title: "{% if message.tags == 'success' %}Message Sent{% else %}Submission Failed{% endif %}",
+
+        text: "{{ message|escapejs }}",
+
+        confirmButtonColor: "#2563eb",
+
+        background: "#1f2937",
+
+        color: "#ffffff",
+
+    });
+
+    {% endfor %}
+
+});
+
+</script>
+{% endif %}
+
 {% endblock %}
+
+

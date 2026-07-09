@@ -73,14 +73,21 @@ class ContactForm(forms.Form):
                     "Order ID is required."
                 )
 
+            elif not Order.objects.filter(id=order_id).exists():
+
+                self.add_error(
+                    "order_id",
+                    "No order exists with the provided Order ID."
+                )
+
             elif not Order.objects.filter(
                 id=order_id,
                 client__email=email
             ).exists():
 
                 self.add_error(
-                    "order_id",
-                    "We couldn't find an order with this Order ID and email."
+                    "email",
+                    "The email address does not match the owner of this order."
                 )
 
         return cleaned_data
