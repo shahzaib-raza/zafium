@@ -207,58 +207,35 @@
 console.log("COUNTER SCRIPT LOADED");
 (function () {
 
-    let countersInitialized = false;
+    counters.forEach(counter => {
 
-    function initCounters() {
+        const target = Number(counter.dataset.target);
 
-        const section = document.querySelector(".portfolio-hero");
-        if (!section || countersInitialized) return;
+        // Handle missing or invalid values
+        if (isNaN(target) || target <= 0) {
+            counter.innerText = "0";
+            return;
+        }
 
-        const counters = section.querySelectorAll(".counter");
+        let count = 0;
 
-        const animateCounters = () => {
+        const duration = 1500;
+        const stepTime = Math.max(Math.floor(duration / target), 10);
+        const increment = Math.ceil(target / (duration / stepTime));
 
-            counters.forEach(counter => {
+        const timer = setInterval(() => {
 
-                const target = parseInt(counter.getAttribute("data-target")) || 0;
-                let count = 0;
+            count += increment;
 
-                const duration = 1500; // total animation time in ms
-                const stepTime = Math.max(Math.floor(duration / target), 10);
+            if (count >= target) {
+                counter.innerText = target + "+";
+                clearInterval(timer);
+            } else {
+                counter.innerText = count;
+            }
 
-                const timer = setInterval(() => {
-                    count += Math.ceil(target / (duration / stepTime));
+        }, stepTime);
 
-                    if (count >= target) {
-                        counter.innerText = target + "+";
-                        clearInterval(timer);
-                    } else {
-                        counter.innerText = count;
-                    }
-                }, stepTime);
-
-            });
-
-            countersInitialized = true;
-        };
-
-        const observer = new IntersectionObserver((entries, obs) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    animateCounters();
-                    obs.disconnect(); // 🔥 ensures it runs only once
-                }
-            });
-        }, {
-            threshold: 0.5
-        });
-
-        observer.observe(section);
-    }
-
-    // ✅ Run on initial page load
-    document.addEventListener("DOMContentLoaded", function () {
-        initCounters();
     });
 
 

@@ -131,7 +131,7 @@ console.log("COUNTER SCRIPT LOADED");
                     count += Math.ceil(target / (duration / stepTime));
 
                     if (count >= target) {
-                        counter.innerText = target + "+";
+                        counter.innerText = target > 0 ? target + "+" : "0";
                         clearInterval(timer);
                     } else {
                         counter.innerText = count;
