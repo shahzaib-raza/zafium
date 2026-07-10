@@ -264,6 +264,14 @@ class Order(models.Model):
             self.ProjectStatus.COMPLETED,
             self.ProjectStatus.DELIVERED
         )
+    
+    @property
+    def revision_count(self):
+        return self.revisions.count()
+
+    @property
+    def can_request_revision(self):
+        return self.revision_count < 3
 
     def __str__(self):
         return f"Order #{self.pk} - {self.client.name}"
@@ -285,6 +293,39 @@ class OrderItem(models.Model):
 
     def total_price(self):
         return self.price * self.quantity
+    
+
+class OrderRevision(models.Model):
+
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pending"
+        ACCEPTED = "accepted", "Accepted"
+        COMPLETED = "completed", "Completed"
+        REJECTED = "rejected", "Rejected"
+
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="revisions",
+    )
+
+    message = models.TextField()
+
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.PENDING,
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    resolved_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    def __str__(self):
+        return f"Revision #{self.pk} - Order #{self.order.id}"
 
 
 class OrderReview(models.Model):

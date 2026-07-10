@@ -17,7 +17,7 @@ from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 import os,uuid
 from .utils import _img_array_to_svg
-from .models import PortfolioItem, PortfolioCategory, PortfolioSubCategory, Order, OrderItem, OrderReview, Client
+from .models import PortfolioItem, PortfolioCategory, PortfolioSubCategory, Order, OrderItem, OrderReview, Client, OrderRevision
 
 from django.views.decorators.http import require_POST
 
@@ -347,6 +347,119 @@ def submit_review(request, token, order_id):
         "core:order_detail",
         token=client.access_token,
         order_id=order.id
+    )
+
+
+def request_revision(request, token, order_id):
+
+    client = get_object_or_404(
+        Client,
+        access_token=token
+    )
+
+    order = get_object_or_404(
+        Order,
+        id=order_id,
+        client=client,
+    )
+
+    # Only allow revisions after delivery
+    if order.project_status != Order.ProjectStatus.DELIVERED:
+
+        messages.error(
+            request,
+            "Revision requests are only available after the project has been delivered."
+        )
+
+        return redirect(
+            "core:order_detail",
+            token=token,
+            order_id=order.id,
+        )
+    
+    # Maximum 3 revisions
+    if order.revision_count >= 3:
+
+        messages.error(
+            request,
+            "You have reached the maximum of 3 revision requests for this order."
+        )
+
+        return redirect(
+            "core:order_detail",
+            token=token,
+            order_id=order.id,
+        )
+
+    # Prevent multiple pending requests
+    if order.revisions.filter(
+        status=OrderRevision.Status.PENDING
+    ).exists():
+
+        messages.warning(
+            request,
+            "You already have a pending revision request."
+        )
+
+        return redirect(
+            "core:order_detail",
+            token=token,
+            order_id=order.id,
+        )
+
+    if request.method == "POST":
+
+        message = request.POST.get(
+            "message",
+            ""
+        ).strip()
+
+        if not message:
+
+            messages.error(
+                request,
+                "Please describe the changes you would like."
+            )
+
+            return render(
+                request,
+                "request_revision.html",
+                {
+                    "order": order,
+                    "dashboard_token": token,
+                },
+            )
+
+        OrderRevision.objects.create(
+            order=order,
+            message=message,
+        )
+
+        order.project_status = Order.ProjectStatus.REVISION
+        order.progress = 80
+        order.save(update_fields=[
+            "project_status",
+            "progress",
+        ])
+
+        messages.success(
+            request,
+            "Your revision request has been submitted successfully."
+        )
+
+        return redirect(
+            "core:order_detail",
+            token=token,
+            order_id=order.id,
+        )
+
+    return render(
+        request,
+        "request_revision.html",
+        {
+            "order": order,
+            "dashboard_token": token,
+        },
     )
 
 # ____________________________________________________________________________________________________________

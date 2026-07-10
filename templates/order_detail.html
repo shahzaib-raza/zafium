@@ -513,6 +513,8 @@ Order #{{ order.id }} | zafium
                 Your completed project files are available below.
             </p>
 
+            <p>Total Deliveries: {{ order.deliveries.count }}</p>
+
             <div class="delivery-list">
 
                 {% for delivery in order.deliveries.all %}
@@ -550,6 +552,23 @@ Order #{{ order.id }} | zafium
                 {% endfor %}
 
             </div>
+
+            {% if order.can_request_revision %}
+
+            <a
+                href="{% url 'core:request_revision' dashboard_token order.id %}"
+                class="btn-secondary"
+                >
+                    Request Revision
+            </a>
+
+            {% else %}
+
+            <p class="revision-limit">
+                Maximum revision limit (3) has been reached.
+            </p>
+
+            {% endif %}
 
         </div>
 

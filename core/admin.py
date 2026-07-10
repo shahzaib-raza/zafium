@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils import timezone
 
 from .models import (
     Client,
@@ -10,6 +11,7 @@ from .models import (
     OrderItem,
     OrderReview,
     OrderDelivery,
+    OrderRevision,
 )
 
 class PortfolioMediaInline(admin.TabularInline):
@@ -175,3 +177,79 @@ class OrderDeliveryAdmin(admin.ModelAdmin):
         "order__client__name",
         "order__client__email",
     )
+
+
+@admin.register(OrderRevision)
+class OrderRevisionAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "id",
+        "order",
+        "client",
+        "status",
+        "created_at",
+        "resolved_at",
+    )
+
+    list_filter = (
+        "status",
+        "created_at",
+    )
+
+    search_fields = (
+        "order__id",
+        "order__client__name",
+        "order__client__email",
+        "message",
+    )
+
+    readonly_fields = (
+        "created_at",
+    )
+
+    autocomplete_fields = (
+        "order",
+    )
+
+    fieldsets = (
+
+        (
+            "Revision",
+            {
+                "fields": (
+                    "order",
+                    "status",
+                    "message",
+                )
+            },
+        ),
+
+        (
+            "Dates",
+            {
+                "fields": (
+                    "created_at",
+                    "resolved_at",
+                )
+            },
+        ),
+
+    )
+
+    def client(self, obj):
+        return obj.order.client.name
+
+    client.short_description = "Client"
+
+    def save_model(self, request, obj, form, change):
+
+        super().save_model(request, obj, form, change)
+
+        if obj.status == Order.ProjectStatus.DELIVERED:
+
+            obj.revisions.filter(
+                status=OrderRevision.Status.PENDING
+            ).update(
+                status=OrderRevision.Status.COMPLETED,
+                resolved_at=timezone.now(),
+            )

@@ -7,6 +7,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 {% endblock %}
 
 <!-- HERO -->
@@ -41,14 +42,69 @@
 
         <h3>Capabilities Overview</h3>
 
-        <ul>
-            <li>✔ Design & Branding Solutions</li>
-            <li>✔ Large Scale Data Scraping</li>
-            <li>✔ Business Research & Analytics</li>
-            <li>✔ Automation Systems</li>
-            <li>✔ AI / Machine Learning Models</li>
-            <li>✔ Web Applications & E-Commerce</li>
-        </ul>
+        <div class="capability-list">
+
+            <div class="capability-item">
+                <span class="capability-icon">
+                    <i class="fas fa-check"></i>
+                </span>
+
+                <span>
+                    Design & Branding Solutions
+                </span>
+            </div>
+
+            <div class="capability-item">
+                <span class="capability-icon">
+                    <i class="fas fa-check"></i>
+                </span>
+
+                <span>
+                    Large Scale Data Scraping
+                </span>
+            </div>
+
+            <div class="capability-item">
+                <span class="capability-icon">
+                    <i class="fas fa-check"></i>
+                </span>
+
+                <span>
+                    Business Research & Analytics
+                </span>
+            </div>
+
+            <div class="capability-item">
+                <span class="capability-icon">
+                    <i class="fas fa-check"></i>
+                </span>
+
+                <span>
+                    Automation Systems
+                </span>
+            </div>
+
+            <div class="capability-item">
+                <span class="capability-icon">
+                    <i class="fas fa-check"></i>
+                </span>
+
+                <span>
+                    AI / Machine Learning Models
+                </span>
+            </div>
+
+            <div class="capability-item">
+                <span class="capability-icon">
+                    <i class="fas fa-check"></i>
+                </span>
+
+                <span>
+                    Web Applications & E-Commerce
+                </span>
+            </div>
+
+        </div>
 
     </div>
 
@@ -220,6 +276,7 @@
 
 </section>
 
+
 <!-- CTA -->
 
 <section id="contact" class="cta">
@@ -238,5 +295,115 @@
 
 
 </section>
+
+
+<section class="connect-section">
+
+    <div class="container">
+
+        <div class="section-header">
+
+            <span class="section-label">
+
+                GET IN TOUCH
+
+            </span>
+
+            <h2>
+
+                Connect With Us
+
+            </h2>
+
+            <p>
+
+                Whether you're looking to hire us through Fiverr
+                or want to discuss your project directly,
+                we're always available.
+
+            </p>
+
+        </div>
+
+
+        <div class="connect-grid">
+
+            <!-- Fiverr -->
+
+            <div class="connect-card">
+
+                <div class="connect-icon">
+
+                    <img src="{% static 'images/fiverr_logo_tranparent.png' %}" alt="Fiverr">
+
+                </div>
+
+                <h3>
+
+                    Hire us on Fiverr
+
+                </h3>
+
+                <p>
+
+                    Secure payments, verified reviews,
+                    and a streamlined hiring process.
+
+                </p>
+
+                <a href="https://www.fiverr.com/shahzaib881"
+
+                   target="https://www.fiverr.com/shahzaib881"
+
+                   class="btn-primary">
+
+                    Visit Fiverr
+
+                </a>
+
+            </div>
+
+
+            <!-- WhatsApp -->
+
+            <div class="connect-card">
+
+                <div class="connect-icon">
+
+                    <i class="fa-brands fa-whatsapp"></i>
+
+                </div>
+
+                <h3>
+
+                    Chat on WhatsApp
+
+                </h3>
+
+                <p>
+
+                    Have a question?
+                    Get a quick response directly from our team.
+
+                </p>
+
+                <a href="https://wa.me/923192774192"
+
+                   target="_blank"
+
+                   class="btn-secondary">
+
+                    Start Chat
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
 
 {% endblock %}

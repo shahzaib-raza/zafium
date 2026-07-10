@@ -476,3 +476,133 @@
     }
 
 }
+
+
+.connect-section{
+
+    padding:120px 0;
+}
+
+.connect-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:32px;
+
+    margin-top:60px;
+}
+
+.connect-card{
+
+    background:var(--card);
+
+    border:1px solid var(--border);
+
+    border-radius:var(--radius);
+
+    padding:40px;
+
+    text-align:center;
+
+    transition:.35s;
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+.connect-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:var(--shadow-lg);
+
+    border-color:rgba(79,70,229,.4);
+}
+
+.connect-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:linear-gradient(
+        135deg,
+        rgba(79,70,229,.08),
+        rgba(14,165,233,.08)
+    );
+
+    opacity:0;
+
+    transition:.3s;
+
+    z-index:0;
+
+    pointer-events:none;
+}
+
+.connect-card > *{
+
+    position:relative;
+
+    z-index:1;
+
+}
+
+.connect-card:hover::before{
+
+    opacity:1;
+}
+
+.connect-icon{
+
+    width:74px;
+
+    height:74px;
+
+    margin:auto;
+
+    margin-bottom:24px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    border-radius:50%;
+
+    background:linear-gradient(
+        135deg,
+        #4f46e5,
+        #0ea5e9
+    );
+
+    color:#fff;
+
+    font-size:2rem;
+}
+
+.connect-icon img{
+    width:38px;
+    height:38px;
+    object-fit:contain;
+}
+
+.connect-card h3{
+
+    margin-bottom:14px;
+}
+
+.connect-card p{
+
+    color:var(--muted);
+
+    margin-bottom:28px;
+
+    line-height:1.7;
+}

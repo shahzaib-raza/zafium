@@ -107,5 +107,11 @@ urlpatterns = [
         submit_review,
         name="submit_review"
     ),
+
+    path(
+        "dashboard/<uuid:token>/order/<int:order_id>/revision/",
+        request_revision,
+        name="request_revision",
+    ),
     
 ]

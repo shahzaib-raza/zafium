@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/request_revision.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+    <div style="background:red;color:white;padding:20px;">
+        {% for message in messages %}
+            <p>{{ message.tags }} : {{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<!-- ===========================================
+                HERO
+=========================================== -->
+
+<section class="portfolio-hero">
+
+    <div class="container">
+
+        <div class="hero-badge">
+            ORDER REVISION
+        </div>
+
+        <h1 class="hero-title">
+            Request a Revision
+        </h1>
+
+        <p class="hero-subtitle">
+
+            Tell us exactly what you'd like changed.
+            We'll review your request and begin working on the revisions as soon as possible.
+
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===========================================
+                REVISION FORM
+=========================================== -->
+
+<section class="revision-section">
+
+    <div class="container">
+
+        <div class="revision-layout">
+
+            <!-- FORM -->
+
+            <div class="revision-card">
+
+                <div class="section-header">
+
+                    <span class="section-label">
+
+                        REVISION REQUEST
+
+                    </span>
+
+                    <h2>
+
+                        Order #{{ order.id }}
+
+                    </h2>
+
+                    <p>
+
+                        Please provide clear and detailed instructions so we can
+                        complete your requested changes accurately.
+
+                    </p>
+
+                </div>
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+                    <div class="input-group">
+
+                        <label>
+                            Describe the required changes
+                        </label>
+
+                        <textarea
+                            name="message"
+                            rows="10"
+                            required
+                            placeholder="Example:
+
+• Change the homepage hero image.
+• Replace the blue color with green.
+• Increase the logo size.
+• Fix the mobile navigation issue.
+• Update the pricing section.
+
+The more details you provide, the faster we can complete your revision."
+                        ></textarea>
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <a
+                            href="{% url 'core:order_detail' dashboard_token order.id %}"
+                            class="btn-secondary"
+                        >
+
+                            ← Back to Order
+
+                        </a>
+
+                        <button
+                            type="submit"
+                            class="btn-primary"
+                        >
+
+                            Submit Revision
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- SIDEBAR -->
+
+            <aside class="revision-sidebar">
+
+                <div class="info-card">
+
+                    <h3>
+
+                        Order Information
+
+                    </h3>
+
+                    <ul>
+
+                        <li>
+
+                            <strong>Order ID</strong>
+
+                            <span>
+
+                                #{{ order.id }}
+
+                            </span>
+
+                        </li>
+
+                        <li>
+
+                            <strong>Status</strong>
+
+                            <span>
+
+                                {{ order.get_project_status_display }}
+
+                            </span>
+
+                        </li>
+
+                        <li>
+
+                            <strong>Progress</strong>
+
+                            <span>
+
+                                {{ order.progress }}%
+
+                            </span>
+
+                        </li>
+
+                        <li>
+
+                            <strong>Delivered</strong>
+
+                            <span>
+
+                                {{ order.completed_at|date:"M d, Y" }}
+
+                            </span>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <h3>
+
+                        Tips for Faster Revisions
+
+                    </h3>
+
+                    <ul class="features">
+
+                        <li>
+
+                            ✔ Describe every requested change clearly.
+
+                        </li>
+
+                        <li>
+
+                            ✔ Mention the exact page or feature.
+
+                        </li>
+
+                        <li>
+
+                            ✔ Include colors, text, or screenshots if applicable.
+
+                        </li>
+
+                        <li>
+
+                            ✔ Combine all requested changes into one revision whenever possible.
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+                <div class="info-card gradient-card">
+
+                    <h3>
+
+                        Need More Than a Revision?
+
+                    </h3>
+
+                    <p>
+
+                        If you're looking for additional features outside the original project scope,
+                        feel free to contact us for a new quotation.
+
+                    </p>
+
+                    <a
+                        href="{% url 'core:contact' %}"
+                        class="btn-secondary"
+                    >
+
+                        Contact Us
+
+                    </a>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+        Swal.fire({
+
+            icon: "{% if message.tags == 'error' %}error{% elif message.tags == 'warning' %}warning{% else %}success{% endif %}",
+
+            title: "{% if message.tags == 'success' %}Success{% elif message.tags == 'warning' %}Notice{% else %}Error{% endif %}",
+
+            text: "{{ message|escapejs }}",
+
+            confirmButtonColor: "#2563eb",
+
+            background: "#1e293b",
+
+            color: "#ffffff"
+
+        });
+
+        {% endfor %}
+
+    {% endif %}
+
+});
+</script>
+
+{% endblock %}
