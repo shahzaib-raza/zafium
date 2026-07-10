@@ -37,9 +37,9 @@ class StaticViewSitemap(Sitemap):
             'core:services',
             'core:order',
             'core:layerforge',
-            'core:autolytics'
-            'core:contact'
-            'core:orders_activity'
+            'core:autolytics',
+            'core:contact',
+            'core:orders_activity',
         ]
 
     def location(self, item):
