@@ -193,7 +193,6 @@ class Order(models.Model):
 
     class PaymentMethod(models.TextChoices):
         CARD = "card", "Credit / Debit Card"
-        PAYPAL = "paypal", "PayPal"
         BANK = "bank", "Bank Transfer"
         JAZZCASH = "jazzcash", "JazzCash"
         EASYPAISA = "easypaisa", "Easypaisa"
@@ -209,6 +208,12 @@ class Order(models.Model):
         max_length=20,
         choices=PaymentMethod.choices,
         blank=True
+    )
+
+    paddle_transaction_id = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True
     )
 
     payment_status = models.CharField(

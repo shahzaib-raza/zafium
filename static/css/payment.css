@@ -1,0 +1,86 @@
+.payment-section{
+
+    padding:140px 0 100px;
+
+}
+
+.payment-card{
+
+    max-width:650px;
+    margin:auto;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:60px;
+    text-align:center;
+
+}
+
+.payment-icon{
+
+    font-size:70px;
+
+}
+
+.payment-card h1{
+
+    margin-top:20px;
+
+}
+
+.payment-description{
+
+    margin-top:20px;
+    color:var(--muted);
+    line-height:1.8;
+
+}
+
+.payment-status{
+
+    margin-top:45px;
+
+}
+
+.loader{
+
+    width:60px;
+    height:60px;
+    margin:0 auto 30px;
+    border:5px solid var(--border);
+    border-top-color:var(--accent);
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+
+}
+
+@keyframes spin{
+
+    to{
+        transform:rotate(360deg);
+    }
+
+}
+
+.payment-info{
+
+    margin-top:50px;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:15px;
+
+}
+
+.info-item{
+
+    padding:15px;
+    border:1px solid var(--border);
+    border-radius:12px;
+
+}
+
+#retryButton{
+
+    margin-top:40px;
+
+}

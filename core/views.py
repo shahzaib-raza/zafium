@@ -5,12 +5,16 @@ from django.core.mail import send_mail
 from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
 
+import pprint
+
 from django.conf import settings
 from django.http import HttpResponse
 from django.contrib import messages
 from decimal import Decimal
 
 from django.http import JsonResponse
+import requests
+from requests.exceptions import RequestException
 import json
 from django.template.loader import render_to_string
 
@@ -633,6 +637,130 @@ def checkout(request):
         },
     )
 
+def create_paddle_transaction(order):
+
+    total = order.total_amount
+
+    payload = {
+        "items": [
+            {
+                "quantity": 1,
+                "price": {
+                    "product_id": settings.PADDLE_SANDBOX_PRODUCT_ID,
+                    "name": f"Order #{order.id}",
+                    "description": f"Custom service order #{order.id}",
+                    "unit_price": {
+                        "amount": str(int(order.total_amount * 100)),
+                        "currency_code": "USD",
+                    },
+                },
+            }
+        ],
+        "currency_code": "USD",
+        "custom_data": {
+            "order_id": order.id,
+        },
+    }
+
+    try:
+
+        response = requests.post(
+            # "https://api.paddle.com/transactions",
+            "https://sandbox-api.paddle.com/transactions",
+            headers={
+                "Authorization": f"Bearer {settings.PADDLE_SANDBOX_KEY}",
+                "Content-Type": "application/json",
+            },
+            json=payload,
+            timeout=20,
+        )
+
+        data = response.json()
+
+        if response.ok:
+
+            return {
+                "success": True,
+                "transaction_id": data["data"]["id"],
+                "response": data,
+            }
+
+        # Paddle returned an API error
+        error = data.get("error", {})
+
+        message = error.get(
+            "detail",
+            "Paddle returned an unknown error."
+        )
+
+        if error.get("errors"):
+
+            message += "\n\n"
+
+            for item in error["errors"]:
+                message += (
+                    f"{item.get('field')}: "
+                    f"{item.get('message')}\n"
+                )
+
+        return {
+            "success": False,
+            "message": message,
+            "response": data,
+        }
+
+    except RequestException as e:
+
+        return {
+            "success": False,
+            "message": f"Unable to connect to Paddle.\n\n{str(e)}",
+            "response": None,
+        }
+
+    except ValueError:
+
+        return {
+            "success": False,
+            "message": "Paddle returned an invalid JSON response.",
+            "response": None,
+        }
+
+
+@csrf_exempt
+def paddle_webhook(request):
+
+    payload = json.loads(
+        request.body.decode("utf-8")
+    )
+
+    event_type = payload["event_type"]
+
+    if event_type == "transaction.completed":
+
+        transaction_id = payload["data"]["id"]
+        
+        """
+        order = Order.objects.get(
+            paddle_transaction_id=transaction_id
+        )
+        """
+
+        order = Order.objects.filter(
+            paddle_transaction_id=transaction_id
+        ).first()
+
+        if not order:
+            return HttpResponse(status=200)
+
+        if order.payment_status != "paid":
+
+            order.payment_status = "paid"
+            order.save()
+
+            send_order_emails(order)
+
+    return HttpResponse(status=200)
+
 
 def place_order(request):
 
@@ -689,22 +817,46 @@ def place_order(request):
 
     request.session["order_id"] = order.id
 
-    del request.session["checkout"]
+    # del request.session["checkout"]
 
-    return redirect(
-        "core:payment_success",
-        order_id=order.id
+    transaction = create_paddle_transaction(order)
+
+    pprint.pprint(transaction)
+
+    if not transaction["success"]:
+
+        print(transaction["response"])     # Optional for debugging
+
+        messages.error(
+            request,
+            transaction["message"],
+        )
+
+        return redirect("core:checkout")
+
+    order.paddle_transaction_id = transaction["transaction_id"]
+    order.save()
+
+    return render(
+        request,
+        "payment.html",
+        {
+            "transaction_id": transaction["transaction_id"],
+            "paddle_client_token": settings.PADDLE_SANDBOX_CLIENT_TOKEN,
+        },
     )
 
 
-def payment_success(request, order_id):
-
+def payment_success(request):
+    
+    """
     order = get_object_or_404(Order, pk=order_id)
 
     order.payment_status = "paid"
     order.save()
 
     send_order_emails(order)
+    """
 
     return redirect("core:success_page")
 

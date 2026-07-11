@@ -118,6 +118,8 @@ class OrderAdmin(admin.ModelAdmin):
         "project_status",
         "progress",
         "payment_status",
+        "paddle_transaction_id",
+        "payment_status",
         "created_at",
         "total_amount",
     )
@@ -132,12 +134,14 @@ class OrderAdmin(admin.ModelAdmin):
         "project_status",
         "payment_status",
         "created_at",
+        "paddle_transaction_id",
     )
 
     search_fields = (
         "client__name",
         "client__email",
         "client__phone",
+        "paddle_transaction_id",
     )
 
     autocomplete_fields = (

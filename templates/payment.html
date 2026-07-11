@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/payment.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="payment-section">
+
+    <div class="container">
+
+        <div class="payment-card">
+
+            <div class="payment-icon">
+                💳
+            </div>
+
+            <h1>Secure Payment</h1>
+
+            <p class="payment-description">
+                You are being redirected to our secure payment provider to
+                complete your purchase.
+            </p>
+
+            <div class="payment-status">
+
+                <div class="loader"></div>
+
+                <h3>Preparing Secure Checkout...</h3>
+
+                <p>
+                    Please wait while we establish a secure connection with
+                    Paddle.
+                </p>
+
+            </div>
+
+            <div class="payment-info">
+
+                <div class="info-item">
+                    <span>✔ SSL Encrypted</span>
+                </div>
+
+                <div class="info-item">
+                    <span>✔ PCI DSS Compliant</span>
+                </div>
+
+                <div class="info-item">
+                    <span>✔ Visa / Mastercard Accepted</span>
+                </div>
+
+            </div>
+
+            <button
+                id="retryButton"
+                class="btn-primary"
+                style="display:none;"
+            >
+                Continue to Payment
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+
+<script>
+Paddle.Environment.set("sandbox");
+
+Paddle.Initialize({
+    token: "{{ paddle_client_token }}"
+});
+
+function openCheckout() {
+    Paddle.Checkout.open({
+        transactionId: "{{ transaction_id }}"
+    });
+}
+
+window.onload = function () {
+    openCheckout();
+};
+
+
+function openCheckout(){
+
+    Paddle.Checkout.open({
+        transactionId: "{{ transaction_id }}"
+    });
+
+}
+
+window.onload = function(){
+
+    setTimeout(function(){
+
+        openCheckout();
+
+    }, 800);
+
+};
+
+document
+.getElementById("retryButton")
+.addEventListener("click", function(){
+
+    openCheckout();
+
+});
+
+</script>
+
+{% endblock %}

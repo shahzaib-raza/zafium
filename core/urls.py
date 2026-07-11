@@ -113,5 +113,11 @@ urlpatterns = [
         request_revision,
         name="request_revision",
     ),
+
+    path(
+        "paddle/webhook/",
+        paddle_webhook,
+        name="paddle_webhook",
+    ),
     
 ]
