@@ -40,6 +40,10 @@ class StaticViewSitemap(Sitemap):
             'core:autolytics',
             'core:contact',
             'core:orders_activity',
+            'core:privacy_policy',
+            'core:terms_of_service',
+            'core:refund_policy',
+            'core:pricing',
         ]
 
     def location(self, item):
