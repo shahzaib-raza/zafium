@@ -1,0 +1,199 @@
+/* ==========================
+   Pricing Page
+========================== */
+
+.pricing-section{
+    padding:120px 0 80px;
+    min-height:100vh;
+}
+
+.pricing-header{
+    text-align:center;
+    margin-bottom:70px;
+}
+
+.pricing-header h1{
+    font-size:58px;
+    font-weight:800;
+    color:#fff;
+    margin-bottom:18px;
+}
+
+.pricing-header p{
+    max-width:850px;
+    margin:auto;
+    color:#9ca7bd;
+    font-size:20px;
+    line-height:1.8;
+}
+
+.pricing-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+    gap:35px;
+}
+
+/* ==========================
+   Category Card
+========================== */
+
+.category-card{
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    overflow:hidden;
+    transition:.35s;
+    backdrop-filter:blur(10px);
+}
+
+.category-card:hover{
+    transform:translateY(-8px);
+    border-color:#4b8dff;
+    box-shadow:0 18px 45px rgba(0,0,0,.35);
+}
+
+.category-header{
+    padding:28px;
+    background:linear-gradient(135deg,#3d6df2,#00c2ff);
+    color:#fff;
+}
+
+.category-header h2{
+    margin:0;
+    font-size:30px;
+    font-weight:700;
+}
+
+.category-header i{
+    margin-right:12px;
+    font-size:30px;
+}
+
+/* ==========================
+   Pricing Table
+========================== */
+
+.pricing-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.pricing-table thead{
+    background:#020617;
+}
+
+.pricing-table th{
+    padding:16px 22px;
+    color:#6366f1;
+    font-size:15px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    text-align:left;
+}
+
+.pricing-table td{
+    padding:18px 22px;
+    color:#e5e7eb;
+    border-top:1px solid rgba(255,255,255,.06);
+    font-size:17px;
+}
+
+.pricing-table tbody tr{
+    transition:.25s;
+}
+
+.pricing-table tbody tr:hover{
+    background:rgba(255,255,255,.04);
+}
+
+.price{
+    text-align:right;
+    color:#00d084;
+    font-weight:700;
+    font-size:18px;
+}
+
+/* ==========================
+   Information Box
+========================== */
+
+.pricing-note{
+    margin-top:70px;
+    padding:40px;
+    border-radius:18px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.pricing-note h3{
+    color:#e5e7eb;
+    margin-bottom:20px;
+    font-size:28px;
+}
+
+.pricing-note ul{
+    margin:0;
+    padding-left:22px;
+}
+
+.pricing-note li{
+    color:#e5e7eb;
+    line-height:2;
+    font-size:17px;
+}
+
+/* ==========================
+   CTA
+========================== */
+
+.pricing-cta{
+    text-align:center;
+    margin-top:70px;
+}
+
+.pricing-cta .btn{
+    display:inline-block;
+    padding:16px 42px;
+    border-radius:50px;
+    background:linear-gradient(135deg,#6366f1,#22d3ee);
+    color:#e5e7eb;
+    text-decoration:none;
+    font-weight:700;
+    font-size:18px;
+    transition:.3s;
+}
+
+.pricing-cta .btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 12px 30px rgba(61,109,242,.35);
+}
+
+/* ==========================
+   Mobile
+========================== */
+
+@media(max-width:768px){
+
+    .pricing-section{
+        padding:100px 0 60px;
+    }
+
+    .pricing-header h1{
+        font-size:40px;
+    }
+
+    .pricing-header p{
+        font-size:17px;
+    }
+
+    .category-header h2{
+        font-size:24px;
+    }
+
+    .pricing-table th,
+    .pricing-table td{
+        padding:14px;
+        font-size:15px;
+    }
+
+}

@@ -52,6 +52,15 @@ def services(request):
 def about(request):
     return render(request, "about.html")
 
+def privacy_policy(request):
+    return render(request, "privacy.html")
+
+def terms_of_service(request):
+    return render(request, "terms_of_service.html")
+
+def refund_policy(request):
+    return render(request, "refund_policy.html")
+
 
 def portfolio_category(request, category):
 
@@ -210,6 +219,23 @@ def orders_activity(request):
         request,
         "orders_activity.html",
         context,
+    )
+
+
+def pricing(request):
+
+    categories = (
+        PortfolioCategory.objects
+        .prefetch_related("subcategories")
+        .order_by("name")
+    )
+
+    return render(
+        request,
+        "pricing.html",
+        {
+            "categories": categories,
+        },
     )
 
 # ____________________________________________________________________________________________________________

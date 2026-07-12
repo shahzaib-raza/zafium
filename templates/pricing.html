@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css"/>
+<link rel="stylesheet" href="{% static 'css/pricing.css' %}"/>
+{% endblock %}
+
+{% block content %}
+
+<section class="pricing-section">
+
+    <div class="container">
+
+        <div class="pricing-header">
+            <h1>Transparent Pricing</h1>
+
+            <p>
+                Every service offered by Zafium has a clearly displayed
+                base price. Select one or more services during ordering,
+                and your final total is calculated automatically before
+                payment.
+            </p>
+        </div>
+
+        <div class="pricing-grid">
+
+            {% for category in categories %}
+
+            <div class="category-card">
+
+                <div class="category-header">
+                    <h2>
+                        <i class="{{ category.icon }}"></i>
+                        {{ category.name }}
+                    </h2>
+                </div>
+
+                <table class="pricing-table">
+
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th style="text-align:right;">Base Price</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for service in category.subcategories.all %}
+
+                        <tr>
+                            <td>{{ service.name }}</td>
+
+                            <td class="price">
+                                ${{ service.price }}
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        <div class="pricing-note">
+
+            <h3>Pricing Information</h3>
+
+            <ul>
+                <li>All prices shown are base prices in USD.</li>
+                <li>Quantities can be adjusted during ordering.</li>
+                <li>Multiple services may be combined into a single order.</li>
+                <li>The final total is calculated before payment.</li>
+                <li>Taxes (if applicable) are calculated by Paddle based on your location.</li>
+                <li>If your project requires features beyond the listed scope, a custom quote may be provided before work begins.</li>
+            </ul>
+
+        </div>
+
+        <div class="pricing-cta">
+            <a href="{% url 'core:order' %}" class="btn">
+                Start Your Order
+            </a>
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

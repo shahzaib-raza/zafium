@@ -68,6 +68,30 @@ urlpatterns = [
         name="orders_activity",
     ),
 
+    path(
+        "pricing/",
+        pricing,
+        name="pricing",
+    ),
+
+    path(
+        "privacy-policy/",
+        privacy_policy,
+        name="privacy_policy",
+    ),
+
+    path(
+        "terms-of-service/",
+        terms_of_service,
+        name="terms_of_service",
+    ),
+
+    path(
+        "refund-policy/",
+        refund_policy,
+        name="refund_policy",
+    ),
+
     path("checkout/", checkout, name="checkout"),
 
     path(
