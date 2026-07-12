@@ -73,7 +73,17 @@
 Paddle.Environment.set("sandbox");
 
 Paddle.Initialize({
-    token: "{{ paddle_client_token }}"
+    token: "{{ paddle_client_token }}",
+
+    eventCallback: function(event) {
+
+        console.log(event);
+
+        if (event.name === "checkout.completed") {
+            window.location.href = "{% url 'core:success_page' %}";
+        }
+
+    }
 });
 
 function openCheckout() {
@@ -83,34 +93,17 @@ function openCheckout() {
 }
 
 window.onload = function () {
-    openCheckout();
-};
 
-
-function openCheckout(){
-
-    Paddle.Checkout.open({
-        transactionId: "{{ transaction_id }}"
-    });
-
-}
-
-window.onload = function(){
-
-    setTimeout(function(){
-
+    setTimeout(function () {
         openCheckout();
-
     }, 800);
 
 };
 
 document
 .getElementById("retryButton")
-.addEventListener("click", function(){
-
+.addEventListener("click", function () {
     openCheckout();
-
 });
 
 </script>
