@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -135,3 +136,11 @@ EMAIL_HOST_USER = "zafium.tech@gmail.com"
 EMAIL_HOST_PASSWORD = "sremsaebodpkqqtz"
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+PADDLE_KEY = os.environ['PADDLE_KEY']
+PADDLE_SANDBOX_KEY = os.environ['PADDLE_SANDBOX_KEY']
+PADDLE_CLIENT_TOKEN = os.environ['PADDLE_CLIENT_TOKEN']
+PADDLE_SANDBOX_CLIENT_TOKEN = os.environ['PADDLE_SANDBOX_CLIENT_TOKEN']
+PADDLE_SANDBOX_PRODUCT_ID = os.environ['PADDLE_SANDBOX_PRODUCT_ID']
+PADDLE_PRODUCT_ID = os.environ['PADDLE_PRODUCT_ID']
