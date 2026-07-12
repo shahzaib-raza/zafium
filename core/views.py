@@ -646,7 +646,7 @@ def create_paddle_transaction(order):
             {
                 "quantity": 1,
                 "price": {
-                    "product_id": settings.PADDLE_SANDBOX_PRODUCT_ID,
+                    "product_id": settings.PADDLE_PRODUCT_ID,
                     "name": f"Order #{order.id}",
                     "description": f"Custom service order #{order.id}",
                     "unit_price": {
@@ -665,10 +665,10 @@ def create_paddle_transaction(order):
     try:
 
         response = requests.post(
-            # "https://api.paddle.com/transactions",
-            "https://sandbox-api.paddle.com/transactions",
+            "https://api.paddle.com/transactions",
+            # "https://sandbox-api.paddle.com/transactions",
             headers={
-                "Authorization": f"Bearer {settings.PADDLE_SANDBOX_KEY}",
+                "Authorization": f"Bearer {settings.PADDLE_KEY}",
                 "Content-Type": "application/json",
             },
             json=payload,
@@ -842,7 +842,7 @@ def place_order(request):
         "payment.html",
         {
             "transaction_id": transaction["transaction_id"],
-            "paddle_client_token": settings.PADDLE_SANDBOX_CLIENT_TOKEN,
+            "paddle_client_token": settings.PADDLE_CLIENT_TOKEN,
         },
     )
 
