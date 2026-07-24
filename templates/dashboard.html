@@ -62,7 +62,7 @@
 <div style="width:{{ order.progress }}%;height:100%;background:var(--gradient-primary);border-radius:999px;"></div>
 </div>
 
-<p><strong>Total:</strong> ${{ order.total_amount }}</p>
+<p><strong>Total:</strong> PKR{{ order.total_amount }}</p>
 
 {% if order.latest_update %}
 <p>{{ order.latest_update }}</p>
@@ -129,7 +129,7 @@
 
                 <strong>
 
-                    ${{ order.total_amount }}
+                    PKR{{ order.total_amount }}
 
                 </strong>
 

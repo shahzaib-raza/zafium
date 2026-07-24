@@ -162,7 +162,7 @@ function attachEvents(item) {
             .filter(([id, s]) => s.category == catId);
 
         subSelect.innerHTML = filtered.map(([id, s]) =>
-            `<option value="${id}">${s.name} ($${s.price})</option>`
+            `<option value="${id}">${s.name} (PKR ${s.price})</option>`
         ).join("");
 
         update(item);
@@ -213,14 +213,14 @@ function updateTotal() {
         row.classList.add("summary-row");
 
         row.innerHTML = `
-            <span>${subcategories[subId].name} x ${qty}</span>
-            <span>$${price}</span>
+            <span>${subcategories[subId].name} x PKR {qty}</span>
+            <span>PKR ${price}</span>
         `;
 
         summary.appendChild(row);
     });
 
-    document.getElementById("total").innerText = `$${total}`;
+    document.getElementById("total").innerText = `PKR ${total}`;
 }
 
 // INIT

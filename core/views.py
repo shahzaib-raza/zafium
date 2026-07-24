@@ -521,7 +521,7 @@ def send_order_emails(order):
         order_summary += (
             f"{item.subcategory.name} "
             f"x {item.quantity} "
-            f"= ${item.total_price()}\n"
+            f"= PKR{item.total_price()}\n"
         )
 
     # -------------------------
@@ -547,7 +547,7 @@ def send_order_emails(order):
         {order.progress}%
 
         Total:
-        ${order.total_amount}
+        PKR{order.total_amount}
         
         Client Access Token: { client.access_token }
         Client Dashboard URL: https://www.zafium.com/dashboard/{ client.access_token }/

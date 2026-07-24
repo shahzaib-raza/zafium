@@ -48,8 +48,8 @@
                             <tr>
                                 <td>{{ item.subcategory }}</td>
                                 <td>{{ item.quantity }}</td>
-                                <td>${{ item.price }}</td>
-                                <td>${{ item.total }}</td>
+                                <td>PKR{{ item.price }}</td>
+                                <td>PKR{{ item.total }}</td>
                             </tr>
 
                         {% endfor %}
@@ -124,24 +124,24 @@
 
                     <div class="summary-row">
                         <span>Subtotal</span>
-                        <span>${{ total }}</span>
+                        <span>PKR{{ total }}</span>
                     </div>
 
                     <div class="summary-row">
                         <span>Tax</span>
-                        <span>$0.00</span>
+                        <span>PKR0.00</span>
                     </div>
 
                     <div class="summary-row">
                         <span>Discount</span>
-                        <span>$0.00</span>
+                        <span>PKR0.00</span>
                     </div>
 
                     <div class="summary-total">
 
                         <span>Total</span>
 
-                        <h2>${{ total }}</h2>
+                        <h2>PKR{{ total }}</h2>
 
                     </div>
 
