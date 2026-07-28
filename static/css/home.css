@@ -191,6 +191,13 @@
     margin-top:60px;
 }
 
+@media (max-width: 768px){
+    .connect-grid{
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+}
+
 .connect-card{
 
     background:var(--card);
