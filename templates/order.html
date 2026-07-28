@@ -162,7 +162,7 @@ function attachEvents(item) {
             .filter(([id, s]) => s.category == catId);
 
         subSelect.innerHTML = filtered.map(([id, s]) =>
-            `<option value="${id}">${s.name} (PKR ${s.price})</option>`
+            `<option value="${id}">${s.name} (${s.price})</option>`
         ).join("");
 
         update(item);
