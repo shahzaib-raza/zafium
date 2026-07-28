@@ -1,7 +1,6 @@
 {% load static %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css"/>
 <link rel="stylesheet" href="{% static 'css/navbar.css' %}"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 {% endblock %}
@@ -40,7 +39,10 @@
                             <a href="/portfolio/{{ category.slug }}/">
 
                                 {% if category.icon %}
-                                    <i class="{{ category.icon }}"></i>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor">
+                                        <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                                        <path d="{{ category.icon }}"/>
+                                    </svg>
                                 {% endif %}
 
                                 <span>{{ category.name }}</span>

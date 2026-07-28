@@ -23,7 +23,7 @@ class PortfolioCategory(models.Model):
     slug = models.SlugField(unique=True)
 
     icon = models.CharField(
-        max_length=50,
+        max_length=5000,
         blank=True
     )
 

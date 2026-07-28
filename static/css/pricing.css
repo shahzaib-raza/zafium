@@ -62,6 +62,16 @@
     margin:0;
     font-size:30px;
     font-weight:700;
+
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.category-header svg{
+    width:30px;
+    height:30px;
+    fill:currentColor;
 }
 
 .category-header i{

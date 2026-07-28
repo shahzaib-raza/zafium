@@ -3,7 +3,6 @@
 {% load static %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css"/>
 <link rel="stylesheet" href="{% static 'css/pricing.css' %}"/>
 {% endblock %}
 
@@ -32,7 +31,12 @@
 
                 <div class="category-header">
                     <h2>
-                        <i class="{{ category.icon }}"></i>
+                        {% if category.icon %}
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor">
+                                <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                                <path d="{{ category.icon }}"/>
+                            </svg>
+                        {% endif %}
                         {{ category.name }}
                     </h2>
                 </div>

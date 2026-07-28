@@ -107,6 +107,13 @@
     border-radius:0;
 }
 
+.capability-icon svg{
+    width:18px;
+    height:18px;
+    display:block;
+    fill:currentColor;
+}
+
 .capability-item span:last-child{
 
     color:#dbe7ff;

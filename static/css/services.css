@@ -257,6 +257,6 @@
     }
 
     .service-band {
-        background-attachment: scroll;
+        background-attachment: fixed;
     }
 }
