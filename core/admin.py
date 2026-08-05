@@ -12,6 +12,7 @@ from .models import (
     OrderReview,
     OrderDelivery,
     OrderRevision,
+    OrderAttachment,
 )
 
 class PortfolioMediaInline(admin.TabularInline):
@@ -48,6 +49,10 @@ class ClientAdmin(admin.ModelAdmin):
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
     list_display = ("order", "category", "subcategory", "quantity", "price", "total_price")
+
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
+    extra = 0
 
 
 @admin.register(OrderReview)
@@ -109,6 +114,11 @@ class OrderDeliveryInline(admin.TabularInline):
         "uploaded_at",
     )
 
+class OrderAttachmentInline(admin.TabularInline):
+    model = OrderAttachment
+    extra = 0
+    readonly_fields = ("uploaded_at",)
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
 
@@ -119,7 +129,6 @@ class OrderAdmin(admin.ModelAdmin):
         "progress",
         "payment_status",
         "paddle_transaction_id",
-        "payment_status",
         "created_at",
         "total_amount",
     )
@@ -150,10 +159,65 @@ class OrderAdmin(admin.ModelAdmin):
 
     readonly_fields = (
         "created_at",
+        "total_amount",
+    )
+
+    fieldsets = (
+        (
+            "Order Information",
+            {
+                "fields": (
+                    "client",
+                    "description",
+                )
+            },
+        ),
+        (
+            "Internal Admin Notes",
+            {
+                "fields": (
+                    "notes",
+                )
+            },
+        ),
+        (
+            "Project Status",
+            {
+                "fields": (
+                    "project_status",
+                    "progress",
+                    "latest_update",
+                    "estimated_delivery",
+                    "completed_at",
+                )
+            },
+        ),
+        (
+            "Payment",
+            {
+                "fields": (
+                    "payment_method",
+                    "payment_status",
+                    "paddle_transaction_id",
+                    "transaction_id",
+                )
+            },
+        ),
+        (
+            "System Information",
+            {
+                "fields": (
+                    "created_at",
+                    "total_amount",
+                )
+            },
+        ),
     )
 
     inlines = [
+        OrderItemInline,
         OrderDeliveryInline,
+        OrderAttachmentInline,
     ]
 
     def __str__(self):

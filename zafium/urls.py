@@ -25,6 +25,11 @@ from core.sitemap import (
 )
 from django.contrib.sitemaps.views import sitemap
 
+# Customize the Django Admin titles
+admin.site.site_header = "Zafium Admin Portal"  # Changes the main top banner text
+admin.site.site_title = "Zafium Admin Control Panel"      # Changes the browser tab title
+admin.site.index_title = "Welcome to the Zafium Dashboard" # Changes the subtitle on the index landing page
+
 sitemaps = {
     "static": StaticViewSitemap,
     "portfolio": PortfolioSitemap,

@@ -21,7 +21,7 @@ from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 import os,uuid
 from .utils import _img_array_to_svg
-from .models import PortfolioItem, PortfolioCategory, PortfolioSubCategory, Order, OrderItem, OrderReview, Client, OrderRevision
+from .models import PortfolioItem, PortfolioCategory, PortfolioSubCategory, Order, OrderItem, OrderReview, Client, OrderRevision, OrderAttachment
 
 from django.views.decorators.http import require_POST
 
@@ -594,6 +594,8 @@ def checkout(request):
     name = request.POST.get("name")
     email = request.POST.get("email")
     phone = request.POST.get("phone")
+    description = request.POST.get("description", "").strip()
+    # attachments = request.FILES.getlist("attachments")
 
     raw_items = request.POST.get("items", "[]")
 
@@ -646,6 +648,7 @@ def checkout(request):
             "name": name,
             "email": email,
             "phone": phone,
+            "description": description,
         },
 
         "items": checkout_items,
@@ -811,6 +814,8 @@ def place_order(request):
     name=customer["name"]
     email=customer["email"]
     phone=customer["phone"]
+    description = request.POST.get("description", "").strip()
+    attachments = request.FILES.getlist("attachments")
     payment_method=payment_method
 
     client, _ = Client.objects.get_or_create(
@@ -824,7 +829,14 @@ def place_order(request):
     order = Order.objects.create(
         client=client,
         payment_method=payment_method,
+        description=description,
     )
+
+    for attachment in attachments:
+        OrderAttachment.objects.create(
+            order=order,
+            file=attachment
+        )
 
     # Create Order Items
     for item in items:

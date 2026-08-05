@@ -102,6 +102,56 @@
     color: var(--accent);
 }
 
+/* TEXTAREA */
+.input-group textarea {
+    width: 100%;
+    min-height: 150px;
+
+    padding: 18px 14px;
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    background: rgba(255,255,255,0.03);
+    color: var(--text);
+
+    font-family: inherit;
+    font-size: 0.95rem;
+    line-height: 1.6;
+
+    resize: vertical;
+
+    outline: none;
+
+    transition: 0.2s ease;
+}
+
+
+/* TEXTAREA FOCUS */
+.input-group textarea:focus {
+    border-color: var(--accent);
+
+    box-shadow:
+        0 0 0 2px rgba(99, 102, 241, 0.2);
+
+    background: rgba(255,255,255,0.06);
+}
+
+
+/* TEXTAREA FLOAT LABEL */
+.input-group textarea:focus + label,
+.input-group textarea:not(:placeholder-shown) + label {
+
+    top: -8px;
+    left: 10px;
+
+    background: var(--bg);
+    padding: 0 6px;
+
+    font-size: 0.75rem;
+    color: var(--accent);
+}
+
 
 /* LAYOUT */
 .order-layout {

@@ -13,7 +13,7 @@
 
 <section class="order-section">
 
-<form id="order-form" action="{% url 'core:checkout' %}" method="POST">
+<form id="order-form" action="{% url 'core:checkout' %}" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="container">
 
@@ -55,6 +55,55 @@
                         <input type="text" name="phone" required placeholder=" ">
                         <label>Phone</label>
                     </div>
+                </div>
+
+                <!-- PROJECT DETAILS -->
+                <div class="card project-details">
+
+                    <h3>Project Details</h3>
+
+                    <div class="input-group">
+                        <textarea
+                            name="description"
+                            id="description"
+                            rows="6"
+                            placeholder=" "
+                        ></textarea>
+
+                        <label for="description">
+                            Describe Your Project
+                        </label>
+                    </div>
+
+                    <div class="attachment-group">
+
+                        <label for="attachments" class="attachment-label">
+                            Project Files
+                        </label>
+
+                        <p class="attachment-help">
+                            Upload files related to your project.
+                            You can upload multiple files, up to 25 MB in total.
+                        </p>
+
+                        <input
+                            type="file"
+                            name="attachments"
+                            id="attachments"
+                            multiple
+                        >
+
+                        <div id="attachment-error" class="attachment-error"></div>
+
+                        <div id="attachment-list"></div>
+
+                        <div class="attachment-total">
+                            <span>Total size:</span>
+                            <strong id="attachment-size">0 MB / 25 MB</strong>
+                        </div>
+
+                    </div>
+
                 </div>
 
                 <button type="submit" class="btn-primary submit-btn">
@@ -237,6 +286,80 @@ document.getElementById("order-form").addEventListener("submit", function () {
     collectItems();
 });
 
+</script>
+
+<script>
+const attachmentInput = document.getElementById("attachments");
+const attachmentList = document.getElementById("attachment-list");
+const attachmentSize = document.getElementById("attachment-size");
+const orderForm = document.getElementById("order-form");
+
+const MAX_TOTAL_SIZE = 25 * 1024 * 1024; // 25 MB
+
+
+function validateAttachments() {
+
+    let totalSize = 0;
+
+    attachmentList.innerHTML = "";
+
+    for (const file of attachmentInput.files) {
+
+        totalSize += file.size;
+
+        const item = document.createElement("div");
+
+        item.textContent =
+            `${file.name} — ${(file.size / 1024 / 1024).toFixed(2)} MB`;
+
+        attachmentList.appendChild(item);
+    }
+
+    const totalMB = totalSize / (1024 * 1024);
+
+    attachmentSize.textContent =
+        `${totalMB.toFixed(2)} MB / 25 MB`;
+
+
+    if (totalSize > MAX_TOTAL_SIZE) {
+
+        attachmentSize.style.color = "red";
+
+        attachmentInput.setCustomValidity(
+            "The total size of all attachments cannot exceed 25 MB."
+        );
+
+        return false;
+
+    } else {
+
+        attachmentSize.style.color = "";
+
+        attachmentInput.setCustomValidity("");
+
+        return true;
+    }
+}
+
+
+// Validate immediately when files are selected
+attachmentInput.addEventListener("change", function () {
+    validateAttachments();
+});
+
+
+// Validate again when the form is submitted
+orderForm.addEventListener("submit", function (event) {
+
+    if (!validateAttachments()) {
+
+        event.preventDefault();
+
+        // Optional: show the browser's validation message
+        attachmentInput.reportValidity();
+    }
+
+});
 </script>
 
 {% endblock %}

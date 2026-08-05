@@ -202,6 +202,12 @@ class Order(models.Model):
         on_delete=models.CASCADE,
         related_name="orders"
     )
+
+    description = models.TextField(
+        blank=True,
+        help_text="Project requirements provided by the client."
+    )
+    
     notes = models.TextField(blank=True)
 
     payment_method = models.CharField(
@@ -367,6 +373,23 @@ class OrderReview(models.Model):
 
     def __str__(self):
         return f"{self.order.client.name} ({self.rating}/5)"
+
+
+class OrderAttachment(models.Model):
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="attachments"
+    )
+
+    file = models.FileField(
+        upload_to="order_attachments/%Y/%m/"
+    )
+
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.file.name
     
 
 class OrderDelivery(models.Model):
