@@ -911,28 +911,49 @@ def generate_svg(request):
     try:
         uploaded = request.FILES["image"]
 
-        k_min = int(request.POST.get("k_min", 3))
-        k_max = int(request.POST.get("k_max", 15))
-        cluster_scale = float(request.POST.get("cluster_scale", 0.5))
-        min_area_ratio = float(request.POST.get("min_area_ratio", 0.0003))
-        smooth = request.POST.get("smooth") == "true"
+        file_name = uploaded.name
+
+        edge_detection_threshold = int(request.POST.get("edge_detection_threshold", 10))
+        min_anchor_distance = int(request.POST.get("min_anchor_distance", 15))
 
         # Decode image directly from memory
+        """
         image_bytes = np.frombuffer(uploaded.read(), np.uint8)
         img = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
-        svg_text = _img_array_to_svg(
-            img,
-            K_MIN=k_min,
-            K_MAX=k_max,
-            CLUSTER_SCALE=cluster_scale,
-            MIN_AREA_RATIO=min_area_ratio,
-            smooth=smooth
+        """
+        uploaded.seek(0)
+        image_bytes = np.frombuffer(
+            uploaded.read(),
+            np.uint8
         )
 
+        img = cv2.imdecode(
+            image_bytes,
+            cv2.IMREAD_COLOR
+        )
+
+        if img is None:
+            raise ValueError(
+                "OpenCV could not decode the uploaded image."
+            )
+
+        img = cv2.cvtColor(
+            img,
+            cv2.COLOR_BGR2RGB
+        )
+        svg_text = _img_array_to_svg(
+            img,
+            edge_detection_threshold=edge_detection_threshold,
+            min_anchor_distance=min_anchor_distance,
+        )
+
+        filename = "_".join(str(file_name).split(".")[:-1])
+        filename = filename+"_layerforged.svg"
+
         return HttpResponse(svg_text, content_type="image/svg+xml")
-    except:
+    except Exception as e:
+        print(e)
         with open("templates/layerforge/sorry.html", "r", encoding="utf-8") as f:
             html = f.read()
         return HttpResponse(html, content_type="text/html", status=400)

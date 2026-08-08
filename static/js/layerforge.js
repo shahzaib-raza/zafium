@@ -3,7 +3,6 @@ const svgWrapper = document.getElementById("svgWrapper");
 const loader = document.getElementById("loader");
 const imageUpload = document.getElementById("imageUpload");
 const downloadBtn = document.getElementById("downloadBtn");
-const smoothToggle = document.getElementById("smoothToggle");
 const sliders = document.querySelectorAll("input[type=range]");
 
 let currentImage = null;
@@ -30,11 +29,8 @@ function debounce(fn, delay = 300) {
 
 function collectParams() {
     return {
-        k_min: k_min.value,
-        k_max: k_max.value,
-        cluster_scale: cluster_scale.value,
-        min_area_ratio: min_area_ratio.value,
-        smooth: smoothToggle.checked
+        edge_detection_threshold: edge_detection_threshold.value,
+        min_anchor_distance: min_anchor_distance.value,
     };
 }
 
@@ -77,11 +73,6 @@ sliders.forEach(slider => {
         document.getElementById(e.target.id + "_val").textContent = e.target.value;
         debouncedProcess();
     });
-});
-
-smoothToggle.addEventListener("change", () => {
-    sliders.forEach(s => s.disabled = smoothToggle.checked);
-    processImage();
 });
 
 downloadBtn.addEventListener("click", () => {
