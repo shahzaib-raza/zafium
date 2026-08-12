@@ -5,7 +5,7 @@ from django.core.mail import send_mail
 from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
 
-import pprint
+# import pprint
 
 from django.conf import settings
 from django.http import HttpResponse
@@ -13,8 +13,11 @@ from django.contrib import messages
 from decimal import Decimal
 
 from django.http import JsonResponse
-import requests
-from requests.exceptions import RequestException
+# import requests
+# from requests.exceptions import RequestException
+
+from django.http import Http404
+
 import json
 from django.template.loader import render_to_string
 
@@ -410,7 +413,7 @@ def request_revision(request, token, order_id):
             token=token,
             order_id=order.id,
         )
-    
+
     # Maximum 3 revisions
     if order.revision_count >= 3:
 
@@ -552,7 +555,7 @@ def send_order_emails(order):
 
         Total:
         PKR{order.total_amount}
-        
+
         Client Access Token: { client.access_token }
         Client Dashboard URL: https://www.zafium.com/dashboard/{ client.access_token }/
         """,
@@ -560,7 +563,7 @@ def send_order_emails(order):
         recipient_list=[settings.DEFAULT_FROM_EMAIL],
         fail_silently=False,
     )
-    
+
 
     # -------------------------
     # Customer HTML Email
@@ -795,9 +798,15 @@ def easypay_start(request, order_id):
             order_id=order.id,
         )
 
+    email = order.client.email
+    phone = order.client.phone
+
+    print(email)
+    print(phone)
+
     # Generate an expiry time.
     expiry_date = (
-        timezone.now() + timedelta(minutes=30)
+        timezone.now() + timedelta(minutes=340)
     ).strftime("%Y%m%d %H%M%S")
 
     # Easypaisa requires amount with ONE decimal
@@ -807,6 +816,8 @@ def easypay_start(request, order_id):
     post_back_url = request.build_absolute_uri(
         "/payment/easypay/callback/"
     )
+
+    payment_method = "CC_PAYMENT_METHOD"
 
     hash_fields = {
         "amount": amount,
@@ -849,7 +860,10 @@ def easypay_start(request, order_id):
             "auto_redirect": "0",
 
             "payment_method":
-                "CC_PAYMENT_METHOD",
+                payment_method,
+
+            "email": email,
+            "phone": phone,
         },
     )
 
@@ -894,7 +908,7 @@ def place_order(request):
         payment_method=payment_method,
         description=description,
     )
-    
+
     order.easypay_order_ref = f"ZAF-{order.id}-{uuid.uuid4().hex[:12].upper()}"
 
     for attachment in attachments:
@@ -929,7 +943,7 @@ def place_order(request):
 
 
 def payment_success(request):
-    
+
     """
     order = get_object_or_404(Order, pk=order_id)
 
@@ -1000,7 +1014,7 @@ def generate_svg(request):
         with open("templates/layerforge/sorry.html", "r", encoding="utf-8") as f:
             html = f.read()
         return HttpResponse(html, content_type="text/html", status=400)
-    
+
 # _______________________________________________________________________________________________________________
 
 def autolytics(request):
@@ -1028,7 +1042,7 @@ def autolytics_search(request):
             data = None
     if data is None:
         return render(request, "sorry.html")
-    
+
     try:
         # data['price'].apply(get_int)
         # data['year'].apply(get_int)
@@ -1040,7 +1054,7 @@ def autolytics_search(request):
 
         # Formatting data for bar plot
         # fory = data['year'].value_counts()[:]
-        
+
         sp = subplots.make_subplots(
                     rows=3,
                     cols=1,
@@ -1049,10 +1063,10 @@ def autolytics_search(request):
                         [{"type": "xy"}],
                         [{"type": "polar"}]]
                 )
-        
+
         # x_vals = data['year']
         # y_vals = data['price']
-        
+
         x_vals = [y for y, _ in data]
         y_vals = [p for _, p in data]
 
@@ -1070,7 +1084,7 @@ def autolytics_search(request):
         intercept = y_mean - slope * x_mean
 
         best_fit_line = [slope * x + intercept for x in x_vals]
-        
+
         sp.add_trace(go.Scatter(x=x_vals,
                                 y=y_vals,
                                 name="Each Available "+mn+" Price",
@@ -1116,7 +1130,7 @@ def autolytics_search(request):
                         col=1
                     )
 
-        # Formatting data for C_bar 
+        # Formatting data for C_bar
         """
         grouped_data = data.groupby(['year'])
         gd_min_price = grouped_data.min().reset_index()['price'].tolist()
@@ -1127,7 +1141,7 @@ def autolytics_search(request):
         grouped = defaultdict(list)
         for year, price in data:
             grouped[year].append(price)
-        
+
         gd_years = sorted(grouped.keys())
 
         gd_min_price = [min(grouped[y]) for y in gd_years]
@@ -1151,7 +1165,7 @@ def autolytics_search(request):
                 row=3,
                 col=1,
             )
-        
+
         sp.add_trace(
                 go.Barpolar(r=gd_mean_price,
                             name='Mean Price Per Year',
@@ -1208,7 +1222,7 @@ def autolytics_search(request):
                 x=0.5
             )
         )
-        
+
         prc = [p for _, p in data if p is not None]
         plot_div = plot({'data': sp}, output_type='div')
         min_price = int(min(prc))
