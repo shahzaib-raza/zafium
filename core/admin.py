@@ -128,7 +128,7 @@ class OrderAdmin(admin.ModelAdmin):
         "project_status",
         "progress",
         "payment_status",
-        "paddle_transaction_id",
+        "easypay_order_ref",
         "created_at",
         "total_amount",
     )
@@ -143,14 +143,14 @@ class OrderAdmin(admin.ModelAdmin):
         "project_status",
         "payment_status",
         "created_at",
-        "paddle_transaction_id",
+        "easypay_order_ref",
     )
 
     search_fields = (
         "client__name",
         "client__email",
         "client__phone",
-        "paddle_transaction_id",
+        "easypay_order_ref",
     )
 
     autocomplete_fields = (
@@ -198,7 +198,7 @@ class OrderAdmin(admin.ModelAdmin):
                 "fields": (
                     "payment_method",
                     "payment_status",
-                    "paddle_transaction_id",
+                    "easypay_order_ref",
                     "transaction_id",
                 )
             },

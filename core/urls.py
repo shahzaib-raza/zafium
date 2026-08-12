@@ -94,10 +94,24 @@ urlpatterns = [
 
     path("checkout/", checkout, name="checkout"),
 
+    path("place-order/", place_order, name="place_order"),
+
     path(
-        "place-order/",
-        place_order,
-        name="place_order",
+        "payment/easypay/start/<int:order_id>/",
+        easypay_start,
+        name="easypay_start",
+    ),
+
+    path(
+        "payment/easypay/callback/",
+        easypay_callback,
+        name="easypay_callback",
+    ),
+
+    path(
+        "payment/easypay/result/",
+        easypay_result,
+        name="easypay_result",
     ),
 
     path(
@@ -136,12 +150,6 @@ urlpatterns = [
         "dashboard/<uuid:token>/order/<int:order_id>/revision/",
         request_revision,
         name="request_revision",
-    ),
-
-    path(
-        "paddle/webhook/",
-        paddle_webhook,
-        name="paddle_webhook",
     ),
     
 ]

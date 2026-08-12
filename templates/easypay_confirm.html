@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirming Payment</title>
+</head>
+
+<body>
+
+    <p>
+        Confirming your Easypaisa payment...
+    </p>
+
+    <form
+        id="easypay-confirm-form"
+        method="POST"
+        action="{{ easypay_confirm_url }}"
+    >
+
+        <input
+            type="hidden"
+            name="auth_token"
+            value="{{ auth_token }}"
+        >
+
+        <input
+            type="hidden"
+            name="postBackURL"
+            value="{{ post_back_url }}"
+        >
+
+    </form>
+
+    <script>
+        document
+            .getElementById("easypay-confirm-form")
+            .submit();
+    </script>
+
+</body>
+</html>

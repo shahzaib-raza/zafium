@@ -216,7 +216,7 @@ class Order(models.Model):
         blank=True
     )
 
-    paddle_transaction_id = models.CharField(
+    easypay_order_ref = models.CharField(
         max_length=255,
         blank=True,
         null=True

@@ -28,6 +28,10 @@ from django.views.decorators.http import require_POST
 from .forms import ContactForm
 from .helpers import send_contact_email
 
+from .easypay import generate_easypay_hash
+from django.utils import timezone
+from datetime import timedelta
+
 import cv2
 import numpy as np
 from collections import defaultdict, Counter
@@ -666,129 +670,188 @@ def checkout(request):
         },
     )
 
-def create_paddle_transaction(order):
 
-    total = order.total_amount
+def easypay_result(request):
 
-    payload = {
-        "items": [
+    status = request.GET.get("status")
+    desc = request.GET.get("desc")
+    order_ref = request.GET.get("orderRefNumber")
+
+    if not order_ref:
+        return render(
+            request,
+            "success.html",
             {
-                "quantity": 1,
-                "price": {
-                    "product_id": settings.PADDLE_PRODUCT_ID,
-                    "name": f"Order #{order.id}",
-                    "description": f"Custom service order #{order.id}",
-                    "unit_price": {
-                        "amount": str(int(order.total_amount * 100)),
-                        "currency_code": "USD",
-                    },
-                },
-            }
-        ],
-        "currency_code": "USD",
-        "custom_data": {
-            "order_id": order.id,
-        },
-    }
-
-    try:
-
-        response = requests.post(
-            "https://api.paddle.com/transactions",
-            # "https://sandbox-api.paddle.com/transactions",
-            headers={
-                "Authorization": f"Bearer {settings.PADDLE_KEY}",
-                "Content-Type": "application/json",
+                "payment_status": "failed",
+                "message": (
+                    "Easypaisa did not return "
+                    "an order reference."
+                ),
             },
-            json=payload,
-            timeout=20,
+            status=400,
         )
 
-        data = response.json()
+    order = Order.objects.filter(
+        easypay_order_ref=order_ref
+    ).first()
 
-        if response.ok:
-
-            return {
-                "success": True,
-                "transaction_id": data["data"]["id"],
-                "response": data,
-            }
-
-        # Paddle returned an API error
-        error = data.get("error", {})
-
-        message = error.get(
-            "detail",
-            "Paddle returned an unknown error."
+    if not order:
+        return render(
+            request,
+            "success.html",
+            {
+                "payment_status": "failed",
+                "message": (
+                    "We could not find the "
+                    "corresponding order."
+                ),
+            },
+            status=404,
         )
 
-        if error.get("errors"):
-
-            message += "\n\n"
-
-            for item in error["errors"]:
-                message += (
-                    f"{item.get('field')}: "
-                    f"{item.get('message')}\n"
-                )
-
-        return {
-            "success": False,
-            "message": message,
-            "response": data,
-        }
-
-    except RequestException as e:
-
-        return {
-            "success": False,
-            "message": f"Unable to connect to Paddle.\n\n{str(e)}",
-            "response": None,
-        }
-
-    except ValueError:
-
-        return {
-            "success": False,
-            "message": "Paddle returned an invalid JSON response.",
-            "response": None,
-        }
-
-
-@csrf_exempt
-def paddle_webhook(request):
-
-    payload = json.loads(
-        request.body.decode("utf-8")
-    )
-
-    event_type = payload["event_type"]
-
-    if event_type == "transaction.completed":
-
-        transaction_id = payload["data"]["id"]
-        
-        """
-        order = Order.objects.get(
-            paddle_transaction_id=transaction_id
-        )
-        """
-
-        order = Order.objects.filter(
-            paddle_transaction_id=transaction_id
-        ).first()
-
-        if not order:
-            return HttpResponse(status=200)
+    if status == "Success":
 
         if order.payment_status != "paid":
 
             order.payment_status = "paid"
-            order.save()
+            order.save(
+                update_fields=["payment_status"]
+            )
 
             send_order_emails(order)
 
-    return HttpResponse(status=200)
+        return redirect(
+            "core:payment_success",
+            order_id=order.id,
+        )
+
+    # Any non-success result
+    if order.payment_status != "paid":
+
+        order.payment_status = "failed"
+        order.save(
+            update_fields=["payment_status"]
+        )
+
+    return render(
+        request,
+        "success.html",
+        {
+            "payment_status": "failed",
+            "order": order,
+            "message": (
+                "Your Easypaisa payment was "
+                "not completed."
+            ),
+            "payment_description": desc,
+        },
+    )
+
+
+def easypay_callback(request):
+
+    auth_token = request.GET.get("auth_token")
+
+    if not auth_token:
+        return render(
+            request,
+            "success.html",
+            {
+                "payment_status": "failed",
+                "message": (
+                    "Easypaisa did not return "
+                    "an authentication token."
+                ),
+            },
+            status=400,
+        )
+
+    return render(
+        request,
+        "easypay_confirm.html",
+        {
+            "auth_token": auth_token,
+            "easypay_confirm_url": settings.EASYPAY_CONFIRM_URL,
+            "post_back_url": (
+                "https://www.zafium.com/"
+                "payment/easypay/result/"
+            ),
+        },
+    )
+
+
+def easypay_start(request, order_id):
+
+    order = get_object_or_404(
+        Order.objects.select_related("client"),
+        pk=order_id,
+    )
+
+    # Don't allow already-paid orders to start
+    # another payment.
+    if order.payment_status == "paid":
+        return redirect(
+            "core:payment_success",
+            order_id=order.id,
+        )
+
+    # Generate an expiry time.
+    expiry_date = (
+        timezone.now() + timedelta(minutes=30)
+    ).strftime("%Y%m%d %H%M%S")
+
+    # Easypaisa requires amount with ONE decimal
+    # place for merchantHashedReq.
+    amount = f"{order.total_amount:.1f}"
+
+    post_back_url = request.build_absolute_uri(
+        "/payment/easypay/callback/"
+    )
+
+    hash_fields = {
+        "amount": amount,
+        "storeId": str(settings.EASYPAY_STORE_ID),
+        "autoRedirect": "0",
+        "orderRefNum": order.easypay_order_ref,
+        "expiryDate": expiry_date,
+        "postBackURL": post_back_url,
+    }
+
+    merchant_hashed_req = generate_easypay_hash(
+        hash_fields
+    )
+
+    print(merchant_hashed_req)
+
+    return render(
+        request,
+        "easypay_redirect.html",
+        {
+            "easypay_url": settings.EASYPAY_INDEX_URL,
+
+            "store_id":
+                settings.EASYPAY_STORE_ID,
+
+            "amount": amount,
+
+            "post_back_url":
+                post_back_url,
+
+            "order_ref_num":
+                order.easypay_order_ref,
+
+            "expiry_date":
+                expiry_date,
+
+            "merchant_hashed_req":
+                merchant_hashed_req,
+
+            "auto_redirect": "0",
+
+            "payment_method":
+                "CC_PAYMENT_METHOD",
+        },
+    )
 
 
 def place_order(request):
@@ -831,6 +894,8 @@ def place_order(request):
         payment_method=payment_method,
         description=description,
     )
+    
+    order.easypay_order_ref = f"ZAF-{order.id}-{uuid.uuid4().hex[:12].upper()}"
 
     for attachment in attachments:
         OrderAttachment.objects.create(
@@ -855,33 +920,11 @@ def place_order(request):
 
     request.session["order_id"] = order.id
 
-    # del request.session["checkout"]
-
-    transaction = create_paddle_transaction(order)
-
-    pprint.pprint(transaction)
-
-    if not transaction["success"]:
-
-        print(transaction["response"])     # Optional for debugging
-
-        messages.error(
-            request,
-            transaction["message"],
-        )
-
-        return redirect("core:checkout")
-
-    order.paddle_transaction_id = transaction["transaction_id"]
     order.save()
 
-    return render(
-        request,
-        "payment.html",
-        {
-            "transaction_id": transaction["transaction_id"],
-            "paddle_client_token": settings.PADDLE_CLIENT_TOKEN,
-        },
+    return redirect(
+        "core:easypay_start",
+        order_id=order.id,
     )
 
 

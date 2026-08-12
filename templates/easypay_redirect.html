@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting to Easypaisa</title>
+</head>
+
+<body>
+
+    <p>
+        Redirecting you to Easypaisa secure payment...
+    </p>
+
+    <form id="easypay-form" action="{{ easypay_url }}" method="post">
+	 	 <input name="storeId" value="{{ store_id }}" type="hidden" />
+	 	 <input name="postBackURL" value="{{ post_back_url }}" type="hidden" />
+	 	 <input name="autoRedirect" value="{{ auto_redirect }}" type="hidden" />
+		 <input name="orderRefNum" value="{{ order_ref_num }}" type="hidden" readOnly="true" />
+		 <input name="amount" value="{{ amount }}" type="hidden" readOnly="true" />
+         <input type="hidden" name="expiryDate" value="{{ expiry_date }}">
+		 <input name="merchantHashedReq" value="{{ merchant_hashed_req }}" type="hidden" readOnly="true" />
+         <!-- <input value="proceed to checkhout" type="submit" class="button" name="pay" /> -->
+	</form>
+
+    <script>
+        document.getElementById("easypay-form").submit();
+    </script>
+
+</body>
+</html>
