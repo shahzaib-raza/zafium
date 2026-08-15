@@ -129,13 +129,16 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
+
+EMAIL_HOST = "mail.privateemail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "zafium.tech@gmail.com"
-EMAIL_HOST_PASSWORD = "sremsaebodpkqqtz"
+
+EMAIL_HOST_USER = "info@zafium.com"
+EMAIL_HOST_PASSWORD = "YOUR_INFO_ZAFIUM_EMAIL_PASSWORD"
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = "info@zafium.com"
 
 
 EASYPAY_HASH_KEY = os.environ['EASYPAY_HASH_KEY']
