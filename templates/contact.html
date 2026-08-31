@@ -3,6 +3,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/contact.css' %}">
+<link rel="preconnect" href="https://challenges.cloudflare.com"/>
 {% endblock %}
 
 {% block canonical %}
@@ -137,6 +138,7 @@
                                 type="text"
                                 name="name"
                                 placeholder="John Doe"
+                                pattern="[A-Za-z ]+"
                             >
 
                         </div>
@@ -163,9 +165,10 @@
                             <label>Phone</label>
 
                             <input
-                                type="text"
+                                type="tel"
                                 name="phone"
-                                placeholder="+1 555 555 555"
+                                placeholder="+1555555555"
+                                pattern="^\+?[0-9]*$"
                             >
 
                         </div>
@@ -213,6 +216,14 @@
                         ></textarea>
 
                     </div>
+
+                    <div
+                        class="cf-turnstile"
+                        data-sitekey="{{ CF_SITE_KEY }}"
+                        data-theme="dark"
+                        data-size="normal"
+                        data-callback="onSuccess"
+                    ></div>
 
 
                     <button
@@ -564,6 +575,12 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 </script>
+
+<script
+	src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+	async
+	defer
+></script>
 
 {% if messages %}
 <script>

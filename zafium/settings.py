@@ -145,3 +145,6 @@ EASYPAY_HASH_KEY = os.environ['EASYPAY_HASH_KEY']
 EASYPAY_STORE_ID = os.environ['EASYPAY_STORE_ID']
 EASYPAY_INDEX_URL = os.environ['EASYPAY_INDEX_URL']
 EASYPAY_CONFIRM_URL = os.environ['EASYPAY_CONFIRM_URL']
+
+CF_SITE_KEY = os.environ['cf_site_key']
+CF_SECRET_KEY = os.environ['cf_secret_key']

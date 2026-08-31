@@ -40,6 +40,7 @@ import numpy as np
 from collections import defaultdict, Counter
 from plotly.offline import plot
 from .api_call import get_data_pw, millify
+import requests
 from plotly import subplots
 import plotly.graph_objs as go
 
@@ -128,28 +129,65 @@ def robots_txt(request):
     )
 
 
+def validate_turnstile(token, secret, remoteip=None):
+    url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
+
+    data = {
+        'secret': secret,
+        'response': token
+    }
+
+    if remoteip:
+        data['remoteip'] = remoteip
+
+    try:
+        response = requests.post(url, data=data, timeout=10)
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as e:
+        print(f"Turnstile validation error: {e}")
+        return {'success': False, 'error-codes': ['internal-error']}
+
+
 def contact(request):
 
     if request.method == "POST":
 
         form = ContactForm(request.POST)
 
-        if form.is_valid():
+        token = request.POST.get("cf-turnstile-response")
 
-            send_contact_email(form)
-
-            messages.success(
+        if not token:
+            messages.error(
                 request,
-                "Your message has been sent successfully. We'll get back to you within 24 hours."
+                "Please complete the CAPTCHA verification."
             )
-
             return redirect("core:contact")
 
-        # Form is invalid
-        for field, errors in form.errors.items():
-            for error in errors:
-                messages.error(request, error)
+        result = validate_turnstile(
+            token,
+            settings.CF_SECRET_KEY,
+        )
 
+        if not result.get("success"):
+            messages.error(request, "Failed to validate captcha")
+            return redirect("core:contact")
+        else:
+            if form.is_valid():
+
+                send_contact_email(form)
+
+                messages.success(
+                    request,
+                    "Your message has been sent successfully. We'll get back to you within 24 hours."
+                )
+
+                return redirect("core:contact")
+
+            # Form is invalid
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, error)
     else:
         form = ContactForm()
 
@@ -158,6 +196,7 @@ def contact(request):
         "contact.html",
         {
             "form": form,
+            'CF_SITE_KEY': settings.CF_SITE_KEY
         },
     )
 
