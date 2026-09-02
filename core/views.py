@@ -254,6 +254,16 @@ def orders_activity(request):
         .order_by("-order__created_at")
     )
 
+    try:
+        active_count = int(active_count)
+    except:
+        active_count = 0
+
+    try:
+        completed_count = int(completed_count)
+    except:
+        completed_count = 0
+
     context = {
         "active_count": active_count,
         "completed_count": completed_count,

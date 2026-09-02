@@ -127,6 +127,14 @@ console.log("COUNTER SCRIPT LOADED");
             counters.forEach(counter => {
 
                 const target = parseInt(counter.getAttribute("data-target")) || 0;
+
+                // If target is 0, simply display 0
+                if (target <= 0) {
+                    counter.innerText = "0";
+                    return;
+                }
+
+
                 let count = 0;
 
                 const duration = 1500; // total animation time in ms
