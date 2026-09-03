@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Invalid Verification Link | Zafium{% endblock %}
+
+{% block content %}
+
+<section>
+    <div class="container">
+
+        <div style="max-width: 600px; margin: 0 auto;">
+
+            <div class="card" style="text-align: center;">
+
+                <div style="font-size: 55px; margin-bottom: 20px;">
+                    ⚠️
+                </div>
+
+                <div class="section-heading" style="margin-bottom: 25px;">
+
+                    <span>VERIFICATION FAILED</span>
+
+                    <h2>Invalid Verification Link</h2>
+
+                </div>
+
+                <p style="margin-bottom: 20px;">
+                    This email verification link is invalid or has
+                    expired.
+                </p>
+
+                <p style="margin-bottom: 30px;">
+                    Please make sure you are using the complete
+                    verification link from your email.
+                </p>
+
+                <a
+                    href="{% url 'core:login' %}"
+                    class="btn-primary"
+                >
+                    Go to Sign In
+                </a>
+
+                <div style="margin-top: 20px;">
+
+                    <a
+                        href="{% url 'core:signup' %}"
+                        class="btn-secondary"
+                    >
+                        Create New Account
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

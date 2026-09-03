@@ -129,27 +129,37 @@ urlpatterns = [
     path("robots.txt", robots_txt),
 
     path(
-        "dashboard/<uuid:token>/",
+        "dashboard/",
         dashboard,
         name="dashboard"
     ),
 
     path(
-        "dashboard/<uuid:token>/order/<int:order_id>/",
+        "dashboard/order/<int:order_id>/",
         order_detail,
         name="order_detail"
     ),
 
     path(
-        "dashboard/<uuid:token>/order/<int:order_id>/review/",
+        "dashboard/order/<int:order_id>/review/",
         submit_review,
         name="submit_review"
     ),
 
     path(
-        "dashboard/<uuid:token>/order/<int:order_id>/revision/",
+        "dashboard/order/<int:order_id>/revision/",
         request_revision,
         name="request_revision",
     ),
+
+    path("signup/", signup, name="signup"),
+    path("login/", login_view, name="login"),
+    path("logout/", logout_view, name="logout"),
+    path(
+        "verify/<uidb64>/<token>/",
+        verify_email,
+        name="verify_email",
+    ),
+    path("account/", account, name="account"),
     
 ]

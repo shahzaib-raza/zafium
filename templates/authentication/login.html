@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In | Zafium{% endblock %}
+
+{% block content %}
+
+<section>
+    <div class="container">
+
+        <div style="max-width: 500px; margin: 0 auto;">
+
+            <div class="section-heading">
+
+                <span>WELCOME BACK</span>
+
+                <h2>Sign In to <span class="gradient-text">Zafium</span></h2>
+
+                <p>
+                    Access your account, projects, and services.
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                {% if error %}
+                    <div
+                        style="
+                            margin-bottom: 20px;
+                            padding: 14px;
+                            border-radius: var(--radius);
+                            border: 1px solid var(--border);
+                            background: rgba(239, 68, 68, 0.10);
+                            color: #fca5a5;
+                        "
+                    >
+                        {{ error }}
+                    </div>
+                {% endif %}
+
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+                    {% if next %}
+                        <input
+                            type="hidden"
+                            name="next"
+                            value="{{ next }}"
+                        >
+                    {% endif %}
+
+
+                    <div style="margin-bottom: 20px;">
+
+                        <label for="email">
+                            Email Address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value="{{ email|default:'' }}"
+                            required
+                            autocomplete="email"
+                            autofocus
+                            style="
+                                width: 100%;
+                                padding: 12px 14px;
+                                border-radius: 10px;
+                                border: 1px solid var(--border);
+                                background: rgba(255,255,255,0.04);
+                                color: var(--text);
+                                outline: none;
+                            "
+                        >
+
+                    </div>
+
+
+                    <div style="margin-bottom: 25px;">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            required
+                            autocomplete="current-password"
+                            style="
+                                width: 100%;
+                                padding: 12px 14px;
+                                border-radius: 10px;
+                                border: 1px solid var(--border);
+                                background: rgba(255,255,255,0.04);
+                                color: var(--text);
+                                outline: none;
+                            "
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                        style="width: 100%; border: none; cursor: pointer;"
+                    >
+                        Sign In
+                    </button>
+
+                </form>
+
+
+                <div
+                    style="
+                        margin-top: 25px;
+                        padding-top: 20px;
+                        border-top: 1px solid var(--border);
+                        text-align: center;
+                    "
+                >
+
+                    <p>
+                        Don't have an account?
+                    </p>
+
+                    <a
+                        href="{% url 'core:signup' %}"
+                        class="btn-secondary"
+                    >
+                        Create Account
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

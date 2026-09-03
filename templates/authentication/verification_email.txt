@@ -1,0 +1,15 @@
+Hello {{ user.first_name }},
+
+Thank you for creating your Zafium account.
+
+Please verify your email address by clicking the link below:
+
+{{ verification_url }}
+
+This link is used to verify your email address and activate your Zafium account.
+
+If you did not create a Zafium account, you can safely ignore this email.
+
+Regards,
+Zafium
+https://www.zafium.com

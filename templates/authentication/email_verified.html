@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Email Verified | Zafium{% endblock %}
+
+{% block content %}
+
+<section>
+    <div class="container">
+
+        <div style="max-width: 600px; margin: 0 auto;">
+
+            <div class="card" style="text-align: center;">
+
+                <div style="font-size: 55px; margin-bottom: 20px;">
+                    ✓
+                </div>
+
+                <div class="section-heading" style="margin-bottom: 25px;">
+
+                    <span>VERIFICATION COMPLETE</span>
+
+                    <h2>Email Verified</h2>
+
+                </div>
+
+                <p style="margin-bottom: 25px;">
+                    Your email address has been successfully verified.
+                    Your Zafium account is now active.
+                </p>
+
+                <p style="margin-bottom: 30px;">
+                    You can now sign in and access your account.
+                </p>
+
+                <a
+                    href="{% url 'core:login' %}"
+                    class="btn-primary"
+                >
+                    Sign In
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

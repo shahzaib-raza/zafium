@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up | Zafium{% endblock %}
+
+{% block content %}
+
+<section>
+    <div class="container">
+
+        <div style="max-width: 500px; margin: 0 auto;">
+
+            <div class="section-heading">
+                <span>CREATE ACCOUNT</span>
+                <h2>Join <span class="gradient-text">Zafium</span></h2>
+                <p>
+                    Create your free account to access Zafium's
+                    tools, projects, and services.
+                </p>
+            </div>
+
+            <div class="card">
+
+                {% if error %}
+                    <div
+                        style="
+                            margin-bottom: 20px;
+                            padding: 14px;
+                            border-radius: var(--radius);
+                            border: 1px solid var(--border);
+                            background: rgba(239, 68, 68, 0.10);
+                            color: #fca5a5;
+                        "
+                    >
+                        {{ error }}
+                    </div>
+                {% endif %}
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+                    <div style="margin-bottom: 18px;">
+                        <label for="first_name">
+                            First Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="first_name"
+                            name="first_name"
+                            value="{{ first_name|default:'' }}"
+                            required
+                            autocomplete="given-name"
+                            style="
+                                width: 100%;
+                                padding: 12px 14px;
+                                border-radius: 10px;
+                                border: 1px solid var(--border);
+                                background: rgba(255,255,255,0.04);
+                                color: var(--text);
+                                outline: none;
+                            "
+                        >
+                    </div>
+
+
+                    <div style="margin-bottom: 18px;">
+                        <label for="last_name">
+                            Last Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="last_name"
+                            name="last_name"
+                            value="{{ last_name|default:'' }}"
+                            required
+                            autocomplete="family-name"
+                            style="
+                                width: 100%;
+                                padding: 12px 14px;
+                                border-radius: 10px;
+                                border: 1px solid var(--border);
+                                background: rgba(255,255,255,0.04);
+                                color: var(--text);
+                                outline: none;
+                            "
+                        >
+                    </div>
+
+
+                    <div style="margin-bottom: 18px;">
+                        <label for="email">
+                            Email Address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value="{{ email|default:'' }}"
+                            required
+                            autocomplete="email"
+                            style="
+                                width: 100%;
+                                padding: 12px 14px;
+                                border-radius: 10px;
+                                border: 1px solid var(--border);
+                                background: rgba(255,255,255,0.04);
+                                color: var(--text);
+                                outline: none;
+                            "
+                        >
+                    </div>
+
+
+                    <div style="margin-bottom: 18px;">
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            required
+                            minlength="8"
+                            autocomplete="new-password"
+                            style="
+                                width: 100%;
+                                padding: 12px 14px;
+                                border-radius: 10px;
+                                border: 1px solid var(--border);
+                                background: rgba(255,255,255,0.04);
+                                color: var(--text);
+                                outline: none;
+                            "
+                        >
+                    </div>
+
+
+                    <div style="margin-bottom: 24px;">
+                        <label for="password_confirm">
+                            Confirm Password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="password_confirm"
+                            name="password_confirm"
+                            required
+                            minlength="8"
+                            autocomplete="new-password"
+                            style="
+                                width: 100%;
+                                padding: 12px 14px;
+                                border-radius: 10px;
+                                border: 1px solid var(--border);
+                                background: rgba(255,255,255,0.04);
+                                color: var(--text);
+                                outline: none;
+                            "
+                        >
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                        style="width: 100%; border: none; cursor: pointer;"
+                    >
+                        Create Account
+                    </button>
+
+                </form>
+
+
+                <div
+                    style="
+                        margin-top: 25px;
+                        padding-top: 20px;
+                        border-top: 1px solid var(--border);
+                        text-align: center;
+                    "
+                >
+                    <p>
+                        Already have an account?
+                    </p>
+
+                    <a
+                        href="{% url 'core:login' %}"
+                        class="btn-secondary"
+                    >
+                        Sign In
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

@@ -2,7 +2,9 @@ from django.contrib import admin
 from django.utils import timezone
 
 from .models import (
-    Client,
+    UserProfile,
+    ProjectUsageSettings,
+    ProjectUsage,
     PortfolioItem,
     PortfolioMedia,
     PortfolioCategory,
@@ -30,20 +32,87 @@ class PortfolioSubCategoryAdmin(admin.ModelAdmin):
     list_display = ("name", "category")
     prepopulated_fields = {"slug": ("name",)}
 
-@admin.register(Client)
-class ClientAdmin(admin.ModelAdmin):
-
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
     list_display = (
-        "name",
+        "user",
         "email",
+        "plan",
         "phone",
+        "country",
+        "company",
+        "created_at",
+    )
+
+    list_filter = (
+        "plan",
+        "country",
         "created_at",
     )
 
     search_fields = (
-        "name",
-        "email",
+        "user__username",
+        "user__email",
+        "user__first_name",
+        "user__last_name",
         "phone",
+        "company",
+    )
+
+    readonly_fields = (
+        "created_at",
+    )
+
+    @admin.display(description="Email")
+    def email(self, obj):
+        return obj.user.email
+
+@admin.register(ProjectUsageSettings)
+class ProjectUsageSettingsAdmin(admin.ModelAdmin):
+    list_display = (
+        "free_daily_limit",
+        "paid_daily_limit",
+        "updated_at",
+    )
+
+    readonly_fields = (
+        "updated_at",
+    )
+
+    def has_add_permission(self, request):
+        # Only allow one settings record
+        return not ProjectUsageSettings.objects.exists()
+
+
+@admin.register(ProjectUsage)
+class ProjectUsageAdmin(admin.ModelAdmin):
+    list_display = (
+        "identity_key",
+        "project",
+        "date",
+        "count",
+    )
+
+    list_filter = (
+        "project",
+        "date",
+    )
+
+    search_fields = (
+        "identity_key",
+        "project",
+    )
+
+    readonly_fields = (
+        "identity_key",
+        "project",
+        "date",
+        "count",
+    )
+
+    ordering = (
+        "-date",
+        "-count",
     )
 
 @admin.register(OrderItem)
@@ -106,7 +175,7 @@ class OrderDeliveryInline(admin.TabularInline):
     fields = (
         "title",
         "file",
-        "visible_to_client",
+        "visible_to_user",
         "uploaded_at",
     )
 
@@ -124,7 +193,7 @@ class OrderAdmin(admin.ModelAdmin):
 
     list_display = (
         "id",
-        "client",
+        "user",
         "project_status",
         "progress",
         "payment_status",
@@ -147,14 +216,14 @@ class OrderAdmin(admin.ModelAdmin):
     )
 
     search_fields = (
-        "client__name",
-        "client__email",
-        "client__phone",
+        "user__name",
+        "user__email",
+        "user__phone",
         "easypay_order_ref",
     )
 
     autocomplete_fields = (
-        "client",
+        "user",
     )
 
     readonly_fields = (
@@ -167,7 +236,7 @@ class OrderAdmin(admin.ModelAdmin):
             "Order Information",
             {
                 "fields": (
-                    "client",
+                    "user",
                     "description",
                 )
             },
@@ -221,7 +290,7 @@ class OrderAdmin(admin.ModelAdmin):
     ]
 
     def __str__(self):
-        return f"Order #{self.id} - {self.client.name} "
+        return f"Order #{self.id} - {self.user.name} "
     
 
 @admin.register(OrderDelivery)
@@ -230,20 +299,20 @@ class OrderDeliveryAdmin(admin.ModelAdmin):
     list_display = (
         "title",
         "order",
-        "visible_to_client",
+        "visible_to_user",
         "uploaded_at",
     )
 
     list_filter = (
-        "visible_to_client",
+        "visible_to_user",
         "uploaded_at",
     )
 
     search_fields = (
         "title",
         "order__id",
-        "order__client__name",
-        "order__client__email",
+        "order__user__name",
+        "order__user__email",
     )
 
 
@@ -253,7 +322,7 @@ class OrderRevisionAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "order",
-        "client",
+        "user",
         "status",
         "created_at",
         "resolved_at",
@@ -266,8 +335,8 @@ class OrderRevisionAdmin(admin.ModelAdmin):
 
     search_fields = (
         "order__id",
-        "order__client__name",
-        "order__client__email",
+        "order__user__name",
+        "order__user__email",
         "message",
     )
 
@@ -304,10 +373,10 @@ class OrderRevisionAdmin(admin.ModelAdmin):
 
     )
 
-    def client(self, obj):
-        return obj.order.client.name
+    def user(self, obj):
+        return obj.order.user.name
 
-    client.short_description = "Client"
+    user.short_description = "UserProfile"
 
     def save_model(self, request, obj, form, change):
 

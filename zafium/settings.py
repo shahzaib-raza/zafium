@@ -148,3 +148,8 @@ EASYPAY_CONFIRM_URL = os.environ['EASYPAY_CONFIRM_URL']
 
 CF_SITE_KEY = os.environ['cf_site_key']
 CF_SECRET_KEY = os.environ['cf_secret_key']
+
+LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = "/account/"
+LOGOUT_REDIRECT_URL = "/login/"
+

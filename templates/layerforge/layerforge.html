@@ -23,6 +23,8 @@
     <span class="byline">by zafium</span>
 </h2>
 
+<div id="alert" class="alert"></div>
+
 <div class="app">
 
     <!-- CONTROLS -->
@@ -69,6 +71,29 @@
 
 {% block extra_js %}
 <script src="{% static 'js/layerforge.js' %}"></script>
+
+<script>
+
+function showUsageLimitAlert() {
+    const alertBox = document.getElementById("alert");
+
+    alertBox.innerText =
+        "⚠️Usage limit exceeded⚠️\nYou have reached your daily " +
+        "LayerForge usage limit. Please purchase a plan " +
+        "or wait 24 hours for your limit to reset.";
+
+    alertBox.classList.add("show");
+}
+
+
+{% if usage_limit_exceeded %}
+document.addEventListener("DOMContentLoaded", function () {
+    showUsageLimitAlert();
+});
+{% endif %}
+
+</script>
+
 {% endblock %}
 
 

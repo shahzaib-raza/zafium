@@ -81,6 +81,43 @@
                 </a>
             </li>
             {% endif %}
+            {% if user.is_authenticated %}
+
+            <li class="dropdown">
+                <a href="#">
+                    {{ user.first_name|default:user.username }}
+                </a>
+
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="{% url 'core:account' %}">
+                            My Account
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'core:logout' %}">
+                            Sign Out
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+        {% else %}
+
+            <li>
+                <a href="{% url 'core:login' %}">
+                    Sign In
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'core:signup' %}">
+                    Sign Up
+                </a>
+            </li>
+
+        {% endif %}
 
         </ul>
 

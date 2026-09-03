@@ -24,7 +24,8 @@ from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 import os,uuid
 from .utils import _img_array_to_svg
-from .models import PortfolioItem, PortfolioCategory, PortfolioSubCategory, Order, OrderItem, OrderReview, Client, OrderRevision, OrderAttachment
+from .models import PortfolioItem, PortfolioCategory, PortfolioSubCategory, Order, OrderItem, OrderReview, OrderRevision, OrderAttachment, UserProfile
+from django.db import models
 
 from django.views.decorators.http import require_POST
 
@@ -43,6 +44,19 @@ from .api_call import get_data_pw, millify
 import requests
 from plotly import subplots
 import plotly.graph_objs as go
+
+from core.services.project_usage import consume_project_usage
+from .decorators import project_usage_required
+
+from .models import UserProfile
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.urls import reverse
+from django.db import transaction
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.contrib.auth.tokens import default_token_generator
 
 def get_int(x):
     try:
@@ -246,7 +260,7 @@ def orders_activity(request):
         OrderReview.objects
         .select_related(
             "order",
-            "order__client",
+            "order__user",
         )
         .filter(
             approved=True,
@@ -296,31 +310,381 @@ def pricing(request):
 
 # ____________________________________________________________________________________________________________
 
-def dashboard(request, token):
 
-    client = get_object_or_404(
-        Client,
-        access_token=token
+def signup(request):
+
+    if request.user.is_authenticated:
+        return redirect("core:account")
+
+    if request.method == "POST":
+
+        first_name = request.POST.get("first_name", "").strip()
+        last_name = request.POST.get("last_name", "").strip()
+        email = request.POST.get("email", "").strip().lower()
+        password = request.POST.get("password", "")
+        password_confirm = request.POST.get("password_confirm", "")
+
+        # -------------------------
+        # VALIDATION
+        # -------------------------
+
+        if not first_name or not last_name or not email:
+            return render(
+                request,
+                "authentication/signup.html",
+                {
+                    "error": "Please fill in all required fields."
+                }
+            )
+
+        if password != password_confirm:
+            return render(
+                request,
+                "authentication/signup.html",
+                {
+                    "error": "Passwords do not match.",
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "email": email,
+                }
+            )
+
+        if len(password) < 8:
+            return render(
+                request,
+                "authentication/signup.html",
+                {
+                    "error": "Password must be at least 8 characters long.",
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "email": email,
+                }
+            )
+
+        if User.objects.filter(email=email).exists():
+            return render(
+                request,
+                "authentication/signup.html",
+                {
+                    "error": "An account with this email already exists.",
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "email": email,
+                }
+            )
+
+        # -------------------------
+        # CREATE USER
+        # -------------------------
+
+        with transaction.atomic():
+
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+            )
+
+            # Account cannot log in until email is verified
+            user.is_active = False
+            user.save(update_fields=["is_active"])
+
+            # Every new account starts as FREE
+            UserProfile.objects.create(
+                user=user,
+                plan=UserProfile.Plan.FREE,
+            )
+
+        # -------------------------
+        # VERIFICATION EMAIL
+        # -------------------------
+
+        uid = urlsafe_base64_encode(
+            force_bytes(user.pk)
+        )
+
+        token = default_token_generator.make_token(user)
+
+        verification_url = request.build_absolute_uri(
+            reverse(
+                "core:verify_email",
+                kwargs={
+                    "uidb64": uid,
+                    "token": token,
+                }
+            )
+        )
+
+        subject = "Verify your Zafium account"
+
+        context = {
+            "user": user,
+            "verification_url": verification_url,
+        }
+
+        text_message = render_to_string(
+            "authentication/verification_email.txt",
+            context,
+        )
+
+        html_message = render_to_string(
+            "authentication/verification_email.html",
+            context,
+        )
+
+        email = EmailMultiAlternatives(
+            subject="Verify your Zafium account",
+            body=text_message,
+            from_email=None,
+            to=[user.email],
+        )
+
+        email.attach_alternative(
+            html_message,
+            "text/html",
+        )
+
+        email.send(fail_silently=False)
+
+        return render(
+            request,
+            "authentication/check_email.html",
+            {
+                "email": user.email
+            }
+        )
+
+    return render(
+        request,
+        "authentication/signup.html"
     )
 
+
+def login_view(request):
+
+    if request.user.is_authenticated:
+        return redirect("core:account")
+
+    if request.method == "POST":
+
+        email = request.POST.get("email", "").strip().lower()
+        password = request.POST.get("password", "")
+
+        user = authenticate(
+            request,
+            username=email,
+            password=password,
+        )
+
+        if user is None:
+
+            # Check whether the email exists but is not verified
+            existing_user = User.objects.filter(
+                email=email
+            ).first()
+
+            if existing_user and not existing_user.is_active:
+
+                return render(
+                    request,
+                    "authentication/login.html",
+                    {
+                        "error":
+                            "Please verify your email address "
+                            "before signing in."
+                    }
+                )
+
+            return render(
+                request,
+                "authentication/login.html",
+                {
+                    "error":
+                        "Invalid email address or password.",
+                    "email": email,
+                }
+            )
+
+        login(request, user)
+
+        next_url = request.POST.get("next")
+
+        if next_url:
+            return redirect(next_url)
+
+        return redirect("core:account")
+
+    next_url = request.GET.get("next", "")
+
+    return render(
+        request,
+        "authentication/login.html",
+        {
+            "next": next_url
+        }
+    )
+
+
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect("core:account")
+
+    if request.method == "POST":
+        email = request.POST.get("email", "").strip().lower()
+        password = request.POST.get("password", "")
+
+        user = User.objects.filter(email=email).first()
+
+        if user is None:
+            return render(
+                request,
+                "authentication/login.html",
+                {
+                    "error": "Invalid email address or password.",
+                    "email": email,
+                }
+            )
+
+        if not user.is_active:
+            return render(
+                request,
+                "authentication/login.html",
+                {
+                    "error": "Please verify your email address before signing in.",
+                    "email": email,
+                }
+            )
+
+        authenticated_user = authenticate(
+            request,
+            username=user.username,
+            password=password,
+        )
+
+        if authenticated_user is None:
+            return render(
+                request,
+                "authentication/login.html",
+                {
+                    "error": "Invalid email address or password.",
+                    "email": email,
+                }
+            )
+
+        login(request, authenticated_user)
+
+        next_url = request.POST.get("next")
+
+        if next_url:
+            return redirect(next_url)
+
+        return redirect("core:account")
+
+    next_url = request.GET.get("next", "")
+
+    return render(
+        request,
+        "authentication/login.html",
+        {
+            "next": next_url,
+        }
+    )
+
+
+@login_required
+def logout_view(request):
+
+    logout(request)
+
+    return redirect("core:login")
+
+
+def verify_email(request, uidb64, token):
+
+    if request.user.is_authenticated:
+        return redirect("core:account")
+
+    try:
+
+        uid = force_str(
+            urlsafe_base64_decode(uidb64)
+        )
+
+        user = User.objects.get(pk=uid)
+
+    except (
+        TypeError,
+        ValueError,
+        OverflowError,
+        User.DoesNotExist,
+    ):
+
+        user = None
+
+    if user is not None and default_token_generator.check_token(
+        user,
+        token
+    ):
+
+        if not user.is_active:
+
+            user.is_active = True
+
+            user.save(
+                update_fields=["is_active"]
+            )
+
+        return render(
+            request,
+            "authentication/email_verified.html"
+        )
+
+    return render(
+        request,
+        "authentication/verification_invalid.html"
+    )
+
+
+@login_required
+def account(request):
+
+    user = request.user
+
+    profile = getattr(
+        user,
+        "profile",
+        None
+    )
+
+    return render(
+        request,
+        "authentication/account.html",
+        {
+            "user": user,
+            "profile": profile,
+        }
+    )
+
+# ____________________________________________________________________________________________________________
+
+@login_required
+def dashboard(request):
+
     orders = (
-        client.orders
+        request.user.orders
         .prefetch_related(
             "items__subcategory",
-            "review"
+            "review",
         )
         .order_by("-created_at")
     )
 
     order_id = request.GET.get("order_id")
 
-    orders = Order.objects.filter(client=client)
-
     if order_id:
         orders = orders.filter(id=order_id)
-
-    if not orders.exists():
-        raise Http404("Dashboard not found.")
 
     active_orders = orders.exclude(
         project_status__in=[
@@ -341,24 +705,19 @@ def dashboard(request, token):
         request,
         "dashboard.html",
         {
-            "client": client,
+            "user": request.user,
             "orders": orders,
             "active_orders": active_orders,
             "completed_orders": completed_orders,
-            "dashboard_token": client.access_token,
         }
     )
 
+@login_required
+def order_detail(request, order_id):
 
-def order_detail(request, token, order_id):
-
-    client = get_object_or_404(
-        Client,
-        access_token=token
-    )
 
     order = get_object_or_404(
-        client.orders.prefetch_related(
+        request.user.orders.prefetch_related(
             "items__subcategory",
             "review",
             "deliveries",
@@ -370,23 +729,18 @@ def order_detail(request, token, order_id):
         request,
         "order_detail.html",
         {
-            "client": client,
+            "client": request.user,
             "order": order,
-            "dashboard_token": client.access_token,
         }
     )
 
 
+@login_required
 @require_POST
-def submit_review(request, token, order_id):
-
-    client = get_object_or_404(
-        Client,
-        access_token=token
-    )
+def submit_review(request, order_id):
 
     order = get_object_or_404(
-        client.orders,
+        request.user.orders,
         id=order_id
     )
 
@@ -401,7 +755,6 @@ def submit_review(request, token, order_id):
 
         return redirect(
             "core:order_detail",
-            token=client.access_token,
             order_id=order.id
         )
 
@@ -413,7 +766,6 @@ def submit_review(request, token, order_id):
 
         return redirect(
             "core:order_detail",
-            token=client.access_token,
             order_id=order.id
         )
 
@@ -431,22 +783,17 @@ def submit_review(request, token, order_id):
 
     return redirect(
         "core:order_detail",
-        token=client.access_token,
         order_id=order.id
     )
 
+@login_required
+def request_revision(request, order_id):
 
-def request_revision(request, token, order_id):
-
-    client = get_object_or_404(
-        Client,
-        access_token=token
-    )
 
     order = get_object_or_404(
         Order,
         id=order_id,
-        client=client,
+        user=request.user,
     )
 
     # Only allow revisions after delivery
@@ -459,7 +806,6 @@ def request_revision(request, token, order_id):
 
         return redirect(
             "core:order_detail",
-            token=token,
             order_id=order.id,
         )
 
@@ -473,7 +819,6 @@ def request_revision(request, token, order_id):
 
         return redirect(
             "core:order_detail",
-            token=token,
             order_id=order.id,
         )
 
@@ -489,7 +834,6 @@ def request_revision(request, token, order_id):
 
         return redirect(
             "core:order_detail",
-            token=token,
             order_id=order.id,
         )
 
@@ -512,7 +856,6 @@ def request_revision(request, token, order_id):
                 "request_revision.html",
                 {
                     "order": order,
-                    "dashboard_token": token,
                 },
             )
 
@@ -535,7 +878,6 @@ def request_revision(request, token, order_id):
 
         return redirect(
             "core:order_detail",
-            token=token,
             order_id=order.id,
         )
 
@@ -544,7 +886,6 @@ def request_revision(request, token, order_id):
         "request_revision.html",
         {
             "order": order,
-            "dashboard_token": token,
         },
     )
 
@@ -569,7 +910,7 @@ def order(request):
 
 def send_order_emails(order):
 
-    client = order.client
+    user = order.user
 
     order_summary = ""
 
@@ -588,9 +929,9 @@ def send_order_emails(order):
         message=f"""
         New Order Received
 
-        Client: {client.name}
-        Email: {client.email}
-        Phone: {client.phone}
+        Client: {user.profile.name}
+        Email: {user.email}
+        Phone: {user.profile.phone}
 
         Items:
 
@@ -604,9 +945,6 @@ def send_order_emails(order):
 
         Total:
         PKR{order.total_amount}
-
-        Client Access Token: { client.access_token }
-        Client Dashboard URL: https://www.zafium.com/dashboard/{ client.access_token }/
         """,
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[settings.DEFAULT_FROM_EMAIL],
@@ -634,13 +972,13 @@ def send_order_emails(order):
         subject=f"Thank you for your order #{order.id}",
         body=text_content,
         from_email=settings.DEFAULT_FROM_EMAIL,
-        to=[client.email],
+        to=[user.profile.email],
     )
 
     email.attach_alternative(html_content, "text/html")
     email.send()
 
-
+@login_required
 def checkout(request):
 
     # User should only arrive here from order.html
@@ -835,7 +1173,7 @@ def easypay_callback(request):
 def easypay_start(request, order_id):
 
     order = get_object_or_404(
-        Order.objects.select_related("client"),
+        Order.objects.select_related("user"),
         pk=order_id,
     )
 
@@ -847,8 +1185,8 @@ def easypay_start(request, order_id):
             order_id=order.id,
         )
 
-    email = order.client.email
-    phone = order.client.phone
+    email = order.user.email
+    phone = order.user.profile.phone
 
     print(email)
     print(phone)
@@ -944,16 +1282,9 @@ def place_order(request):
     attachments = request.FILES.getlist("attachments")
     payment_method=payment_method
 
-    client, _ = Client.objects.get_or_create(
-        email=email,
-        defaults={
-            "name": name,
-            "phone": phone,
-        }
-    )
 
     order = Order.objects.create(
-        client=client,
+        user=request.user,
         payment_method=payment_method,
         description=description,
     )
@@ -1014,6 +1345,15 @@ def layerforge(request):
 
 @csrf_exempt
 def generate_svg(request):
+
+    
+    if not consume_project_usage(request, "layerforge"):
+        return HttpResponse(
+            "daily_limit_reached",
+            content_type="text/plain",
+            status=429
+        )
+
     try:
         uploaded = request.FILES["image"]
 
@@ -1086,7 +1426,20 @@ def autolytics_search(request):
         city = request.GET.get('city')
 
         if make is not None and model is not None and city is not None:
+
+            # Check and consume Autolytics quota
+            if not consume_project_usage(request, "autolytics"):
+                return render(
+                    request,
+                    "autolytics/autolytics.html",
+                    {
+                        "usage_limit_exceeded": True
+                    },
+                    status=429
+                )
+
             data = get_data_pw(mm, mn, ct)
+
         else:
             data = None
     if data is None:

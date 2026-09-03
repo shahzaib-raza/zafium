@@ -14,6 +14,63 @@ body.layerforge-page {
     background-attachment: fixed;
 }
 
+/* ALERT */
+.alert {
+    display: none;
+
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%) scale(0.92);
+
+    width: min(500px, 90%);
+    box-sizing: border-box;
+
+    padding: 14px;
+
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+
+    background: var(--card);
+    color: var(--text);
+
+    backdrop-filter: blur(10px);
+
+    z-index: 9999;
+
+    opacity: 0;
+
+    text-align: center;
+}
+
+
+/* SHOW ALERT */
+.alert.show {
+    display: block;
+
+    animation: alertPop 0.3s ease-out forwards;
+}
+
+
+/* POP + FADE EFFECT */
+@keyframes alertPop {
+
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-15px) scale(0.92);
+    }
+
+    60% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(3px) scale(1.02);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+    }
+}
+
 /* Title */
 
 .app-title {

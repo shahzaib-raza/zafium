@@ -19,8 +19,13 @@ body.autolytics-page {
 .alert {
     display: none;
 
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%) scale(0.92);
+
     width: min(500px, 90%);
-    margin: 0 auto 20px auto;
+    box-sizing: border-box;
 
     padding: 14px;
 
@@ -31,6 +36,39 @@ body.autolytics-page {
     color: var(--text);
 
     backdrop-filter: blur(10px);
+
+    z-index: 9999;
+
+    opacity: 0;
+
+    text-align: center;
+}
+
+
+/* SHOW ALERT */
+.alert.show {
+    display: block;
+
+    animation: alertPop 0.3s ease-out forwards;
+}
+
+/* ALERT POP ANIMATION */
+@keyframes alertPop {
+
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-15px) scale(0.92);
+    }
+
+    60% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(3px) scale(1.02);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+    }
 }
 
 .app-title {

@@ -46,19 +46,49 @@ function processImage() {
         formData.append(k, v)
     );
 
-    fetch("/generate/", { method: "POST", body: formData })
-        .then(res => res.text())
-        .then(svg => {
+    fetch("/generate/", {
+        method: "POST",
+        body: formData
+    })
+    .then(async res => {
+
+        // Daily quota exceeded
+        if (res.status === 429) {
+
             hideLoader();
-            currentSVG = svg;
-            svgWrapper.innerHTML = svg;
-            applyZoom();
-            downloadBtn.disabled = false;
-        })
-        .catch(() => {
-            hideLoader();
-            alert("SVG generation failed.");
-        });
+
+            showUsageLimitAlert();
+
+            return null;
+        }
+
+        // Other server errors
+        if (!res.ok) {
+            throw new Error("SVG generation failed.");
+        }
+
+        return res.text();
+    })
+    .then(svg => {
+
+        if (!svg) return;
+
+        hideLoader();
+
+        currentSVG = svg;
+
+        svgWrapper.innerHTML = svg;
+
+        applyZoom();
+
+        downloadBtn.disabled = false;
+    })
+    .catch(() => {
+
+        hideLoader();
+
+        alert("SVG generation failed.");
+    });
 }
 
 const debouncedProcess = debounce(processImage);

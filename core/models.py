@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 import uuid
 from django.utils import timezone
+from django.conf import settings
 
 # Create your models here.
 
@@ -149,28 +150,81 @@ class PortfolioMedia(models.Model):
     
 
 
-class Client(models.Model):
+class UserProfile(models.Model):
 
-    name = models.CharField(max_length=150)
+    class Plan(models.TextChoices):
+        FREE = "free", "Free"
+        PAID = "paid", "Paid"
 
-    email = models.EmailField(unique=True)
-
-    phone = models.CharField(max_length=20)
-
-    country = models.CharField(max_length=100, blank=True)
-
-    company = models.CharField(max_length=150, blank=True)
-
-    access_token = models.UUIDField(
-        default=uuid.uuid4,
-        unique=True,
-        editable=False
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="profile",
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    phone = models.CharField(
+        max_length=20,
+        blank=True,
+    )
+
+    country = models.CharField(
+        max_length=100,
+        blank=True,
+    )
+
+    company = models.CharField(
+        max_length=150,
+        blank=True,
+    )
+
+    plan = models.CharField(
+        max_length=20,
+        choices=Plan.choices,
+        default=Plan.FREE,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
 
     def __str__(self):
-        return f"{self.name} ({self.email})"
+        return f"{self.user.email} - {self.get_plan_display()}"
+
+
+class ProjectUsageSettings(models.Model):
+
+    free_daily_limit = models.PositiveIntegerField(
+        default=5
+    )
+
+    paid_daily_limit = models.PositiveIntegerField(
+        default=20
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    def __str__(self):
+        return "Project Usage Settings"
+
+
+class ProjectUsage(models.Model):
+    identity_key = models.CharField(max_length=255)
+    project = models.CharField(max_length=100)
+    date = models.DateField()
+    count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["identity_key", "project", "date"],
+                name="unique_daily_project_usage",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.identity_key} - {self.project} - {self.date}"
 
 
 class Order(models.Model):
@@ -197,10 +251,10 @@ class Order(models.Model):
         JAZZCASH = "jazzcash", "JazzCash"
         EASYPAISA = "easypaisa", "Easypaisa"
 
-    client = models.ForeignKey(
-        Client,
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="orders"
+        related_name="orders",
     )
 
     description = models.TextField(
@@ -285,7 +339,7 @@ class Order(models.Model):
         return self.revision_count < 3
 
     def __str__(self):
-        return f"Order #{self.pk} - {self.client.name}"
+        return f"Order #{self.id} - {self.user.email}"
 
 
 class OrderItem(models.Model):
@@ -372,7 +426,7 @@ class OrderReview(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"{self.order.client.name} ({self.rating}/5)"
+        return f"{self.order.user.name} ({self.rating}/5)"
 
 
 class OrderAttachment(models.Model):
@@ -413,7 +467,7 @@ class OrderDelivery(models.Model):
         upload_to="deliveries/%Y/%m/"
     )
 
-    visible_to_client = models.BooleanField(
+    visible_to_user = models.BooleanField(
         default=True
     )
 

@@ -91,10 +91,33 @@
 <script src="{% static 'js/autolytics.js' %}"></script>
 
 <script>
+
+function showUsageLimitAlert() {
+    const alertBox = document.getElementById("alert");
+
+    alertBox.innerText =
+        "⚠️Usage limit exceeded⚠️\nYou have reached your daily " +
+        "AutoLytics usage limit. Please purchase a plan " +
+        "or wait 24 hours for your limit to reset.";
+
+    alertBox.classList.add("show");
+}
+
+
+{% if usage_limit_exceeded %}
+document.addEventListener("DOMContentLoaded", function () {
+    showUsageLimitAlert();
+});
+{% endif %}
+
 function showAlert() {
     const alertBox = document.getElementById("alert");
-    alertBox.style.display = "block";
-    alertBox.innerText = "Sometimes it takes time to scrape data. Please be patient...";
+
+    alertBox.innerText =
+        "Sometimes it takes time to scrape data. Please be patient...";
+
+    alertBox.classList.add("show");
 }
+
 </script>
 {% endblock %}

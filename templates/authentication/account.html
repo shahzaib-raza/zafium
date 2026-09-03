@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}My Account | Zafium{% endblock %}
+
+{% block content %}
+
+<section>
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <span>ACCOUNT</span>
+
+            <h2>
+                Welcome,
+                <span class="gradient-text">
+                    {{ user.first_name|default:user.username }}
+                </span>
+            </h2>
+
+            <p>
+                Manage your Zafium account and access your services.
+            </p>
+
+        </div>
+
+
+        <div class="grid-2">
+
+            <!-- ACCOUNT INFORMATION -->
+
+            <div class="card">
+
+                <h3>Account Information</h3>
+
+                <div style="margin-top: 25px;">
+
+                    <p>
+                        <strong style="color: var(--text);">
+                            Name
+                        </strong>
+                    </p>
+
+                    <p style="margin-bottom: 18px;">
+                        {{ user.get_full_name|default:user.username }}
+                    </p>
+
+
+                    <p>
+                        <strong style="color: var(--text);">
+                            Email
+                        </strong>
+                    </p>
+
+                    <p style="margin-bottom: 18px; word-break: break-word;">
+                        {{ user.email }}
+                    </p>
+
+
+                    <p>
+                        <strong style="color: var(--text);">
+                            Plan
+                        </strong>
+                    </p>
+
+                    <p>
+                        {% if profile %}
+
+                            {{ profile.get_plan_display }}
+
+                        {% else %}
+
+                            Free
+
+                        {% endif %}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- QUICK ACTIONS -->
+
+            <div class="card">
+
+                <h3>Quick Actions</h3>
+
+                <div
+                    style="
+                        display: flex;
+                        flex-direction: column;
+                        gap: 12px;
+                        margin-top: 25px;
+                    "
+                >
+
+                    <a
+                        href="{% url 'core:dashboard'%}"
+                        class="btn-primary"
+                    >
+                        Client Dashboard
+                    </a>
+
+
+                    <a
+                        href="{% url 'core:pricing' %}"
+                        class="btn-secondary"
+                    >
+                        View Plans
+                    </a>
+
+
+                    <a
+                        href="{% url 'core:order' %}"
+                        class="btn-secondary"
+                    >
+                        Place an Order
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PROJECTS -->
+
+        <div style="margin-top: 30px;">
+
+            <div class="card">
+
+                <h3>Your Zafium Projects</h3>
+
+                <p style="margin-top: 8px;">
+                    Use Zafium's online tools and services directly
+                    from your account.
+                </p>
+
+                <div
+                    class="grid-2"
+                    style="margin-top: 25px;"
+                >
+
+                    <a
+                        href="{% url 'core:layerforge' %}"
+                        class="btn-secondary"
+                    >
+                        LayerForge
+                    </a>
+
+                    <a
+                        href="{% url 'core:autolytics' %}"
+                        class="btn-secondary"
+                    >
+                        AutoLytics
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SIGN OUT -->
+
+        <div
+            style="
+                margin-top: 30px;
+                text-align: center;
+            "
+        >
+
+            <a
+                href="{% url 'core:logout' %}"
+                class="btn-secondary"
+            >
+                Sign Out
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
