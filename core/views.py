@@ -245,7 +245,7 @@ def orders_activity(request):
         OrderReview.objects
         .select_related(
             "order",
-            "order__client",
+            "order__user",
         )
         .filter(
             approved=True,
