@@ -74,14 +74,12 @@
                     <li><a href="/refund-policy/">Refund Policy</a></li>
                 </ul>
             </li>
-            {% if dashboard_token %}
+            {% if user.is_authenticated %}
             <li>
-                <a href="{% url 'core:dashboard' dashboard_token %}">
+                <a href="{% url 'core:dashboard' %}">
                     Client Dashboard
                 </a>
             </li>
-            {% endif %}
-            {% if user.is_authenticated %}
 
             <li class="dropdown">
                 <a href="#">

@@ -97,30 +97,6 @@ urlpatterns = [
     path("place-order/", place_order, name="place_order"),
 
     path(
-        "payment/easypay/start/<int:order_id>/",
-        easypay_start,
-        name="easypay_start",
-    ),
-
-    path(
-        "payment/easypay/callback/",
-        easypay_callback,
-        name="easypay_callback",
-    ),
-
-    path(
-        "payment/easypay/result/",
-        easypay_result,
-        name="easypay_result",
-    ),
-
-    path(
-        "order/success/<int:order_id>/",
-        payment_success,
-        name="payment_success",
-    ),
-
-    path(
         "success/",
         success_page,
         name="success_page",

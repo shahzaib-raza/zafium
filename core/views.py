@@ -32,7 +32,6 @@ from django.views.decorators.http import require_POST
 from .forms import ContactForm
 from .helpers import send_contact_email
 
-from .easypay import generate_easypay_hash
 from django.utils import timezone
 from datetime import timedelta
 
@@ -929,9 +928,9 @@ def send_order_emails(order):
         message=f"""
         New Order Received
 
-        Client: {user.profile.name}
-        Email: {user.email}
-        Phone: {user.profile.phone}
+        Client: {user.first_name}
+        Email: {user.username}
+        Phone: {order.phone_number}
 
         Items:
 
@@ -962,7 +961,7 @@ def send_order_emails(order):
     }
 
     html_content = render_to_string(
-        "order_confirmation.html",
+        "invoice_mail.html",
         context,
     )
 
@@ -972,7 +971,7 @@ def send_order_emails(order):
         subject=f"Thank you for your order #{order.id}",
         body=text_content,
         from_email=settings.DEFAULT_FROM_EMAIL,
-        to=[user.profile.email],
+        to=[user.username],
     )
 
     email.attach_alternative(html_content, "text/html")
@@ -1061,199 +1060,6 @@ def checkout(request):
     )
 
 
-def easypay_result(request):
-
-    status = request.GET.get("status")
-    desc = request.GET.get("desc")
-    order_ref = request.GET.get("orderRefNumber")
-
-    if not order_ref:
-        return render(
-            request,
-            "success.html",
-            {
-                "payment_status": "failed",
-                "message": (
-                    "Easypaisa did not return "
-                    "an order reference."
-                ),
-            },
-            status=400,
-        )
-
-    order = Order.objects.filter(
-        easypay_order_ref=order_ref
-    ).first()
-
-    if not order:
-        return render(
-            request,
-            "success.html",
-            {
-                "payment_status": "failed",
-                "message": (
-                    "We could not find the "
-                    "corresponding order."
-                ),
-            },
-            status=404,
-        )
-
-    if status == "Success":
-
-        if order.payment_status != "paid":
-
-            order.payment_status = "paid"
-            order.save(
-                update_fields=["payment_status"]
-            )
-
-            send_order_emails(order)
-
-        return redirect(
-            "core:payment_success",
-            order_id=order.id,
-        )
-
-    # Any non-success result
-    if order.payment_status != "paid":
-
-        order.payment_status = "failed"
-        order.save(
-            update_fields=["payment_status"]
-        )
-
-    return render(
-        request,
-        "success.html",
-        {
-            "payment_status": "failed",
-            "order": order,
-            "message": (
-                "Your Easypaisa payment was "
-                "not completed."
-            ),
-            "payment_description": desc,
-        },
-    )
-
-
-def easypay_callback(request):
-
-    auth_token = request.GET.get("auth_token")
-
-    if not auth_token:
-        return render(
-            request,
-            "success.html",
-            {
-                "payment_status": "failed",
-                "message": (
-                    "Easypaisa did not return "
-                    "an authentication token."
-                ),
-            },
-            status=400,
-        )
-
-    return render(
-        request,
-        "easypay_confirm.html",
-        {
-            "auth_token": auth_token,
-            "easypay_confirm_url": settings.EASYPAY_CONFIRM_URL,
-            "post_back_url": (
-                "https://www.zafium.com/"
-                "payment/easypay/result/"
-            ),
-        },
-    )
-
-
-def easypay_start(request, order_id):
-
-    order = get_object_or_404(
-        Order.objects.select_related("user"),
-        pk=order_id,
-    )
-
-    # Don't allow already-paid orders to start
-    # another payment.
-    if order.payment_status == "paid":
-        return redirect(
-            "core:payment_success",
-            order_id=order.id,
-        )
-
-    email = order.user.email
-    phone = order.user.profile.phone
-
-    print(email)
-    print(phone)
-
-    # Generate an expiry time.
-    expiry_date = (
-        timezone.now() + timedelta(minutes=340)
-    ).strftime("%Y%m%d %H%M%S")
-
-    # Easypaisa requires amount with ONE decimal
-    # place for merchantHashedReq.
-    amount = f"{order.total_amount:.1f}"
-
-    post_back_url = request.build_absolute_uri(
-        "/payment/easypay/callback/"
-    )
-
-    payment_method = "CC_PAYMENT_METHOD"
-
-    hash_fields = {
-        "amount": amount,
-        "storeId": str(settings.EASYPAY_STORE_ID),
-        "autoRedirect": "0",
-        "orderRefNum": order.easypay_order_ref,
-        "expiryDate": expiry_date,
-        "postBackURL": post_back_url,
-    }
-
-    merchant_hashed_req = generate_easypay_hash(
-        hash_fields
-    )
-
-    print(merchant_hashed_req)
-
-    return render(
-        request,
-        "easypay_redirect.html",
-        {
-            "easypay_url": settings.EASYPAY_INDEX_URL,
-
-            "store_id":
-                settings.EASYPAY_STORE_ID,
-
-            "amount": amount,
-
-            "post_back_url":
-                post_back_url,
-
-            "order_ref_num":
-                order.easypay_order_ref,
-
-            "expiry_date":
-                expiry_date,
-
-            "merchant_hashed_req":
-                merchant_hashed_req,
-
-            "auto_redirect": "0",
-
-            "payment_method":
-                payment_method,
-
-            "email": email,
-            "phone": phone,
-        },
-    )
-
 
 def place_order(request):
 
@@ -1287,9 +1093,8 @@ def place_order(request):
         user=request.user,
         payment_method=payment_method,
         description=description,
+        phone_number=phone
     )
-
-    order.easypay_order_ref = f"ZAF-{order.id}-{uuid.uuid4().hex[:12].upper()}"
 
     for attachment in attachments:
         OrderAttachment.objects.create(
@@ -1315,25 +1120,11 @@ def place_order(request):
     request.session["order_id"] = order.id
 
     order.save()
-
-    return redirect(
-        "core:easypay_start",
-        order_id=order.id,
-    )
-
-
-def payment_success(request):
-
-    """
-    order = get_object_or_404(Order, pk=order_id)
-
-    order.payment_status = "paid"
-    order.save()
-
+    
+    # Email the invoice to user and send the order request mail to me
     send_order_emails(order)
-    """
-
     return redirect("core:success_page")
+
 
 # ____________________________________________________________________________________________________________
 

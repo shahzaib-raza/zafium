@@ -270,10 +270,9 @@ class Order(models.Model):
         blank=True
     )
 
-    easypay_order_ref = models.CharField(
-        max_length=255,
-        blank=True,
-        null=True
+    phone_number = models.CharField(
+        max_length=20,
+        blank=True
     )
 
     payment_status = models.CharField(
@@ -426,7 +425,7 @@ class OrderReview(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"{self.order.user.name} ({self.rating}/5)"
+        return f"{self.order.user.first_name} ({self.rating}/5)"
 
 
 class OrderAttachment(models.Model):

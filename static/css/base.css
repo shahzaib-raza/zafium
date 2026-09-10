@@ -283,7 +283,7 @@ a {
 .nav-links {
 
     display: flex;
-    gap: 20px;
+    gap: 10px;
 
     list-style: none;
 }

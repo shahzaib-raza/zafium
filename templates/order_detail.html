@@ -27,7 +27,7 @@ Order #{{ order.id }} | zafium
 
             <span>/</span>
 
-            <a href="{% url 'core:dashboard' dashboard_token %}?email={{ order.client.email }}">
+            <a href="{% url 'core:dashboard' %}">
                 My Orders
             </a>
 
@@ -125,7 +125,7 @@ Order #{{ order.id }} | zafium
 
                         <strong>
 
-                            {{ order.client.name }}
+                            {{ user.first_name|default:user.username }}
 
                         </strong>
 
@@ -141,7 +141,7 @@ Order #{{ order.id }} | zafium
 
                         <strong>
 
-                            {{ order.client.email }}
+                            {{ order.user.email }}
 
                         </strong>
 
@@ -519,7 +519,7 @@ Order #{{ order.id }} | zafium
 
                 {% for delivery in order.deliveries.all %}
 
-                    {% if delivery.visible_to_client %}
+                    {% if delivery.visible_to_user %}
 
                     <div class="delivery-item">
 
@@ -556,7 +556,7 @@ Order #{{ order.id }} | zafium
             {% if order.can_request_revision %}
 
             <a
-                href="{% url 'core:request_revision' dashboard_token order.id %}"
+                href="{% url 'core:request_revision' order.id %}"
                 class="btn-secondary"
                 >
                     Request Revision
@@ -717,18 +717,18 @@ Order #{{ order.id }} | zafium
 
                 <div class="summary-item">
                     <span>Customer</span>
-                    <strong>{{ order.client.name }}</strong>
+                    <strong>{{ order.user.name }}</strong>
                 </div>
 
                 <div class="summary-item">
                     <span>Email</span>
-                    <strong>{{ order.client.email }}</strong>
+                    <strong>{{ order.user.email }}</strong>
                 </div>
 
                 {% if order.phone %}
                 <div class="summary-item">
                     <span>Phone</span>
-                    <strong>{{ order.client.phone }}</strong>
+                    <strong>{{ order.user.phone }}</strong>
                 </div>
                 {% endif %}
 
@@ -802,7 +802,7 @@ Order #{{ order.id }} | zafium
 
                 <form
                     method="post"
-                    action="{% url 'core:submit_review' dashboard_token order.id %}"
+                    action="{% url 'core:submit_review' order.id %}"
                     class="review-form">
 
                     {% csrf_token %}
@@ -918,7 +918,7 @@ Order #{{ order.id }} | zafium
         <div class="order-card">
 
             <a
-                href="{% url 'core:dashboard' dashboard_token %}"
+                href="{% url 'core:dashboard' %}"
                 class="btn-primary"
                 style="width:100%;text-align:center;">
 

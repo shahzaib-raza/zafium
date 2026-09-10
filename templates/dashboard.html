@@ -68,7 +68,7 @@
 <p>{{ order.latest_update }}</p>
 {% endif %}
 
-<a class="btn-primary" href="{% url 'core:order_detail' dashboard_token order.id %}">View Order</a>
+<a class="btn-primary" href="{% url 'core:order_detail' order.id %}">View Order</a>
 </div>
 </div>
 {% endfor %}
@@ -154,7 +154,7 @@
                 </p>
 
                 <a
-                    href="{% url 'core:order_detail' dashboard_token order.id %}"
+                    href="{% url 'core:order_detail' order.id %}"
                     class="btn-secondary">
 
                     View Review
@@ -164,7 +164,7 @@
                 {% else %}
 
                 <a
-                    href="{% url 'core:order_detail' dashboard_token order.id %}"
+                    href="{% url 'core:order_detail' order.id %}"
                     class="btn-primary">
 
                     Leave Review

@@ -1,0 +1,960 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Zafium Invoice #{{ order.id }}</title>
+
+    <style>
+        :root {
+            --bg: #020617;
+            --bg-soft: #0b1220;
+
+            --accent: #6366f1;
+            --accent-2: #22d3ee;
+
+            --text: #111827;
+            --muted: #64748b;
+            --faint: #94a3b8;
+
+            --border: #e5e7eb;
+            --border-strong: #d1d5db;
+
+            --radius: 14px;
+
+            --gradient-primary:
+                linear-gradient(
+                    135deg,
+                    var(--accent),
+                    var(--accent-2)
+                );
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+
+            background: #eef1f7;
+
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        /* =========================================================
+           INVOICE
+        ========================================================= */
+
+        .invoice-wrapper {
+            width: 100%;
+            max-width: 900px;
+
+            margin: 0 auto;
+
+            background: #ffffff;
+
+            border-radius: 18px;
+            overflow: hidden;
+
+            box-shadow:
+                0 25px 70px rgba(15, 23, 42, 0.15);
+        }
+
+        /* =========================================================
+           HEADER
+        ========================================================= */
+
+        .invoice-header {
+            padding: 42px 48px;
+
+            background:
+                radial-gradient(
+                    circle at 85% 20%,
+                    rgba(34, 211, 238, 0.18),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 10% 100%,
+                    rgba(99, 102, 241, 0.22),
+                    transparent 35%
+                ),
+                var(--bg);
+
+            color: #ffffff;
+        }
+
+        .header-content {
+            display: flex;
+
+            justify-content: space-between;
+            align-items: flex-start;
+
+            gap: 40px;
+        }
+
+        /* =========================================================
+           BRAND
+        ========================================================= */
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+
+            gap: 7px;
+        }
+
+        .brand-name {
+            font-size: 30px;
+            line-height: 1;
+
+            font-weight: 800;
+
+            letter-spacing: -1px;
+
+            background: var(--gradient-primary);
+
+            -webkit-background-clip: text;
+            background-clip: text;
+
+            color: transparent;
+        }
+
+        .brand-tagline {
+            color: #94a3b8;
+
+            font-size: 12px;
+            font-weight: 500;
+
+            letter-spacing: 0.2px;
+        }
+
+        /* =========================================================
+           INVOICE TITLE
+        ========================================================= */
+
+        .invoice-title {
+            text-align: right;
+        }
+
+        .invoice-title h1 {
+            font-size: 38px;
+            line-height: 1;
+
+            font-weight: 800;
+
+            letter-spacing: -1px;
+        }
+
+        .invoice-title p {
+            margin-top: 9px;
+
+            color: #94a3b8;
+
+            font-size: 13px;
+        }
+
+        /* =========================================================
+           HEADER ACCENT
+        ========================================================= */
+
+        .header-line {
+            width: 100%;
+            height: 3px;
+
+            margin-top: 34px;
+
+            background: var(--gradient-primary);
+
+            border-radius: 99px;
+        }
+
+        /* =========================================================
+           BODY
+        ========================================================= */
+
+        .invoice-body {
+            padding: 42px 48px;
+        }
+
+        /* =========================================================
+           CUSTOMER / ORDER INFORMATION
+        ========================================================= */
+
+        .info-grid {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 24px;
+
+            margin-bottom: 38px;
+        }
+
+        .info-card {
+            padding: 20px;
+
+            background: #f8fafc;
+
+            border: 1px solid var(--border);
+
+            border-radius: var(--radius);
+        }
+
+        .info-label {
+            margin-bottom: 8px;
+
+            color: var(--muted);
+
+            font-size: 10px;
+            font-weight: 750;
+
+            letter-spacing: 1px;
+
+            text-transform: uppercase;
+        }
+
+        .info-value {
+            color: #111827;
+
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .info-secondary {
+            margin-top: 3px;
+
+            color: var(--muted);
+
+            font-size: 12px;
+        }
+
+        .info-row {
+            display: flex;
+
+            justify-content: space-between;
+            align-items: center;
+
+            padding: 5px 0;
+
+            font-size: 12px;
+        }
+
+        .info-row-label {
+            color: var(--muted);
+        }
+
+        .info-row-value {
+            color: #111827;
+
+            font-weight: 700;
+
+            text-align: right;
+        }
+
+        /* =========================================================
+           ORDER DETAILS HEADING
+        ========================================================= */
+
+        .invoice-meta {
+            display: flex;
+
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 26px;
+        }
+
+        .section-title {
+            color: #111827;
+
+            font-size: 17px;
+            font-weight: 750;
+        }
+
+        .item-count {
+            color: var(--muted);
+
+            font-size: 12px;
+        }
+
+        /* =========================================================
+           TABLE
+        ========================================================= */
+
+        .table-wrapper {
+            width: 100%;
+
+            overflow: hidden;
+
+            border: 1px solid var(--border);
+
+            border-radius: 14px;
+        }
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8fafc;
+        }
+
+        th {
+            padding: 14px 16px;
+
+            color: #64748b;
+
+            font-size: 10px;
+            font-weight: 750;
+
+            letter-spacing: 0.7px;
+
+            text-align: left;
+            text-transform: uppercase;
+
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 17px 16px;
+
+            color: #334155;
+
+            font-size: 13px;
+
+            border-bottom: 1px solid #eef2f7;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        td:first-child {
+            color: #111827;
+
+            font-weight: 700;
+        }
+
+        .category {
+            color: var(--muted);
+        }
+
+        .quantity {
+            font-weight: 600;
+
+            text-align: center;
+        }
+
+        .price,
+        .total {
+            white-space: nowrap;
+
+            text-align: right;
+        }
+
+        .total {
+            color: #111827;
+
+            font-weight: 700;
+        }
+
+        /* =========================================================
+           TOTAL
+        ========================================================= */
+
+        .summary-area {
+            display: flex;
+
+            justify-content: flex-end;
+
+            margin-top: 28px;
+        }
+
+        .summary {
+            width: 330px;
+        }
+
+        .summary-row {
+            display: flex;
+
+            justify-content: space-between;
+            align-items: center;
+
+            padding: 9px 0;
+
+            color: var(--muted);
+
+            font-size: 13px;
+        }
+
+        .summary-row.total-row {
+            margin-top: 8px;
+
+            padding-top: 18px;
+
+            color: #111827;
+
+            font-size: 19px;
+            font-weight: 800;
+
+            border-top: 1px solid var(--border);
+        }
+
+        .amount {
+            color: #111827;
+
+            font-weight: 700;
+        }
+
+        .total-amount {
+            font-size: 22px;
+
+            background: var(--gradient-primary);
+
+            -webkit-background-clip: text;
+            background-clip: text;
+
+            color: transparent;
+        }
+
+        /* =========================================================
+           PAYMENT NOTICE
+        ========================================================= */
+
+        .payment-notice {
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 14px;
+
+            margin-top: 38px;
+
+            padding: 20px 22px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(99, 102, 241, 0.06),
+                    rgba(34, 211, 238, 0.05)
+                );
+
+            border: 1px solid rgba(99, 102, 241, 0.15);
+
+            border-radius: var(--radius);
+        }
+
+        .notice-icon {
+            flex-shrink: 0;
+
+            width: 34px;
+            height: 34px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 10px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(99, 102, 241, 0.14),
+                    rgba(34, 211, 238, 0.14)
+                );
+
+            color: var(--accent);
+
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .notice-title {
+            margin-bottom: 3px;
+
+            color: #111827;
+
+            font-size: 13px;
+            font-weight: 750;
+        }
+
+        .notice-text {
+            color: var(--muted);
+
+            font-size: 11px;
+
+            line-height: 1.6;
+        }
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
+        .invoice-footer {
+            padding: 28px 48px;
+
+            background: var(--bg);
+
+            color: #94a3b8;
+
+            text-align: center;
+        }
+
+        .footer-brand {
+            color: #ffffff;
+
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .footer-accent {
+            display: block;
+
+            width: 80px;
+            height: 2px;
+
+            margin: 16px auto;
+
+            background: var(--gradient-primary);
+
+            border-radius: 99px;
+        }
+
+        .footer-text {
+            color: #94a3b8;
+
+            font-size: 11px;
+
+            line-height: 1.7;
+        }
+
+        .footer-contact {
+            margin-top: 10px;
+
+            color: #64748b;
+
+            font-size: 10px;
+        }
+
+        /* =========================================================
+           PRINT
+        ========================================================= */
+
+        @media print {
+
+            body {
+                padding: 0;
+
+                background: #ffffff;
+            }
+
+            .invoice-wrapper {
+                max-width: none;
+
+                border-radius: 0;
+
+                box-shadow: none;
+            }
+
+            .invoice-header,
+            .invoice-footer,
+            .payment-notice {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .table-wrapper {
+                break-inside: avoid;
+            }
+
+            tr {
+                break-inside: avoid;
+            }
+        }
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 0;
+            }
+
+            .invoice-wrapper {
+                border-radius: 0;
+            }
+
+            .invoice-header,
+            .invoice-body,
+            .invoice-footer {
+                padding-left: 24px;
+                padding-right: 24px;
+            }
+
+            .header-content {
+                flex-direction: column;
+            }
+
+            .invoice-title {
+                text-align: left;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-wrapper {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 650px;
+            }
+
+            .summary {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+<div class="invoice-wrapper">
+
+
+    <!-- =========================================================
+         HEADER
+    ========================================================== -->
+
+    <header class="invoice-header">
+
+        <div class="header-content">
+
+            <div class="brand">
+
+                <div class="brand-name">
+                    ZAFIUM
+                </div>
+
+                <div class="brand-tagline">
+                    AI, Data, Design &amp; Automation Solutions
+                </div>
+
+            </div>
+
+
+            <div class="invoice-title">
+
+                <h1>INVOICE</h1>
+
+                <p>
+                    {{ order.created_at|date:"F d, Y" }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="header-line"></div>
+
+    </header>
+
+
+    <!-- =========================================================
+         BODY
+    ========================================================== -->
+
+    <main class="invoice-body">
+
+
+        <!-- =====================================================
+             CUSTOMER + ORDER INFORMATION
+        ====================================================== -->
+
+        <div class="info-grid">
+
+
+            <!-- Customer -->
+
+            <div class="info-card">
+
+                <div class="info-label">
+                    Customer
+                </div>
+
+                <div class="info-value">
+                    {{ user.first_name }} {{ user.last_name }}
+                </div>
+
+                <div class="info-secondary">
+                    {{ order.user.email }}
+                </div>
+
+            </div>
+
+
+            <!-- Order -->
+
+            <div class="info-card">
+
+                <div class="info-label">
+                    Order Information
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="info-row-label">
+                        Order ID
+                    </span>
+
+                    <span class="info-row-value">
+                        #{{ order.id }}
+                    </span>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="info-row-label">
+                        Order Date
+                    </span>
+
+                    <span class="info-row-value">
+                        {{ order.created_at|date:"F d, Y" }}
+                    </span>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="info-row-label">
+                        Payment Method
+                    </span>
+
+                    <span class="info-row-value">
+                        {{ order.get_payment_method_display }}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             ORDER DETAILS
+        ====================================================== -->
+
+        <div class="invoice-meta">
+
+            <div class="section-title">
+                Order Details
+            </div>
+
+            <div class="item-count">
+                {{ order.items.count }} item{{ order.items.count|pluralize }}
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             ITEMS TABLE
+        ====================================================== -->
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Service
+                        </th>
+
+                        <th>
+                            Category
+                        </th>
+
+                        <th style="text-align:center;">
+                            Qty
+                        </th>
+
+                        <th style="text-align:right;">
+                            Unit Price
+                        </th>
+
+                        <th style="text-align:right;">
+                            Amount
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for item in order.items.all %}
+
+                    <tr>
+
+                        <td>
+                            {{ item.subcategory.name }}
+                        </td>
+
+                        <td class="category">
+                            {{ item.category.name }}
+                        </td>
+
+                        <td class="quantity">
+                            {{ item.quantity }}
+                        </td>
+
+                        <td class="price">
+                            PKR {{ item.price }}
+                        </td>
+
+                        <td class="total">
+                            PKR {{ item.total_price }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- =====================================================
+             TOTAL
+        ====================================================== -->
+
+        <div class="summary-area">
+
+            <div class="summary">
+
+                <div class="summary-row">
+
+                    <span>
+                        Total Items
+                    </span>
+
+                    <span class="amount">
+                        {{ order.items.count }}
+                    </span>
+
+                </div>
+
+
+                <div class="summary-row total-row">
+
+                    <span>
+                        Total Amount
+                    </span>
+
+                    <span class="total-amount">
+                        PKR {{ order.total_amount }}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             PAYMENT INFORMATION
+        ====================================================== -->
+
+        <div class="payment-notice">
+
+            <div class="notice-icon">
+                $
+            </div>
+
+            <div>
+
+                <div class="notice-title">
+                    Payment Instructions
+                </div>
+
+                <div class="notice-text">
+                    Our team will email you the payment process and
+                    payment instructions shortly.
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </main>
+
+
+    <!-- =========================================================
+         FOOTER
+    ========================================================== -->
+
+    <footer class="invoice-footer">
+
+        <div class="footer-brand">
+            ZAFIUM
+        </div>
+
+
+        <span class="footer-accent"></span>
+
+
+        <div class="footer-text">
+            AI, Data, Design &amp; Automation Solutions
+            <br>
+            Thank you for choosing Zafium.
+        </div>
+
+
+        <div class="footer-contact">
+            info@zafium.com &nbsp; • &nbsp; www.zafium.com
+        </div>
+
+    </footer>
+
+
+</div>
+
+</body>
+</html>
