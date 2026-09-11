@@ -1056,6 +1056,7 @@ def checkout(request):
             "customer": request.session["checkout"]["customer"],
             "items": checkout_items,
             "total": grand_total,
+            'CF_SITE_KEY': settings.CF_SITE_KEY
         },
     )
 
