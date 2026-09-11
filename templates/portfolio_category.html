@@ -204,78 +204,170 @@
 
 {% block extra_js %}
 <script>
-console.log("COUNTER SCRIPT LOADED");
 (function () {
 
-    counters.forEach(counter => {
+    console.log("PORTFOLIO SCRIPT LOADED");
 
-        const target = Number(counter.dataset.target);
+    // ==========================
+    // COUNTER INITIALIZATION
+    // ==========================
 
-        // Handle missing or invalid values
-        if (isNaN(target) || target <= 0) {
-            counter.innerText = "0";
-            return;
-        }
+    function initCounters() {
 
-        let count = 0;
+        const counters = document.querySelectorAll(".counter");
 
-        const duration = 1500;
-        const stepTime = Math.max(Math.floor(duration / target), 10);
-        const increment = Math.ceil(target / (duration / stepTime));
+        counters.forEach(counter => {
 
-        const timer = setInterval(() => {
-
-            count += increment;
-
-            if (count >= target) {
-                counter.innerText = target + "+";
-                clearInterval(timer);
-            } else {
-                counter.innerText = count;
+            // Don't animate an already completed counter
+            if (counter.dataset.animated === "true") {
+                return;
             }
 
-        }, stepTime);
+            const target = Number(counter.dataset.target);
 
-    });
+            // Handle missing or invalid values
+            if (isNaN(target) || target <= 0) {
+                counter.innerText = "0";
+                counter.dataset.animated = "true";
+                return;
+            }
+
+            let count = 0;
+
+            const duration = 1500;
+            const stepTime = Math.max(
+                Math.floor(duration / target),
+                10
+            );
+
+            const increment = Math.ceil(
+                target / (duration / stepTime)
+            );
+
+            const timer = setInterval(() => {
+
+                count += increment;
+
+                if (count >= target) {
+
+                    counter.innerText = target + "+";
+
+                    clearInterval(timer);
+
+                    counter.dataset.animated = "true";
+
+                } else {
+
+                    counter.innerText = count;
+
+                }
+
+            }, stepTime);
+
+        });
+    }
+
+
+    // Initialize counters on initial page load
+    initCounters();
 
 
     // ==========================
     // AJAX LOAD MORE HANDLER
     // ==========================
 
-    let loadMoreBtn = document.getElementById("loadMoreBtn");
+    const loadMoreBtn = document.getElementById("loadMoreBtn");
 
     if (loadMoreBtn) {
 
         loadMoreBtn.addEventListener("click", function () {
 
-            let page = this.getAttribute("data-page");
+            const btn = this;
 
-            let url = new URL(window.location.href);
+            const page = btn.getAttribute("data-page");
+
+            console.log("Loading portfolio page:", page);
+
+            const url = new URL(window.location.href);
+
             url.searchParams.set("page", page);
+
+
+            // Prevent multiple clicks
+            btn.disabled = true;
+            btn.innerText = "Loading...";
+
 
             fetch(url, {
                 headers: {
                     "X-Requested-With": "XMLHttpRequest"
                 }
             })
-            .then(res => res.json())
+
+            .then(response => {
+
+                if (!response.ok) {
+                    throw new Error(
+                        "HTTP error: " + response.status
+                    );
+                }
+
+                return response.json();
+
+            })
+
             .then(data => {
 
-                document.getElementById("portfolioGrid")
-                    .insertAdjacentHTML("beforeend", data.html);
+                console.log("Load More response:", data);
 
-                // 🔥 Re-check counters (safe, won't re-run animation)
+
+                const portfolioGrid =
+                    document.getElementById("portfolioGrid");
+
+
+                if (data.html) {
+
+                    portfolioGrid.insertAdjacentHTML(
+                        "beforeend",
+                        data.html
+                    );
+
+                }
+
+
+                // Initialize any counters in newly loaded content
                 initCounters();
 
+
                 if (data.has_next) {
-                    loadMoreBtn.setAttribute("data-page", parseInt(page) + 1);
+
+                    btn.setAttribute(
+                        "data-page",
+                        parseInt(page) + 1
+                    );
+
+                    btn.disabled = false;
+                    btn.innerText = "Load More";
+
                 } else {
-                    loadMoreBtn.remove();
+
+                    btn.remove();
+
                 }
 
             })
-            .catch(err => console.error("ERROR:", err));
+
+            .catch(error => {
+
+                console.error(
+                    "LOAD MORE ERROR:",
+                    error
+                );
+
+                btn.disabled = false;
+                btn.innerText = "Load More";
+
+            });
 
         });
 
