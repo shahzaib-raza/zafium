@@ -56,6 +56,7 @@ from django.db import transaction
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
+from .helpers import get_usd_to_pkr_rate_per_day
 
 def get_int(x):
     try:
@@ -81,6 +82,28 @@ def terms_of_service(request):
 
 def refund_policy(request):
     return render(request, "refund_policy.html")
+
+
+def set_currency(request):
+
+    currency = request.GET.get("currency")
+
+    if currency not in ["USD", "PKR"]:
+        currency = "USD"
+
+    response = redirect(
+        request.META.get("HTTP_REFERER", "/")
+    )
+
+    response.set_cookie(
+        "zafium_currency",
+        currency,
+        max_age=60 * 60 * 24 * 365,
+        samesite="Lax",
+        secure=True,
+    )
+
+    return response
 
 
 def portfolio_category(request, category):
@@ -907,18 +930,50 @@ def order(request):
     )
 
 
+def format_email_price(amount, currency, rate):
+
+    amount = Decimal(str(amount))
+
+    if currency == "PKR":
+        converted_amount = amount * Decimal(str(rate))
+        return f"₨{converted_amount:,.0f}"
+
+    return f"${amount:,.2f}"
+
+
 def send_order_emails(order):
 
     user = order.user
 
+    # Use the currency selected when the order was created.
+    # If you have not saved the order currency yet, default to USD.
+    currency = getattr(order, "currency", "USD") or "USD"
+
+    rate = get_usd_to_pkr_rate_per_day()
+
     order_summary = ""
 
     for item in order.items.select_related("subcategory"):
+
+        item_total = item.total_price()
+
+        formatted_item_total = format_email_price(
+            item_total,
+            currency,
+            rate,
+        )
+
         order_summary += (
             f"{item.subcategory.name} "
             f"x {item.quantity} "
-            f"= PKR{item.total_price()}\n"
+            f"= {formatted_item_total}\n"
         )
+
+    formatted_order_total = format_email_price(
+        order.total_amount,
+        currency,
+        rate,
+    )
 
     # -------------------------
     # Admin Email
@@ -926,30 +981,29 @@ def send_order_emails(order):
     send_mail(
         subject=f"New Order #{order.id}",
         message=f"""
-        New Order Received
+New Order Received
 
-        Client: {user.first_name}
-        Email: {user.username}
-        Phone: {order.phone_number}
+Client: {user.first_name}
+Email: {user.username}
+Phone: {order.phone_number}
 
-        Items:
+Items:
 
-        {order_summary}
+{order_summary}
 
-        Status:
-        {order.get_project_status_display()}
+Status:
+{order.get_project_status_display()}
 
-        Progress:
-        {order.progress}%
+Progress:
+{order.progress}%
 
-        Total:
-        PKR{order.total_amount}
-        """,
+Total:
+{formatted_order_total}
+""",
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[settings.DEFAULT_FROM_EMAIL],
         fail_silently=False,
     )
-
 
     # -------------------------
     # Customer HTML Email
@@ -958,10 +1012,16 @@ def send_order_emails(order):
         "order": order,
         "items": order.items.select_related("subcategory"),
         "order_summary": order_summary,
+        "currency": currency,
+        "exchange_rate": rate,
+        "currency_data": {
+            "currency": currency,
+            "rate": rate,
+        },
     }
 
     html_content = render_to_string(
-        "invoice_mail.html",
+        "order_confirmation.html",
         context,
     )
 
@@ -1089,12 +1149,18 @@ def place_order(request):
     attachments = request.FILES.getlist("attachments")
     payment_method=payment_method
 
+    selected_currency = request.COOKIES.get("zafium_currency", "USD")
+
+    if selected_currency not in ["USD", "PKR"]:
+        selected_currency = "USD"
+
 
     order = Order.objects.create(
         user=request.user,
         payment_method=payment_method,
         description=description,
-        phone_number=phone
+        phone_number=phone,
+        currency=selected_currency,
     )
 
     for attachment in attachments:

@@ -2,6 +2,15 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
+from django.conf import settings
+
+from pathlib import Path
+from decimal import Decimal
+import requests
+import os
+import json
+import datetime as dt
+
 
 def send_contact_email(form):
 
@@ -76,3 +85,50 @@ def send_contact_email(form):
     )
 
     user_email.send()
+
+
+EXCHANGE_FILE = Path(settings.BASE_DIR) / "exchange_rate.json"
+
+def get_usd_to_pkr_rate_per_day():
+
+    today = dt.date.today()
+
+    # Existing cached rate
+    if EXCHANGE_FILE.exists():
+
+        try:
+            with open(EXCHANGE_FILE, "r") as file:
+                available_rate = json.load(file)
+
+            fetched_date = dt.date.fromisoformat(
+                available_rate["fetched_date"]
+            )
+
+            # Rate is still valid for today
+            if fetched_date == today:
+                return Decimal(str(available_rate["rate"]))
+
+        except (json.JSONDecodeError, KeyError, ValueError):
+            pass
+
+    # Fetch fresh rate
+    response = requests.get(
+        "https://open.er-api.com/v6/latest/USD",
+        timeout=10,
+    )
+
+    response.raise_for_status()
+
+    data = response.json()
+
+    usd_pkr = Decimal(str(data["rates"]["PKR"]))
+
+    available_rate = {
+        "fetched_date": today.isoformat(),
+        "rate": str(usd_pkr),
+    }
+
+    with open(EXCHANGE_FILE, "w") as file:
+        json.dump(available_rate, file)
+
+    return usd_pkr

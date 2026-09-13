@@ -212,8 +212,8 @@ Order #{{ order.id }} | zafium
                         </span>
 
                         <strong>
-
-                            PKR{{ order.total_amount }}
+                            
+                            {{ order.total_amount|display_price:currency_data }}
 
                         </strong>
 
@@ -651,13 +651,13 @@ Order #{{ order.id }} | zafium
 
                         <td>
 
-                            PKR{{ item.price }}
+                            {{ item.price|display_price:currency_data }}
 
                         </td>
 
                         <td>
 
-                            PKR{{ item.total_price }}
+                            {{ item.total_price|display_price:currency_data }}
 
                         </td>
 
@@ -680,8 +680,8 @@ Order #{{ order.id }} | zafium
                         <td>
 
                             <strong>
-
-                                PKR{{ order.total_amount }}
+                                
+                                {{ order.total_amount|display_price:currency_data }}
 
                             </strong>
 

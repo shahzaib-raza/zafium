@@ -78,9 +78,9 @@
             <td>
             Subtotal
             </td>
-
+            {% load currency_tags %}
             <td align="right">
-            PKR{{ order.total_amount }}
+            {{ order.total_amount|display_price:currency_data }}
             </td>
             </tr>
 
@@ -103,15 +103,9 @@
             padding-top:20px;
             color:#2563eb;
             ">
-            PKR{{ order.total_amount }}
+            {{ order.total_amount|display_price:currency_data }}
             </td>
 
-            </tr>
-
-            <tr>
-                <td>
-                    Client Access Token: {{ order.client.access_token }}
-                </td>
             </tr>
             <tr>
                 <td>

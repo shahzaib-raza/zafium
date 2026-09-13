@@ -141,9 +141,24 @@
 
 </section>
 
-{% block extra_js_2 %}
+{% endblock %}
+
+{% block extra_js %}
 
 <script>
+
+const currency = "{{ site_currency }}";
+const usdToPkrRate = Number("{{ usd_to_pkr_rate }}");
+
+function formatPrice(usdAmount) {
+
+    if (currency === "PKR") {
+        const pkrAmount = usdAmount * usdToPkrRate;
+        return `₨${Math.round(pkrAmount).toLocaleString()}`;
+    }
+
+    return `$${usdAmount.toFixed(2)}`;
+}
 
 const subcategories = {
     {% for cat in categories %}
@@ -182,7 +197,7 @@ function createItem() {
 
         <input type="number" class="qty" value="1" min="1">
 
-        <span class="price">0</span>
+        <span class="price">$0.00</span>
 
         <span class="remove-btn" style="cursor:pointer; margin-left:10px;">✕</span>
     `;
@@ -222,7 +237,7 @@ function attachEvents(item) {
             .filter(([id, s]) => s.category == catId);
 
         subSelect.innerHTML = filtered.map(([id, s]) =>
-            `<option value="${id}">${s.name} (${s.price})</option>`
+            `<option value="${id}">${s.name} (${formatPrice(s.price)})</option>`
         ).join("");
 
         update(item);
@@ -247,7 +262,7 @@ function update(item) {
 
     const price = subcategories[subId].price * qty;
 
-    item.querySelector(".price").innerText = price;
+    item.querySelector(".price").innerText = formatPrice(price);
 
     updateTotal();
 }
@@ -262,10 +277,11 @@ function updateTotal() {
     document.querySelectorAll(".order-item").forEach(item => {
 
         const subId = item.querySelector(".subcategory").value;
-        const qty = item.querySelector(".qty").value;
-        const price = parseFloat(item.querySelector(".price").innerText || 0);
+        const qty = parseInt(item.querySelector(".qty").value || 0);
 
         if (!subId) return;
+
+        const price = subcategories[subId].price * qty;
 
         total += price;
 
@@ -273,14 +289,14 @@ function updateTotal() {
         row.classList.add("summary-row");
 
         row.innerHTML = `
-            <span>${subcategories[subId].name} x PKR ${qty}</span>
-            <span>PKR ${price}</span>
+            <span>${subcategories[subId].name} × ${qty}</span>
+            <span>${formatPrice(price)}</span>
         `;
 
         summary.appendChild(row);
     });
 
-    document.getElementById("total").innerText = `PKR ${total}`;
+    document.getElementById("total").innerText = formatPrice(total);
 }
 
 // INIT
@@ -368,8 +384,6 @@ orderForm.addEventListener("submit", function (event) {
 
 });
 </script>
-
-{% endblock %}
 
 
 {% endblock %}

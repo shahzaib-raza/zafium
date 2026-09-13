@@ -31,7 +31,8 @@
             {% if order %}
             <div class="order-meta">
                 <p><strong>Order ID:</strong> {{ order.id }}</p>
-                <p><strong>Total:</strong> PKR{{ order.total }}</p>
+                {% load currency_tags %}
+                <p><strong>Total:</strong> {{ order.total|display_price:currency_data }} </p>
             </div>
             {% endif %}
 

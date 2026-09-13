@@ -839,13 +839,13 @@ html
                         <td class="quantity">
                             {{ item.quantity }}
                         </td>
-
+                        {% load currency_tags %}
                         <td class="price">
-                            PKR {{ item.price }}
+                            {{ item.price|display_price:currency_data }}
                         </td>
 
                         <td class="total">
-                            PKR {{ item.total_price }}
+                            {{ item.total_price|display_price:currency_data }}
                         </td>
 
                     </tr>
@@ -887,7 +887,7 @@ html
                     </span>
 
                     <span class="total-amount">
-                        PKR {{ order.total_amount }}
+                        {{ order.total_amount|display_price:currency_data }}
                     </span>
 
                 </div>

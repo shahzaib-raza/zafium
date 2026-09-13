@@ -137,5 +137,10 @@ urlpatterns = [
         name="verify_email",
     ),
     path("account/", account, name="account"),
+    path(
+        "set-currency/",
+        set_currency,
+        name="set_currency",
+    ),
     
 ]

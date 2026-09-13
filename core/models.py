@@ -257,6 +257,15 @@ class Order(models.Model):
         related_name="orders",
     )
 
+    currency = models.CharField(
+    max_length=3,
+        choices=[
+            ("USD", "USD"),
+            ("PKR", "PKR"),
+        ],
+        default="USD",
+    )
+
     description = models.TextField(
         blank=True,
         help_text="Project requirements provided by the client."

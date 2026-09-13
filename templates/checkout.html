@@ -42,14 +42,16 @@
                         </thead>
 
                         <tbody>
+                        
+                        {% load currency_tags %}
 
                         {% for item in items %}
 
                             <tr>
                                 <td>{{ item.subcategory }}</td>
                                 <td>{{ item.quantity }}</td>
-                                <td> PKR{{ item.price }} </td>
-                                <td> PKR{{ item.total }} </td>
+                                <td>{{ item.price|display_price:currency_data }}</td>
+                                <td>{{ item.total|display_price:currency_data }}</td>
                             </tr>
 
                         {% endfor %}
@@ -122,26 +124,11 @@
 
                     <h3>Payment Summary</h3>
 
-                    <div class="summary-row">
-                        <span>Subtotal</span>
-                        <span>PKR{{ total }}</span>
-                    </div>
-
-                    <div class="summary-row">
-                        <span>Tax</span>
-                        <span>PKR0.00</span>
-                    </div>
-
-                    <div class="summary-row">
-                        <span>Discount</span>
-                        <span>PKR0.00</span>
-                    </div>
-
                     <div class="summary-total">
 
                         <span>Total</span>
 
-                        <h2>PKR{{ total }}</h2>
+                        <h2>{{ total|display_price:currency_data }}</h2>
 
                     </div>
 

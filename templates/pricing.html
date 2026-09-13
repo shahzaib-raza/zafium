@@ -61,8 +61,9 @@
                         <tr>
                             <td>{{ service.name }}</td>
 
+                            {% load currency_tags %}
                             <td class="price">
-                                PKR {{ service.price }}
+                                {{ service.price|display_price:currency_data }}
                             </td>
                         </tr>
 

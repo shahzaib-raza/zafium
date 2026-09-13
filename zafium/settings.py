@@ -65,6 +65,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'core.context_processors.portfolio_categories',
+                "core.context_processors.currency",
             ],
         },
     },
@@ -137,7 +138,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "info@zafium.com"
 EMAIL_HOST_PASSWORD = os.environ['EMAIL_PASS']
 
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = "info@zafium.com"
 SERVER_EMAIL = "info@zafium.com"
 
 
