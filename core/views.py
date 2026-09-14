@@ -1301,7 +1301,7 @@ def autolytics_search(request):
         else:
             data = None
     if data is None:
-        return render(request, "sorry.html")
+        return render(request, "autolytics/results/sorry.html")
 
     try:
         # data['price'].apply(get_int)

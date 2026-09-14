@@ -61,7 +61,7 @@
 <div style="height:10px;background:rgba(255,255,255,.08);border-radius:999px;margin:16px 0;">
 <div style="width:{{ order.progress }}%;height:100%;background:var(--gradient-primary);border-radius:999px;"></div>
 </div>
-
+{% load currency_tags %}
 <p><strong>Total:</strong>{{ order.total_amount|display_price:currency_data }}</p>
 
 {% if order.latest_update %}
@@ -167,7 +167,7 @@
                     href="{% url 'core:order_detail' order.id %}"
                     class="btn-primary">
 
-                    Leave Review
+                    View Order
 
                 </a>
 

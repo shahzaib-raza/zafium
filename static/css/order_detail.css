@@ -877,73 +877,80 @@
    STAR RATING
 ========================================================== */
 
-.rating-selector{
+.rating-selector {
 
-    display:flex;
+    display: flex;
 
-    gap:10px;
+    gap: 10px;
 
-    flex-wrap:wrap;
+    flex-wrap: wrap;
 
-}
+    /* Reverse the direction for the sibling selector */
+    flex-direction: row-reverse;
 
-.rating-selector label{
-
-    cursor:pointer;
-
-    position:relative;
+    justify-content: flex-end;
 
 }
 
-.rating-selector input{
+.rating-selector label {
 
-    display:none;
+    cursor: pointer;
 
-}
-
-.rating-selector span{
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    width:52px;
-
-    height:52px;
-
-    border-radius:50%;
-
-    background:rgba(255,255,255,.04);
-
-    border:1px solid var(--border);
-
-    color:#9ca3af;
-
-    font-size:1.45rem;
-
-    transition:.25s;
+    position: relative;
 
 }
 
-.rating-selector span:hover{
+.rating-selector input {
 
-    color:#fbbf24;
-
-    transform:translateY(-4px);
+    display: none;
 
 }
 
-.rating-selector input:checked + span{
+.rating-selector span {
 
-    background:rgba(251,191,36,.12);
+    display: flex;
 
-    border-color:#fbbf24;
+    justify-content: center;
 
-    color:#fbbf24;
+    align-items: center;
 
-    box-shadow:0 8px 24px rgba(251,191,36,.18);
+    width: 52px;
+
+    height: 52px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.04);
+
+    border: 1px solid var(--border);
+
+    color: #9ca3af;
+
+    font-size: 1.45rem;
+
+    transition: .25s;
+
+}
+
+.rating-selector span:hover {
+
+    color: #fbbf24;
+
+    transform: translateY(-4px);
+
+}
+
+/* Selected star and all stars to its left */
+.rating-selector input:checked + span,
+.rating-selector input:checked ~ span {
+
+    background: rgba(251,191,36,.12);
+
+    border-color: #fbbf24;
+
+    color: #fbbf24;
+
+    box-shadow: 0 8px 24px rgba(251,191,36,.18);
 
 }
 
