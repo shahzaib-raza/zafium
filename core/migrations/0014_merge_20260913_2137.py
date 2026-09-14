@@ -6,7 +6,6 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("core", "0011_orderattachment"),
         ("core", "0013_order_currency_orderattachment"),
     ]
 
