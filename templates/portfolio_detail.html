@@ -49,12 +49,6 @@ category-{{ project.category.slug }}
 
         <div class="pd-tags">
             <span class="tag">{{ project.category.name }}</span>
-
-            {% if project.live_url %}
-                <a href="{{ project.live_url }}" target="_blank" class="tag-link">
-                    Live ↗
-                </a>
-            {% endif %}
         </div>
 
     </div>
@@ -102,6 +96,16 @@ category-{{ project.category.slug }}
             <h2>About The Project</h2>
             <p>{{ project.description }}</p>
         </div>
+
+        {% if project.live_url %}
+        <div class="pd-card highlight">
+            <center>
+                <a href="{{ project.live_url }}" target="_blank" class="tag-link">
+                    Click Here To View Live ↗
+                </a>
+            </center>
+        </div>
+        {% endif %}
 
         <!-- MEDIA (VISUAL FIRST IMPACT) -->
         <div class="pd-card media-showcase">
@@ -187,12 +191,6 @@ category-{{ project.category.slug }}
 
             <h3>Want this for your business?</h3>
             <p>We can build a similar solution tailored to your needs.</p>
-
-            {% if project.live_url %}
-                <a class="btn" href="{{ project.live_url }}" target="_blank">
-                    View Live
-                </a>
-            {% endif %}
 
             <a class="btn-primary" href="/contact/">
                 Get This Solution

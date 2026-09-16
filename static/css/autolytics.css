@@ -144,6 +144,11 @@ select:focus {
     border-color: var(--accent);
 }
 
+.site-footer {
+    text-align: left;
+    left: 0;
+}
+
 /* MOBILE */
 @media (max-width: 768px) {
 

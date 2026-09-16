@@ -387,6 +387,10 @@ a {
 
 .site-footer a{
     transition: var(--transition);
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    gap: 5px;
 }
 
 .site-footer a:hover {
