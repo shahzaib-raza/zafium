@@ -105,6 +105,9 @@ def set_currency(request):
 
     return response
 
+def portfolio(request):
+    return render(request, "portfolio.html")
+
 
 def portfolio_category(request, category):
 

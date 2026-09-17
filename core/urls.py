@@ -39,6 +39,12 @@ urlpatterns = [
     ),
 
     path(
+        "portfolio/",
+        portfolio,
+        name="portfolio"
+    ),
+
+    path(
         "portfolio/<slug:category>/",
         portfolio_category,
         name="portfolio_category"
