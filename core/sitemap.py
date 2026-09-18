@@ -35,6 +35,7 @@ class StaticViewSitemap(Sitemap):
             'core:home',
             'core:about',
             'core:services',
+            'core:portfolio',
             'core:order',
             'core:layerforge',
             'core:autolytics',
