@@ -389,7 +389,7 @@ a {
     transition: var(--transition);
     display: flex;
     align-items: center;
-    padding: 10px 16px;
+    padding: 5px 16px;
     gap: 5px;
 }
 
@@ -421,7 +421,7 @@ a {
 .footer-grid li {
 
     color: var(--muted);
-    margin-bottom: 10px;
+    margin-bottom: 2px;
 
     list-style: none;
 }
@@ -554,5 +554,53 @@ a {
 
     .grid-2 {
         grid-template-columns:1fr;
-    } 
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    .site-footer {
+        padding-top: 45px;
+    }
+
+    .footer-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 32px 20px;
+    }
+
+    /* Zafium / first section spans full width */
+    .footer-grid > div:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .footer-grid h3,
+    .footer-grid h4 {
+        margin-bottom: 10px;
+    }
+
+    .footer-grid p,
+    .footer-grid li {
+        margin-bottom: 4px;
+    }
+
+    .site-footer a {
+        padding: 4px 0;
+        gap: 6px;
+        justify-content: flex-start;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .site-footer svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+    }
+
+    .footer-bottom {
+        margin-top: 35px;
+        padding: 18px 0;
+    }
+
 }

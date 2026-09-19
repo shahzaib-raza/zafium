@@ -20,11 +20,31 @@
         <input type="hidden" name="items" id="items-input">
 
         <!-- 🔥 HERO -->
-        <div class="section-heading">
-            <span>Start Your Project</span>
-            <h2 class="gradient-text">Build Your Custom Order</h2>
-            <p>Choose services, set quantities, and get instant pricing.</p>
-        </div>
+        {% if selected_solution %}
+            
+            <div class="section-heading">
+
+                <span class="section-heading">
+                    CONFIGURING SOLUTION
+                </span>
+
+                <h2 class="gradient-text">
+                    {{ selected_solution }}
+                </h2>
+
+                <p>
+                    We've preselected recommended services for this solution.
+                    Customize anything before continuing.
+                </p>
+            </div>
+
+        {% else %}
+            <div class="section-heading">
+                <span>Start Your Project</span>
+                <h2 class="gradient-text">Build Your Custom Order</h2>
+                <p>Choose services, set quantities, and get instant pricing.</p>
+            </div>
+        {% endif %}
 
         <div class="order-layout">
 
@@ -32,9 +52,9 @@
             <div class="order-builder">
 
                 <div id="order-items"></div>
-
+                
                 <button type="button" id="add-item" class="btn-secondary">
-                    + Add Service
+                    + Add Another Service
                 </button>
 
                 <!-- CLIENT INFO -->
@@ -46,10 +66,31 @@
                         <label>Your Name</label>
                     </div>
 
-                    <div class="input-group">
-                        <input type="email" name="email" required placeholder=" ">
-                        <label>Email</label>
-                    </div>
+                    {% if request.user.email %}
+                        <div class="input-group">
+                            <input
+                                type="email"
+                                name="email"
+                                value="{{ request.user.email }}"
+                                required
+                                placeholder=" "
+                                readonly
+                            >
+                            <label>Email</label>
+                            <span class="input-lock">🔒</span>
+                        </div>
+                        <p class="input-note">Your registered account email is used for this order.</p>
+                    {% else %}
+                        <div class="input-group">
+                            <input
+                                    type="email"
+                                    name="email"
+                                    required
+                                    placeholder=" "
+                            >
+                            <label>Email</label>
+                        </div>
+                    {% endif %}
 
                     <div class="input-group">
                         <input type="text" name="phone" required placeholder=" ">
@@ -146,245 +187,36 @@
 {% block extra_js %}
 
 <script>
+    window.ORDER_CONFIG = {
+        currency: "{{ site_currency }}",
+        usdToPkrRate: "{{ usd_to_pkr_rate }}",
 
-const currency = "{{ site_currency }}";
-const usdToPkrRate = Number("{{ usd_to_pkr_rate }}");
-
-function formatPrice(usdAmount) {
-
-    if (currency === "PKR") {
-        const pkrAmount = usdAmount * usdToPkrRate;
-        return `₨${Math.round(pkrAmount).toLocaleString()}`;
-    }
-
-    return `$${usdAmount.toFixed(2)}`;
-}
-
-const subcategories = {
-    {% for cat in categories %}
-        {% for sub in cat.subcategories.all %}
-            "{{sub.id}}": {
-                name: "{{sub.name}}",
-                price: {{sub.price}},
-                category: "{{cat.id}}"
-            },
-        {% endfor %}
-    {% endfor %}
-};
-
-const categories = {
-    {% for cat in categories %}
-        "{{cat.id}}": {
-            name: "{{cat.name}}"
+        subcategories: {
+            {% for cat in categories %}
+                {% for sub in cat.subcategories.all %}
+                    "{{ sub.id }}": {
+                        name: "{{ sub.name|escapejs }}",
+                        price: {{ sub.price }},
+                        category: "{{ cat.id }}"
+                    },
+                {% endfor %}
+            {% endfor %}
         },
-    {% endfor %}
-};
 
-function createItem() {
+        categories: {
+            {% for cat in categories %}
+                "{{ cat.id }}": {
+                    name: "{{ cat.name|escapejs }}"
+                },
+            {% endfor %}
+        },
 
-    const div = document.createElement("div");
-    div.classList.add("order-item", "card");
-
-    div.innerHTML = `
-        <select class="category">
-            <option>Select Category</option>
-            ${Object.entries(categories).map(([id, c]) =>
-                `<option value="${id}">${c.name}</option>`
-            ).join("")}
-        </select>
-
-        <select class="subcategory"></select>
-
-        <input type="number" class="qty" value="1" min="1">
-
-        <span class="price">$0.00</span>
-
-        <span class="remove-btn" style="cursor:pointer; margin-left:10px;">✕</span>
-    `;
-
-    document.getElementById("order-items").appendChild(div);
-
-    attachEvents(div);
-}
-
-function collectItems() {
-    const items = [];
-
-    document.querySelectorAll(".order-item").forEach(item => {
-        const subId = item.querySelector(".subcategory").value;
-        const qty = item.querySelector(".qty").value;
-
-        if (!subId) return;
-
-        items.push(`${subId}|${qty}`);
-    });
-
-    document.getElementById("items-input").value = JSON.stringify(items);
-}
-
-function attachEvents(item) {
-
-    const catSelect = item.querySelector(".category");
-    const subSelect = item.querySelector(".subcategory");
-    const qtyInput = item.querySelector(".qty");
-    const removeBtn = item.querySelector(".remove-btn");
-
-    catSelect.addEventListener("change", () => {
-
-        const catId = catSelect.value;
-
-        const filtered = Object.entries(subcategories)
-            .filter(([id, s]) => s.category == catId);
-
-        subSelect.innerHTML = filtered.map(([id, s]) =>
-            `<option value="${id}">${s.name} (${formatPrice(s.price)})</option>`
-        ).join("");
-
-        update(item);
-    });
-
-    subSelect.addEventListener("change", () => update(item));
-    qtyInput.addEventListener("input", () => update(item));
-
-    // ✅ REMOVE ITEM
-    removeBtn.addEventListener("click", () => {
-        item.remove();
-        updateTotal();
-    });
-}
-
-function update(item) {
-
-    const subId = item.querySelector(".subcategory").value;
-    const qty = parseInt(item.querySelector(".qty").value || 0);
-
-    if (!subId) return;
-
-    const price = subcategories[subId].price * qty;
-
-    item.querySelector(".price").innerText = formatPrice(price);
-
-    updateTotal();
-}
-
-function updateTotal() {
-
-    let total = 0;
-    const summary = document.getElementById("summary-items");
-
-    summary.innerHTML = "";
-
-    document.querySelectorAll(".order-item").forEach(item => {
-
-        const subId = item.querySelector(".subcategory").value;
-        const qty = parseInt(item.querySelector(".qty").value || 0);
-
-        if (!subId) return;
-
-        const price = subcategories[subId].price * qty;
-
-        total += price;
-
-        const row = document.createElement("div");
-        row.classList.add("summary-row");
-
-        row.innerHTML = `
-            <span>${subcategories[subId].name} × ${qty}</span>
-            <span>${formatPrice(price)}</span>
-        `;
-
-        summary.appendChild(row);
-    });
-
-    document.getElementById("total").innerText = formatPrice(total);
-}
-
-// INIT
-document.getElementById("add-item").addEventListener("click", createItem);
-
-// Add first item automatically
-createItem();
-
-document.getElementById("order-form").addEventListener("submit", function () {
-    collectItems();
-});
-
+        selectedServices:
+            {{ selected_services|safe }}
+    };
 </script>
 
-<script>
-const attachmentInput = document.getElementById("attachments");
-const attachmentList = document.getElementById("attachment-list");
-const attachmentSize = document.getElementById("attachment-size");
-const orderForm = document.getElementById("order-form");
-
-const MAX_TOTAL_SIZE = 25 * 1024 * 1024; // 25 MB
-
-
-function validateAttachments() {
-
-    let totalSize = 0;
-
-    attachmentList.innerHTML = "";
-
-    for (const file of attachmentInput.files) {
-
-        totalSize += file.size;
-
-        const item = document.createElement("div");
-
-        item.textContent =
-            `${file.name} — ${(file.size / 1024 / 1024).toFixed(2)} MB`;
-
-        attachmentList.appendChild(item);
-    }
-
-    const totalMB = totalSize / (1024 * 1024);
-
-    attachmentSize.textContent =
-        `${totalMB.toFixed(2)} MB / 25 MB`;
-
-
-    if (totalSize > MAX_TOTAL_SIZE) {
-
-        attachmentSize.style.color = "red";
-
-        attachmentInput.setCustomValidity(
-            "The total size of all attachments cannot exceed 25 MB."
-        );
-
-        return false;
-
-    } else {
-
-        attachmentSize.style.color = "";
-
-        attachmentInput.setCustomValidity("");
-
-        return true;
-    }
-}
-
-
-// Validate immediately when files are selected
-attachmentInput.addEventListener("change", function () {
-    validateAttachments();
-});
-
-
-// Validate again when the form is submitted
-orderForm.addEventListener("submit", function (event) {
-
-    if (!validateAttachments()) {
-
-        event.preventDefault();
-
-        // Optional: show the browser's validation message
-        attachmentInput.reportValidity();
-    }
-
-});
-</script>
-
+<script src="{% static 'js/order.js' %}"></script>
 
 {% endblock %}
 

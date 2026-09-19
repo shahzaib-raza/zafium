@@ -225,6 +225,42 @@
     }
 }
 
+.locked-input {
+    position: relative;
+}
+
+
+.locked-input input {
+    padding-right: 45px;
+    opacity: 0.85;
+}
+
+
+.input-lock {
+    position: absolute;
+
+    right: 15px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    font-size: 13px;
+
+    opacity: 0.55;
+
+    pointer-events: none;
+}
+
+
+.input-note {
+    margin-top: -8px;
+    margin-bottom: 18px;
+
+    color: var(--faint);
+
+    font-size: 11px;
+}
+
 /* =========================
    MOBILE LAYOUT
 ========================= */

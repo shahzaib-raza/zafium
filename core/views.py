@@ -57,6 +57,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
 from .helpers import get_usd_to_pkr_rate_per_day
+from .solutions import SOLUTIONS
 
 def get_int(x):
     try:
@@ -924,11 +925,59 @@ def order(request):
         "subcategories"
     )
 
+    solution_slug = request.GET.get("solution")
+
+    selected_services = []
+
+    selected_solution = []
+
+    if solution_slug in SOLUTIONS:
+
+        selected_services = SOLUTIONS[
+            solution_slug
+        ]["services"]
+
+        selected_solution = SOLUTIONS[solution_slug]["name"]
+
     return render(
         request,
         "order.html",
         {
             "categories": categories,
+            "selected_services": selected_services,
+            "selected_solution": selected_solution,
+        },
+    )
+
+def solutions(request):
+
+    solution_data = {}
+
+    for slug, solution in SOLUTIONS.items():
+
+        services = PortfolioSubCategory.objects.filter(
+            id__in=solution["services"]
+        )
+
+        price = sum(
+            service.price
+            for service in services
+        )
+
+        template_key = slug.replace("-", "_")
+
+        solution_data[template_key] = {
+            "slug": slug,
+            "name": solution["name"],
+            "services": services,
+            "price": price,
+        }
+
+    return render(
+        request,
+        "solutions.html",
+        {
+            "solution_data": solution_data,
         },
     )
 
@@ -987,7 +1036,7 @@ def send_order_emails(order):
 New Order Received
 
 Client: {user.first_name}
-Email: {user.username}
+Email: {user.email}
 Phone: {order.phone_number}
 
 Items:
@@ -1048,7 +1097,7 @@ def checkout(request):
         return redirect("core:order")
 
     name = request.POST.get("name")
-    email = request.POST.get("email")
+    email = request.user.email
     phone = request.POST.get("phone")
     description = request.POST.get("description", "").strip()
     # attachments = request.FILES.getlist("attachments")

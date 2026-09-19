@@ -69,6 +69,12 @@ urlpatterns = [
     ),
 
     path(
+        "solutions/",
+        solutions,
+        name="solutions"
+    ),
+
+    path(
         "live-activity/",
         orders_activity,
         name="orders_activity",
