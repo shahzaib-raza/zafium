@@ -67,7 +67,28 @@ def get_int(x):
 
 # Create your views here.
 def home(request):
-    return render(request, "home.html")
+    solution_data = {}
+
+    for slug, solution in SOLUTIONS.items():
+
+        services = PortfolioSubCategory.objects.filter(
+            id__in=solution["services"]
+        )
+
+        price = sum(
+            service.price
+            for service in services
+        )
+
+        template_key = slug.replace("-", "_")
+
+        solution_data[template_key] = {
+            "slug": slug,
+            "name": solution["name"],
+            "services": services,
+            "price": price,
+        }
+    return render(request, "home.html", {"solution_data": solution_data,})
 
 def services(request):
     return render(request, "services.html")

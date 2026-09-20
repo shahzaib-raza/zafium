@@ -389,7 +389,7 @@ a {
     transition: var(--transition);
     display: flex;
     align-items: center;
-    padding: 5px 16px;
+    padding: 5px 0px;
     gap: 5px;
 }
 
