@@ -1,0 +1,1067 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Product Plans | Zafium{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/saas_purchase.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% load currency_tags %}
+
+<main class="saas-purchase-page">
+
+    <!-- =========================
+         HERO
+    ========================== -->
+    <section class="saas-hero">
+
+        <div class="saas-orb saas-orb-one"></div>
+        <div class="saas-orb saas-orb-two"></div>
+
+        <div class="container">
+
+            <div class="saas-hero-content">
+
+                <span class="saas-eyebrow">
+                    ZAFIUM SAAS
+                </span>
+
+                <h1>
+                    Choose the right
+                    <span class="gradient-text">solution for you.</span>
+                </h1>
+
+                <p>
+                    Select a Zafium product and plan that fits your workflow.
+                    Your subscription will remain pending until payment is confirmed.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         PURCHASE SECTION
+    ========================== -->
+    <section class="saas-purchase-section">
+
+        <div class="container">
+
+            <div class="saas-purchase-layout">
+
+                <!-- =========================
+                     LEFT — FORM
+                ========================== -->
+                <div class="saas-selection-card">
+
+                    <div class="card-heading">
+
+                        <div class="heading-icon">
+                            <span></span>
+                        </div>
+
+                        <div>
+                            <span class="small-label">
+                                SUBSCRIPTION
+                            </span>
+
+                            <h2>
+                                Select your plan
+                            </h2>
+
+                            <p>
+                                Choose a product and subscription level below.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <form
+                        method="POST"
+                        action="{% url 'core:create_subscription_invoice' %}"
+                        id="saasPurchaseForm"
+                    >
+
+                        {% csrf_token %}
+
+
+                        <!-- PRODUCT -->
+                        <div class="form-group">
+
+                            <label for="product">
+                                Product
+                            </label>
+
+                            <div class="select-wrapper">
+
+                                <select
+                                    name="product"
+                                    id="product"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Select a product
+                                    </option>
+
+                                    {% for product in products %}
+
+                                        <option
+                                            value="{{ product.id }}"
+                                            data-description="{{ product.description|escape }}"
+                                            data-free-limit="{{ product.free_daily_limit }}"
+                                            data-usage-unit="{{ product.usage_unit|default:'uses' }}"
+                                        >
+                                            {{ product.name }}
+                                        </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                                <span class="select-arrow">
+                                    ↓
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- PLAN -->
+                        <div class="form-group">
+
+                            <label for="plan">
+                                Plan
+                            </label>
+
+                            <div class="select-wrapper">
+
+                                <select
+                                    name="plan"
+                                    id="plan"
+                                    required
+                                    disabled
+                                >
+
+                                    <option value="">
+                                        Select a product first
+                                    </option>
+
+                                </select>
+
+                                <span class="select-arrow">
+                                    ↓
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- PLAN DETAILS -->
+                        <div
+                            class="selected-plan-details"
+                            id="selectedPlanDetails"
+                            aria-live="polite"
+                        >
+
+                            <div class="empty-plan-state">
+
+                                <div class="empty-plan-icon">
+                                    +
+                                </div>
+
+                                <p>
+                                    Select a product and plan to view
+                                    subscription details.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <!-- PAYMENT METHOD -->
+                        <div class="form-group payment-method-group">
+
+                            <label for="payment_method">
+                                Payment Method
+                            </label>
+
+                            <div class="select-wrapper">
+
+                                <select
+                                    name="payment_method"
+                                    id="payment_method"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Select a payment method
+                                    </option>
+
+                                    <option value="card">
+                                        Visa / Mastercard
+                                    </option>
+
+                                    <option value="easypaisa">
+                                        Easypaisa
+                                    </option>
+
+                                    <option value="jazzcash">
+                                        JazzCash
+                                    </option>
+
+                                    <option value="bank_transfer">
+                                        Bank Transfer
+                                    </option>
+
+                                </select>
+
+                                <span class="select-arrow">
+                                    ↓
+                                </span>
+
+                            </div>
+
+                            <p class="field-help">
+                                Choose how you would like to pay. Payment instructions will be
+                                provided after your invoice is generated.
+                            </p>
+
+                        </div>
+
+
+                        <!-- SUBMIT -->
+                        <button
+                            type="submit"
+                            class="saas-submit-btn"
+                            id="submitButton"
+                            disabled
+                        >
+
+                            <span class="button-text">
+                                Get Invoice
+                            </span>
+
+                            <span class="button-arrow">
+                                →
+                            </span>
+
+                        </button>
+
+
+                        <p class="form-note">
+                            You will receive an invoice after submitting.
+                            Your subscription will only become active after payment is confirmed.
+                        </p>
+
+                    </form>
+
+                </div>
+
+
+                <!-- =========================
+                     RIGHT — INFORMATION
+                ========================== -->
+                <div class="saas-info-column">
+
+                    <!-- FREE ACCESS -->
+                    <div class="info-card free-access-card">
+
+                        <div class="info-card-top">
+
+                            <div class="info-icon">
+                                ✦
+                            </div>
+
+                            <span class="info-badge">
+                                FREE ACCESS
+                            </span>
+
+                        </div>
+
+                        <h3>
+                            Try before you subscribe
+                        </h3>
+
+                        <p>
+                            Zafium SaaS products provide limited free usage
+                            so you can experience the solution before choosing
+                            a paid plan.
+                        </p>
+
+                        <div class="info-divider"></div>
+
+                        <div class="info-row">
+
+                            <span>
+                                Free daily usage
+                            </span>
+
+                            <strong id="freeLimitDisplay">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- HOW IT WORKS -->
+                    <div class="info-card process-card">
+
+                        <span class="small-label">
+                            HOW IT WORKS
+                        </span>
+
+                        <h3>
+                            Simple subscription process
+                        </h3>
+
+
+                        <div class="process-list">
+
+                            <div class="process-item">
+
+                                <div class="process-number">
+                                    01
+                                </div>
+
+                                <div>
+                                    <strong>
+                                        Choose a product
+                                    </strong>
+
+                                    <p>
+                                        Select the Zafium solution you want.
+                                    </p>
+                                </div>
+
+                            </div>
+
+
+                            <div class="process-item">
+
+                                <div class="process-number">
+                                    02
+                                </div>
+
+                                <div>
+                                    <strong>
+                                        Select a plan
+                                    </strong>
+
+                                    <p>
+                                        Choose the usage level that fits your needs.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="process-item">
+
+                                <div class="process-number">
+                                    03
+                                </div>
+
+                                <div>
+                                    <strong>
+                                        Receive your invoice
+                                    </strong>
+
+                                    <p>
+                                        An invoice will be generated and emailed to you.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="process-item">
+
+                                <div class="process-number">
+                                    04
+                                </div>
+
+                                <div>
+                                    <strong>
+                                        Complete payment
+                                    </strong>
+
+                                    <p>
+                                        Payment instructions will be provided separately.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="process-item">
+
+                                <div class="process-number">
+                                    05
+                                </div>
+
+                                <div>
+                                    <strong>
+                                        Subscription activated
+                                    </strong>
+
+                                    <p>
+                                        Your purchased daily limit becomes active after payment confirmation.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SUPPORT -->
+                    <div class="support-card">
+
+                        <div class="support-glow"></div>
+
+                        <div class="support-content">
+
+                            <span class="small-label">
+                                NEED SOMETHING DIFFERENT?
+                            </span>
+
+                            <h3>
+                                Need a custom plan?
+                            </h3>
+
+                            <p>
+                                If your usage requirements exceed the available
+                                plans, contact Zafium for a custom solution.
+                            </p>
+
+                            <a
+                                href="mailto:{{ settings.DEFAULT_FROM_EMAIL }}"
+                                class="support-link"
+                            >
+                                Contact Zafium
+                                <span>→</span>
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const productSelect = document.getElementById("product");
+    const planSelect = document.getElementById("plan");
+    const submitButton = document.getElementById("submitButton");
+
+    const selectedPlanDetails =
+        document.getElementById("selectedPlanDetails");
+
+    const freeLimitDisplay =
+        document.getElementById("freeLimitDisplay");
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Product / Plan data
+    |--------------------------------------------------------------------------
+    |
+    | Django renders the available plans into JavaScript.
+    |
+    */
+
+    const products = {
+
+        {% for product in products %}
+
+        "{{ product.id }}": {
+
+            name: "{{ product.name|escapejs }}",
+
+            description:
+                "{{ product.description|default:''|escapejs }}",
+
+            freeLimit:
+                "{{ product.free_daily_limit }}",
+
+            usageUnit:
+                "{{ product.usage_unit|default:'uses'|escapejs }}",
+
+            plans: [
+
+                {% for plan in product.plans.all %}
+
+                {% if plan.is_active %}
+
+                {
+                    id: "{{ plan.id }}",
+
+                    name:
+                        "{{ plan.name|escapejs }}",
+
+                    dailyLimit:
+                        "{{ plan.daily_limit }}",
+
+                    price:
+                        "{{ plan.price }}",
+
+                    currency:
+                        "{{ plan.currency|escapejs }}",
+
+                    billingDays:
+                        "{{ plan.billing_period_days }}"
+
+                },
+
+                {% endif %}
+
+                {% endfor %}
+
+            ]
+
+        },
+
+        {% endfor %}
+
+    };
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Currency formatter
+    |--------------------------------------------------------------------------
+    */
+
+    function formatPrice(price, currency) {
+
+        const numericPrice = Number(price);
+
+        if (Number.isNaN(numericPrice)) {
+            return price;
+        }
+
+        if (currency === "USD") {
+
+            return "$" + numericPrice.toFixed(2);
+
+        }
+
+        if (currency === "PKR") {
+
+            return "₨" + numericPrice.toLocaleString(
+                "en-PK",
+                {
+                    maximumFractionDigits: 0
+                }
+            );
+
+        }
+
+        return currency + " " + numericPrice.toFixed(2);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Reset plan dropdown
+    |--------------------------------------------------------------------------
+    */
+
+    function resetPlanSelect() {
+
+        planSelect.innerHTML = "";
+
+        const defaultOption =
+            document.createElement("option");
+
+        defaultOption.value = "";
+        defaultOption.textContent =
+            "Select a product first";
+
+        planSelect.appendChild(defaultOption);
+
+        planSelect.disabled = true;
+
+        submitButton.disabled = true;
+
+        selectedPlanDetails.innerHTML = `
+            <div class="empty-plan-state">
+
+                <div class="empty-plan-icon">
+                    +
+                </div>
+
+                <p>
+                    Select a product and plan to view
+                    subscription details.
+                </p>
+
+            </div>
+        `;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Load plans for selected product
+    |--------------------------------------------------------------------------
+    */
+
+    function loadPlans(productId) {
+
+        planSelect.innerHTML = "";
+
+        submitButton.disabled = true;
+
+        if (!productId || !products[productId]) {
+
+            resetPlanSelect();
+
+            freeLimitDisplay.textContent = "—";
+
+            return;
+        }
+
+
+        const product = products[productId];
+
+
+        /*
+        | Update free usage
+        */
+
+        freeLimitDisplay.textContent =
+            product.freeLimit +
+            " " +
+            product.usageUnit +
+            "/day";
+
+
+        /*
+        | Default option
+        */
+
+        const defaultOption =
+            document.createElement("option");
+
+        defaultOption.value = "";
+
+        defaultOption.textContent =
+            "Select a plan";
+
+        planSelect.appendChild(defaultOption);
+
+
+        /*
+        | Add active plans
+        */
+
+        if (!product.plans.length) {
+
+            const unavailableOption =
+                document.createElement("option");
+
+            unavailableOption.value = "";
+
+            unavailableOption.textContent =
+                "No plans currently available";
+
+            planSelect.appendChild(unavailableOption);
+
+            planSelect.disabled = true;
+
+            selectedPlanDetails.innerHTML = `
+                <div class="empty-plan-state">
+
+                    <div class="empty-plan-icon">
+                        !
+                    </div>
+
+                    <p>
+                        No paid plans are currently available
+                        for this product.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        product.plans.forEach(function (plan) {
+
+            const option =
+                document.createElement("option");
+
+            option.value = plan.id;
+
+            option.textContent =
+                plan.name +
+                " — " +
+                formatPrice(
+                    plan.price,
+                    plan.currency
+                );
+
+            option.dataset.planId =
+                plan.id;
+
+            planSelect.appendChild(option);
+
+        });
+
+
+        planSelect.disabled = false;
+
+
+        /*
+        | Automatically select first plan
+        */
+
+        if (product.plans.length === 1) {
+
+            planSelect.value =
+                product.plans[0].id;
+
+            updatePlanDetails();
+
+        } else {
+
+            selectedPlanDetails.innerHTML = `
+                <div class="empty-plan-state">
+
+                    <div class="empty-plan-icon">
+                        +
+                    </div>
+
+                    <p>
+                        Select a plan to view its
+                        subscription details.
+                    </p>
+
+                </div>
+            `;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Update selected plan details
+    |--------------------------------------------------------------------------
+    */
+
+    function updatePlanDetails() {
+
+        const productId =
+            productSelect.value;
+
+        const planId =
+            planSelect.value;
+
+
+        if (
+            !productId ||
+            !planId ||
+            !products[productId]
+        ) {
+
+            submitButton.disabled = true;
+
+            return;
+
+        }
+
+
+        const product =
+            products[productId];
+
+        const plan =
+            product.plans.find(function (item) {
+
+                return String(item.id) ===
+                    String(planId);
+
+            });
+
+
+        if (!plan) {
+
+            submitButton.disabled = true;
+
+            return;
+
+        }
+
+
+        submitButton.disabled = false;
+
+
+        /*
+        | Format billing period
+        */
+
+        let billingText =
+            plan.billingDays + " days";
+
+        if (String(plan.billingDays) === "30") {
+            billingText = "30 days";
+        }
+
+
+        /*
+        | Render details
+        */
+
+        selectedPlanDetails.innerHTML = `
+
+            <div class="selected-plan-header">
+
+                <div>
+
+                    <span class="plan-selected-label">
+                        SELECTED PLAN
+                    </span>
+
+                    <h3>
+                        ${escapeHtml(plan.name)}
+                    </h3>
+
+                </div>
+
+                <div class="selected-plan-price">
+
+                    <strong>
+                        ${formatPrice(
+                            plan.price,
+                            plan.currency
+                        )}
+                    </strong>
+
+                    <span>
+                        / ${billingText}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="plan-specs">
+
+                <div class="plan-spec">
+
+                    <span class="spec-icon">
+                        ↗
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Daily usage
+                        </small>
+
+                        <strong>
+                            ${escapeHtml(plan.dailyLimit)}
+                            ${escapeHtml(product.usageUnit)}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="plan-spec">
+
+                    <span class="spec-icon">
+                        ◷
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Billing period
+                        </small>
+
+                        <strong>
+                            ${billingText}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="plan-spec">
+
+                    <span class="spec-icon">
+                        $
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Plan price
+                        </small>
+
+                        <strong>
+                            ${formatPrice(
+                                plan.price,
+                                plan.currency
+                            )}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="plan-notice">
+
+                <span>i</span>
+
+                <p>
+                    Your subscription will initially be
+                    <strong>Pending</strong>.
+                    Access is activated after payment confirmation.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Basic HTML escaping
+    |--------------------------------------------------------------------------
+    */
+
+    function escapeHtml(value) {
+
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Product change
+    |--------------------------------------------------------------------------
+    */
+
+    productSelect.addEventListener(
+        "change",
+        function () {
+
+            loadPlans(this.value);
+
+        }
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Plan change
+    |--------------------------------------------------------------------------
+    */
+
+    planSelect.addEventListener(
+        "change",
+        function () {
+
+            updatePlanDetails();
+
+        }
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Prevent accidental double submission
+    |--------------------------------------------------------------------------
+    */
+
+    const purchaseForm =
+        document.getElementById("saasPurchaseForm");
+
+    purchaseForm.addEventListener(
+        "submit",
+        function () {
+
+            if (submitButton.disabled) {
+                return;
+            }
+
+            submitButton.disabled = true;
+
+            submitButton.classList.add(
+                "is-loading"
+            );
+
+            submitButton.querySelector(
+                ".button-text"
+            ).textContent =
+                "Generating Invoice...";
+
+        }
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Initial state
+    |--------------------------------------------------------------------------
+    */
+
+    resetPlanSelect();
+
+});
+</script>
+
+{% endblock %}

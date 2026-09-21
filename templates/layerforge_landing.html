@@ -1,0 +1,643 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+LayerForge — From Raster to Layered Vector
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/layerforge_landing.css' %}">
+{% endblock %}
+
+{% block navbar %}
+{# No normal Zafium navigation on the cinematic product page #}
+{% endblock %}
+
+{% block content %}
+
+<main class="layerforge">
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <section class="lf-hero">
+
+        <div class="lf-background-grid"></div>
+        <div class="lf-orb lf-orb-1"></div>
+        <div class="lf-orb lf-orb-2"></div>
+
+        <div class="lf-hero-content">
+
+            <div class="lf-brand-mark">
+                ZAFIUM / LAYERFORGE
+            </div>
+
+            <h1>
+                From raster
+                <span>to layers.</span>
+            </h1>
+
+            <p>
+                A visual transformation from pixels
+                into structured, editable vector shapes.
+            </p>
+
+            <div class="lf-scroll-hint">
+                <span>SCROLL TO TRANSFORM</span>
+
+                <div class="lf-scroll-line">
+                    <i></i>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CINEMATIC TRANSFORMATION
+    ====================================================== -->
+
+    <section class="lf-cinematic" id="lf-cinematic">
+
+        <!-- =====================================================
+            STICKY CINEMATIC STAGE
+
+            EVERYTHING INSIDE THIS REMAINS FIXED WHILE
+            THE USER SCROLLS THROUGH THE STORY.
+        ====================================================== -->
+
+        <div class="lf-sticky-stage">
+
+            <!-- =============================================
+                LEFT STORY TEXT
+            ============================================== -->
+
+            <div class="lf-story-copy">
+
+                <div class="lf-copy-stage stage-0 active">
+
+                    <span class="lf-index">
+                        01 / INPUT
+                    </span>
+
+                    <h2>
+                        It starts
+                        <strong>as pixels.</strong>
+                    </h2>
+
+                    <p>
+                        A raster image contains thousands of
+                        individual pixels. Visually complete,
+                        structurally flat.
+                    </p>
+
+                </div>
+
+
+                <div class="lf-copy-stage stage-1">
+
+                    <span class="lf-index">
+                        02 / ANALYZE
+                    </span>
+
+                    <h2>
+                        Find the
+                        <strong>visual regions.</strong>
+                    </h2>
+
+                    <p>
+                        LayerForge analyzes the image and
+                        identifies areas that belong together.
+                    </p>
+
+                </div>
+
+
+                <div class="lf-copy-stage stage-2">
+
+                    <span class="lf-index">
+                        03 / SEPARATE
+                    </span>
+
+                    <h2>
+                        Colors become
+                        <strong>layers.</strong>
+                    </h2>
+
+                    <p>
+                        Different visual regions begin separating
+                        from the original raster image.
+                    </p>
+
+                </div>
+
+
+                <div class="lf-copy-stage stage-3">
+
+                    <span class="lf-index">
+                        04 / TRACE
+                    </span>
+
+                    <h2>
+                        Boundaries become
+                        <strong>paths.</strong>
+                    </h2>
+
+                    <p>
+                        LayerForge identifies the boundaries that
+                        define each region.
+                    </p>
+
+                </div>
+
+
+                <div class="lf-copy-stage stage-4">
+
+                    <span class="lf-index">
+                        05 / REBUILD
+                    </span>
+
+                    <h2>
+                        Layers become
+                        <strong>vector.</strong>
+                    </h2>
+
+                    <p>
+                        The separated regions are reconstructed
+                        as structured vector paths.
+                    </p>
+
+                </div>
+
+
+                <div class="lf-copy-stage stage-5">
+
+                    <span class="lf-index">
+                        06 / RESULT
+                    </span>
+
+                    <h2>
+                        Ready to
+                        <strong>design.</strong>
+                    </h2>
+
+                    <p>
+                        The flat raster has become a structured
+                        layered vector representation.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                RIGHT ANIMATION CANVAS
+            ============================================== -->
+
+            <div class="lf-canvas">
+
+                <div class="lf-canvas-glow"></div>
+
+                <div class="lf-scan-line"></div>
+
+
+                <!-- =========================================
+                    RASTER
+                ========================================== -->
+
+                <div class="lf-raster-object">
+
+                    <div class="lf-raster-label">
+                        RASTER IMAGE
+                    </div>
+
+                    <div class="lf-pixel-art">
+
+                        <!-- 60 pixels -->
+
+                        <i class="px p1"></i>
+                        <i class="px p2"></i>
+                        <i class="px p3"></i>
+                        <i class="px p4"></i>
+                        <i class="px p5"></i>
+                        <i class="px p6"></i>
+                        <i class="px p7"></i>
+                        <i class="px p8"></i>
+                        <i class="px p9"></i>
+                        <i class="px p10"></i>
+
+                        <i class="px p11"></i>
+                        <i class="px p12"></i>
+                        <i class="px p13"></i>
+                        <i class="px p14"></i>
+                        <i class="px p15"></i>
+                        <i class="px p16"></i>
+                        <i class="px p17"></i>
+                        <i class="px p18"></i>
+                        <i class="px p19"></i>
+                        <i class="px p20"></i>
+
+                        <i class="px p21"></i>
+                        <i class="px p22"></i>
+                        <i class="px p23"></i>
+                        <i class="px p24"></i>
+                        <i class="px p25"></i>
+                        <i class="px p26"></i>
+                        <i class="px p27"></i>
+                        <i class="px p28"></i>
+                        <i class="px p29"></i>
+                        <i class="px p30"></i>
+
+                        <i class="px p31"></i>
+                        <i class="px p32"></i>
+                        <i class="px p33"></i>
+                        <i class="px p34"></i>
+                        <i class="px p35"></i>
+                        <i class="px p36"></i>
+                        <i class="px p37"></i>
+                        <i class="px p38"></i>
+                        <i class="px p39"></i>
+                        <i class="px p40"></i>
+
+                        <i class="px p41"></i>
+                        <i class="px p42"></i>
+                        <i class="px p43"></i>
+                        <i class="px p44"></i>
+                        <i class="px p45"></i>
+                        <i class="px p46"></i>
+                        <i class="px p47"></i>
+                        <i class="px p48"></i>
+                        <i class="px p49"></i>
+                        <i class="px p50"></i>
+
+                        <i class="px p51"></i>
+                        <i class="px p52"></i>
+                        <i class="px p53"></i>
+                        <i class="px p54"></i>
+                        <i class="px p55"></i>
+                        <i class="px p56"></i>
+                        <i class="px p57"></i>
+                        <i class="px p58"></i>
+                        <i class="px p59"></i>
+                        <i class="px p60"></i>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                    COLOR PARTICLES
+                ========================================== -->
+
+                <div class="lf-color-particles">
+
+                    <i></i><i></i><i></i><i></i><i></i>
+                    <i></i><i></i><i></i><i></i><i></i>
+                    <i></i><i></i><i></i><i></i><i></i>
+                    <i></i><i></i><i></i><i></i><i></i>
+
+                </div>
+
+
+                <!-- =========================================
+                    LAYERS
+                ========================================== -->
+
+                <div class="lf-layer-system">
+
+                    <div class="lf-layer layer-1">
+                        <span>COLOR 01</span>
+                    </div>
+
+                    <div class="lf-layer layer-2">
+                        <span>COLOR 02</span>
+                    </div>
+
+                    <div class="lf-layer layer-3">
+                        <span>COLOR 03</span>
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                    VECTOR PATHS
+                ========================================== -->
+
+                <svg
+                    class="lf-vector-system"
+                    viewBox="0 0 700 600"
+                    preserveAspectRatio="xMidYMid meet"
+                >
+
+                    <path
+                        class="vector-path"
+                        d="M130 170
+                        L260 170
+                        L320 220
+                        L460 220
+                        L520 170"
+                    />
+
+                    <path
+                        class="vector-path"
+                        d="M170 280
+                        L270 280
+                        L310 340
+                        L470 340
+                        L520 280"
+                    />
+
+                    <path
+                        class="vector-path"
+                        d="M220 390
+                        L300 390
+                        L340 450
+                        L440 450"
+                    />
+
+                    <g class="vector-nodes">
+
+                        <circle cx="130" cy="170" r="6"/>
+                        <circle cx="260" cy="170" r="6"/>
+                        <circle cx="320" cy="220" r="6"/>
+                        <circle cx="460" cy="220" r="6"/>
+                        <circle cx="520" cy="170" r="6"/>
+
+                        <circle cx="170" cy="280" r="6"/>
+                        <circle cx="270" cy="280" r="6"/>
+                        <circle cx="310" cy="340" r="6"/>
+                        <circle cx="470" cy="340" r="6"/>
+                        <circle cx="520" cy="280" r="6"/>
+
+                        <circle cx="220" cy="390" r="6"/>
+                        <circle cx="300" cy="390" r="6"/>
+                        <circle cx="340" cy="450" r="6"/>
+                        <circle cx="440" cy="450" r="6"/>
+
+                    </g>
+
+                </svg>
+
+
+                <!-- =========================================
+                    FINAL VECTOR
+                ========================================== -->
+
+                <div class="lf-final-vector">
+
+                    <div class="vector-shape shape-a"></div>
+                    <div class="vector-shape shape-b"></div>
+                    <div class="vector-shape shape-c"></div>
+
+                    <div class="vector-caption">
+                        <span>VECTOR</span>
+                        <small>EDITABLE LAYERS</small>
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                    DATA HUD
+                ========================================== -->
+
+                <div class="lf-floating-ui ui-1">
+                    <span>PIXELS</span>
+                    <strong>060</strong>
+                </div>
+
+                <div class="lf-floating-ui ui-2">
+                    <span>REGIONS</span>
+                    <strong>03</strong>
+                </div>
+
+                <div class="lf-floating-ui ui-3">
+                    <span>PATHS</span>
+                    <strong>03</strong>
+                </div>
+
+                <div class="lf-floating-ui ui-4">
+                    <span>LAYERS</span>
+                    <strong>03</strong>
+                </div>
+
+
+                <div class="lf-measure measure-top">
+                    <i></i>
+                    <span>BOUNDARY DETECTION</span>
+                    <i></i>
+                </div>
+
+                <div class="lf-measure measure-bottom">
+                    <i></i>
+                    <span>VECTOR RECONSTRUCTION</span>
+                    <i></i>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+            SCROLL TRIGGERS
+
+            These occupy the scroll space. They are intentionally
+            visually empty. The sticky stage above remains fixed.
+        ====================================================== -->
+
+        <div class="lf-scroll-step" data-stage="0"></div>
+
+        <div class="lf-scroll-step" data-stage="1"></div>
+
+        <div class="lf-scroll-step" data-stage="2"></div>
+
+        <div class="lf-scroll-step" data-stage="3"></div>
+
+        <div class="lf-scroll-step" data-stage="4"></div>
+
+        <div class="lf-scroll-step" data-stage="5"></div>
+
+    </section>
+
+
+    <!-- =====================================================
+         PROBLEM
+    ====================================================== -->
+
+    <section class="lf-problem">
+
+        <div class="lf-problem-visual">
+
+            <div class="manual-canvas">
+
+                <div class="manual-image">
+
+                    <div class="manual-shape shape-one"></div>
+                    <div class="manual-shape shape-two"></div>
+                    <div class="manual-shape shape-three"></div>
+
+                </div>
+
+
+                <div class="cursor cursor-one"></div>
+                <div class="cursor cursor-two"></div>
+                <div class="cursor cursor-three"></div>
+
+
+                <div class="trace-path trace-one"></div>
+                <div class="trace-path trace-two"></div>
+
+            </div>
+
+        </div>
+
+
+        <div class="lf-problem-copy">
+
+            <span class="lf-index">
+                THE PROBLEM
+            </span>
+
+            <h2>
+                Manual tracing
+                <strong>breaks the flow.</strong>
+            </h2>
+
+            <p>
+                Designers can spend significant time tracing
+                raster artwork, creating paths, separating
+                regions and rebuilding layers before the
+                actual design work can even begin.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SOLUTION
+    ====================================================== -->
+
+    <section class="lf-solution">
+
+        <div class="lf-solution-object">
+
+            <div class="solution-raster">
+                <span>RASTER</span>
+            </div>
+
+            <div class="solution-arrow">
+                →
+            </div>
+
+            <div class="solution-layers">
+
+                <div></div>
+                <div></div>
+                <div></div>
+
+            </div>
+
+            <div class="solution-arrow">
+                →
+            </div>
+
+            <div class="solution-vector">
+                <span>VECTOR</span>
+            </div>
+
+        </div>
+
+
+        <div class="lf-solution-copy">
+
+            <span class="lf-index">
+                THE LAYERFORGE APPROACH
+            </span>
+
+            <h2>
+                Let the image
+                <strong>build itself.</strong>
+            </h2>
+
+            <p>
+                LayerForge turns the repetitive raster-to-vector
+                process into a visual transformation:
+                identify regions, derive boundaries, separate
+                layers and reconstruct the artwork.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FINAL
+    ====================================================== -->
+
+    <section class="lf-final">
+
+        <div class="lf-final-grid"></div>
+
+        <div class="lf-final-object">
+
+            <div class="final-ring ring-one"></div>
+            <div class="final-ring ring-two"></div>
+            <div class="final-ring ring-three"></div>
+
+            <div class="final-core">
+                <span>LF</span>
+            </div>
+
+        </div>
+
+
+        <div class="lf-final-copy">
+
+            <span class="lf-brand-mark">
+                ZAFIUM / LAYERFORGE
+            </span>
+
+            <h2>
+                Stop tracing.
+                <strong>Start transforming.</strong>
+            </h2>
+
+            <p>
+                Turn raster artwork into layered vector
+                structures.
+            </p>
+
+            <a
+                href="/layerforge/app/"
+                class="lf-cta"
+            >
+                Try LayerForge
+                <span>→</span>
+            </a>
+
+        </div>
+
+    </section>
+
+</main>
+
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+
+
+{% block extra_js %}
+<script src="{% static 'js/layerforge_landing.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+
+    <body style="margin: 0; padding: 0; background: #020617; color: #e5e7eb; font-family: Arial, sans-serif;">
+
+        <div class="wrapper" style="max-width: 700px; margin: 40px auto; padding: 20px;">
+
+            <div class="invoice" style="background: #0b1220; border: 1px solid rgba(148, 163, 184, 0.15); border-radius: 16px; padding: 35px;">
+
+                <div class="brand" style="font-size: 28px; font-weight: bold; color: #22d3ee; margin-bottom: 30px;">
+                    zafium
+                </div>
+
+                <div class="title" style="font-size: 26px; margin-bottom: 10px;">
+                    {{ invoice.product_name }} Invoice
+                </div>
+
+                <p class="muted" style="color: #94a3b8;">
+                    Invoice #{{ invoice.invoice_number }}
+                </p>
+
+                <p>
+                    Hello
+                    {{ invoice.user.first_name|default:invoice.user.username }},
+                </p>
+
+                <span>Payment Method:&nbsp;</span>
+
+                <strong>
+                    {% if invoice.payment_method == "card" %}
+                        Visa / Mastercard
+
+                    {% elif invoice.payment_method == "easypaisa" %}
+                        Easypaisa
+
+                    {% elif invoice.payment_method == "jazzcash" %}
+                        JazzCash
+
+                    {% elif invoice.payment_method == "bank_transfer" %}
+                        Bank Transfer
+
+                    {% else %}
+                        Not selected
+                    {% endif %}
+                </strong>
+
+
+                <p class="muted" style="color: #94a3b8;">
+                    Thank you for choosing Zafium.
+                    Your {{ invoice.product_name }} subscription invoice has been generated.
+                </p>
+
+                <br>
+
+                <div class="row" style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(148, 163, 184, 0.1);">
+                    <span>Product:&nbsp;</span>
+                    <strong>
+                        {{ invoice.product_name }}
+                    </strong>
+                </div>
+
+                <div class="row" style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(148, 163, 184, 0.1);">
+                    <span>Plan:&nbsp;</span>
+                    <strong>
+                        {{ invoice.plan_name }}
+                    </strong>
+                </div>
+
+                <div class="row" style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(148, 163, 184, 0.1);">
+                    <span>Daily Usage:&nbsp;</span>
+                    <strong>
+                        {{ invoice.daily_limit }} / day
+                    </strong>
+                </div>
+
+                <div class="row" style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(148, 163, 184, 0.1);">
+                    <span>Billing Period:&nbsp;</span>
+                    <strong>
+                        {{ invoice.billing_period_days }} days
+                    </strong>
+                </div>
+
+                <div class="row" style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(148, 163, 184, 0.1);">
+                    <span>Status:&nbsp;</span>
+                    <span class="status" style="display: inline-block; padding: 7px 14px; border-radius: 20px; background: rgba(99, 102, 241, 0.15); color: #a5b4fc;">
+                        {{ invoice.get_status_display }}
+                    </span>
+                </div>
+
+                <div class="row total" style="font-size: 22px; font-weight: bold; margin-top: 25px;">
+                    <span>Total</span>
+
+                    <span>
+                        {{ invoice.currency }}
+                        {{ invoice.amount }}
+                    </span>
+                </div>
+
+                <br>
+
+                <p>
+                    Your subscription will be activated after
+                    payment has been successfully confirmed.
+                </p>
+
+                <p class="muted" style="color: #94a3b8;">
+                    Our team will contact you with the payment
+                    instructions.
+                </p>
+
+                <div class="footer" style="margin-top: 30px; color: #64748b; font-size: 13px; line-height: 1.6;">
+
+                    Zafium<br>
+                    AI, Data, Design & Automation Solutions<br>
+                    info@zafium.com
+
+                </div>
+
+            </div>
+
+        </div>
+    </body>
+</html>

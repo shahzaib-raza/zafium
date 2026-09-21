@@ -77,9 +77,9 @@
 function showUsageLimitAlert() {
     const alertBox = document.getElementById("alert");
 
-    alertBox.innerText =
+    alertBox.innerHTML =
         "⚠️Usage limit exceeded⚠️\nYou have reached your daily " +
-        "LayerForge usage limit. Please contact info@zaium.com to increase the limit " +
+        "LayerForge usage limit. Please purchase the plan @ <a href='{% url 'core:products_subscriptions' %}' style='text-decoration: underline;'>Products Subscription Page</a> " +
         "or wait 24 hours for your limit to reset.";
 
     alertBox.classList.add("show");

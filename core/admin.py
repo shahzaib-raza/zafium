@@ -3,8 +3,11 @@ from django.utils import timezone
 
 from .models import (
     UserProfile,
-    ProjectUsageSettings,
-    ProjectUsage,
+    SaaSProduct,
+    SaaSPlan,
+    SaaSSubscription,
+    SaaSUsage,
+    SaaSInvoice,
     PortfolioItem,
     PortfolioMedia,
     PortfolioCategory,
@@ -37,7 +40,6 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = (
         "user",
         "email",
-        "plan",
         "phone",
         "country",
         "company",
@@ -45,7 +47,6 @@ class UserProfileAdmin(admin.ModelAdmin):
     )
 
     list_filter = (
-        "plan",
         "country",
         "created_at",
     )
@@ -67,45 +68,158 @@ class UserProfileAdmin(admin.ModelAdmin):
     def email(self, obj):
         return obj.user.email
 
-@admin.register(ProjectUsageSettings)
-class ProjectUsageSettingsAdmin(admin.ModelAdmin):
+
+@admin.register(SaaSProduct)
+class SaaSProductAdmin(admin.ModelAdmin):
     list_display = (
+        "name",
+        "slug",
         "free_daily_limit",
-        "paid_daily_limit",
+        "is_active",
+        "created_at",
         "updated_at",
+    )
+
+    list_filter = (
+        "is_active",
+        "created_at",
+    )
+
+    search_fields = (
+        "name",
+        "slug",
+        "description",
+    )
+
+    prepopulated_fields = {
+        "slug": ("name",),
+    }
+
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+    )
+
+    ordering = (
+        "name",
+    )
+
+
+@admin.register(SaaSPlan)
+class SaaSPlanAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "product",
+        "daily_limit",
+        "price",
+        "currency",
+        "billing_period_days",
+        "is_active",
+        "sort_order",
+        "created_at",
+    )
+
+    list_filter = (
+        "product",
+        "currency",
+        "is_active",
+        "billing_period_days",
+    )
+
+    search_fields = (
+        "name",
+        "product__name",
     )
 
     readonly_fields = (
+        "created_at",
         "updated_at",
     )
 
-    def has_add_permission(self, request):
-        # Only allow one settings record
-        return not ProjectUsageSettings.objects.exists()
+    ordering = (
+        "product",
+        "sort_order",
+        "price",
+    )
 
 
-@admin.register(ProjectUsage)
-class ProjectUsageAdmin(admin.ModelAdmin):
+@admin.register(SaaSSubscription)
+class SaaSSubscriptionAdmin(admin.ModelAdmin):
     list_display = (
-        "identity_key",
-        "project",
+        "user",
+        "product",
+        "plan",
+        "status",
+        "daily_limit",
+        "price",
+        "currency",
+        "start_date",
+        "end_date",
+        "is_currently_active",
+        "created_at",
+    )
+
+    list_filter = (
+        "product",
+        "plan",
+        "status",
+        "currency",
+        "created_at",
+        "start_date",
+        "end_date",
+    )
+
+    search_fields = (
+        "user__username",
+        "user__email",
+        "user__first_name",
+        "user__last_name",
+        "product__name",
+        "plan__name",
+    )
+
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+        "is_currently_active",
+        "remaining_days",
+    )
+
+    ordering = (
+        "-created_at",
+    )
+
+    @admin.display(
+        boolean=True,
+        description="Currently Active",
+    )
+    def is_currently_active(self, obj):
+        return obj.is_active
+
+
+@admin.register(SaaSUsage)
+class SaaSUsageAdmin(admin.ModelAdmin):
+    list_display = (
+        "user",
+        "product",
         "date",
         "count",
     )
 
     list_filter = (
-        "project",
+        "product",
         "date",
     )
 
     search_fields = (
-        "identity_key",
-        "project",
+        "user__username",
+        "user__email",
+        "product__name",
     )
 
     readonly_fields = (
-        "identity_key",
-        "project",
+        "user",
+        "product",
         "date",
         "count",
     )
@@ -113,6 +227,50 @@ class ProjectUsageAdmin(admin.ModelAdmin):
     ordering = (
         "-date",
         "-count",
+    )
+
+
+@admin.register(SaaSInvoice)
+class SaaSInvoiceAdmin(admin.ModelAdmin):
+    list_display = (
+        "invoice_number",
+        "user",
+        "product_name",
+        "plan_name",
+        "amount",
+        "currency",
+        "status",
+        "payment_method",
+        "transaction_id",
+        "issued_at",
+        "paid_at",
+    )
+
+    list_filter = (
+        "status",
+        "currency",
+        "payment_method",
+        "issued_at",
+        "paid_at",
+    )
+
+    search_fields = (
+        "invoice_number",
+        "user__username",
+        "user__email",
+        "product_name",
+        "plan_name",
+        "transaction_id",
+    )
+
+    readonly_fields = (
+        "invoice_number",
+        "issued_at",
+        "paid_at",
+    )
+
+    ordering = (
+        "-issued_at",
     )
 
 @admin.register(OrderItem)

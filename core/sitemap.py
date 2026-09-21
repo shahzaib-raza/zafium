@@ -45,6 +45,12 @@ class StaticViewSitemap(Sitemap):
             'core:terms_of_service',
             'core:refund_policy',
             'core:pricing',
+            'core:solutions',
+            'core:signup',
+            'core:login',
+            'core:account',
+            'core:products_subscriptions',
+            
         ]
 
     def location(self, item):

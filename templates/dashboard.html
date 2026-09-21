@@ -6,46 +6,523 @@
 {% endblock %}
 
 {% block content %}
+{% load currency_tags %}
 <section class="portfolio-hero">
-  <div class="container">
-    <div class="hero-badge">CLIENT DASHBOARD</div>
-    <h1 class="hero-title">My Orders</h1>
-    <p class="hero-subtitle">Track your active and completed orders.</p>
 
-    <form method="get" class="dashboard-search">
-        <!-- type="number" -->
-        <input
-            name="order_id"
-            placeholder="Enter Order ID (e.g. 123)"
-            value="{{ request.GET.order_id }}"
-        >
+    <div class="container">
 
-        <button class="btn-primary" type="submit">
-            Search
-        </button>
-    </form>
+        <div class="hero-badge">
+            CLIENT DASHBOARD
+        </div>
 
-    <div class="hero-stats">
-      <div class="stat-card">
-        <h3>{{ active_orders|length }}</h3>
-        <p>Active Orders</p>
-      </div>
-      <div class="stat-card">
-        <h3>{{ completed_orders|length }}</h3>
-        <p>Completed Orders</p>
-      </div>
-      <div class="stat-card">
-        <h3>{{ orders|length }}</h3>
-        <p>Total Orders</p>
-      </div>
+        <h1 class="hero-title">
+            My Dashboard
+        </h1>
+
+        <p class="hero-subtitle">
+            Manage your orders, subscriptions, invoices and Zafium services.
+        </p>
+
+
+        <form method="get" class="dashboard-search">
+
+            <input
+                name="order_id"
+                placeholder="Enter Service ID (e.g. 123)"
+                value="{{ request.GET.order_id }}"
+            >
+
+            <button
+                class="btn-primary"
+                type="submit"
+            >
+                Search
+            </button>
+
+        </form>
+
+
+        <!-- =========================
+             DASHBOARD STATS
+        ========================== -->
+
+        <div class="hero-stats">
+
+            <div class="stat-card">
+
+                <h3>
+                    {{ active_orders|length }}
+                </h3>
+
+                <p>
+                    Active Orders
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3>
+                    {{ active_saas_subscriptions|length }}
+                </h3>
+
+                <p>
+                    Active Plans
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3>
+                    {{ pending_saas_invoices|length }}
+                </h3>
+
+                <p>
+                    Pending Invoices
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3>
+                    {{ completed_orders|length }}
+                </h3>
+
+                <p>
+                    Completed Orders
+                </p>
+
+            </div>
+
+        </div>
+
     </div>
-  </div>
+
+</section>
+
+<!-- =========================
+     ACTIVE SAAS PLANS
+========================== -->
+
+<section class="saas-dashboard-section">
+
+    <div class="container">
+
+        <div class="section-header">
+
+            <h2>
+                Active Product Plans
+            </h2>
+
+            <p>
+                Your currently active Zafium subscriptions.
+            </p>
+
+        </div>
+
+
+        {% if active_saas_subscriptions %}
+
+        <div class="portfolio-grid">
+
+            {% for subscription in active_saas_subscriptions %}
+
+            <div class="portfolio-card saas-subscription-card">
+
+                <div class="card-content">
+
+
+                    <!-- STATUS -->
+
+                    <div class="saas-card-top">
+
+                        <div class="card-meta">
+                            {{ subscription.product.name }}
+                        </div>
+
+                        <span class="saas-status active">
+                            ACTIVE
+                        </span>
+
+                    </div>
+
+
+                    <!-- PRODUCT -->
+
+                    <h3>
+                        {{ subscription.plan.name }}
+                    </h3>
+
+
+                    <!-- DETAILS -->
+
+                    <div class="saas-plan-details">
+
+                        <div class="saas-detail">
+
+                            <span>
+                                Daily Limit
+                            </span>
+
+                            <strong>
+                                {{ subscription.daily_limit }}
+                                {{ subscription.product.usage_unit|default:"uses" }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="saas-detail">
+
+                            <span>
+                                Price
+                            </span>
+
+                            <strong>
+                                
+                                {{ subscription.price|display_price:currency_data }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="saas-detail">
+
+                            <span>
+                                Started
+                            </span>
+
+                            <strong>
+                                {{ subscription.start_date|date:"M d, Y" }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="saas-detail">
+
+                            <span>
+                                Expires
+                            </span>
+
+                            <strong>
+                                {{ subscription.end_date|date:"M d, Y" }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- REMAINING -->
+
+                    <div class="subscription-remaining">
+
+                        <div>
+
+                            <span>
+                                Remaining
+                            </span>
+
+                            <strong>
+                                {{ subscription.remaining_days }}
+                                days
+                            </strong>
+
+                        </div>
+
+                        <div class="remaining-bar">
+
+                            {% widthratio subscription.remaining_days subscription.billing_period_days 100 as remaining_percent %}
+
+                            <div
+                                style="width:{{ remaining_percent }}%;"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACTION -->
+
+                    <div class="saas-card-actions">
+
+                        <a
+                            href="{% url 'core:products_subscriptions' %}"
+                            class="btn-secondary"
+                        >
+                            Manage Plans
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <h3>
+                No active product plans
+            </h3>
+
+            <p>
+                You don't currently have an active Zafium subscription.
+            </p>
+
+            <a
+                href="{% url 'core:products_subscriptions' %}"
+                class="btn-primary"
+            >
+                Explore Product Plans
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+<!-- =========================
+     PENDING SAAS INVOICES
+========================== -->
+
+<section class="saas-dashboard-section">
+
+    <div class="container">
+
+        <div class="section-header">
+
+            <h2>
+                Product Invoices
+            </h2>
+
+            <p>
+                Review your subscription invoices and payment status.
+            </p>
+
+        </div>
+
+
+        {% if saas_invoices %}
+
+        <div class="portfolio-grid">
+
+            {% for invoice in saas_invoices|slice:":6" %}
+
+            <div class="portfolio-card invoice-card">
+
+                <div class="card-content">
+
+
+                    <!-- HEADER -->
+
+                    <div class="saas-card-top">
+
+                        <div class="card-meta">
+
+                            {{ invoice.invoice_number }}
+
+                        </div>
+
+
+                        {% if invoice.status == "paid" %}
+
+                            <span class="saas-status paid">
+                                PAID
+                            </span>
+
+                        {% elif invoice.status == "pending" %}
+
+                            <span class="saas-status pending">
+                                PENDING
+                            </span>
+
+                        {% elif invoice.status == "failed" %}
+
+                            <span class="saas-status failed">
+                                FAILED
+                            </span>
+
+                        {% elif invoice.status == "cancelled" %}
+
+                            <span class="saas-status cancelled">
+                                CANCELLED
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- PRODUCT -->
+
+                    <h3>
+                        {{ invoice.product_name }}
+                    </h3>
+
+                    <p>
+                        {{ invoice.plan_name }}
+                    </p>
+
+
+                    <!-- INVOICE DETAILS -->
+
+                    <div class="invoice-details">
+
+                        <div>
+
+                            <span>
+                                Amount
+                            </span>
+
+                            <strong>
+                                
+                                {{ invoice.amount|display_price:currency_data }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Payment Method
+                            </span>
+
+                            <strong>
+
+                                {% if invoice.payment_method == "card" %}
+                                    Visa / Mastercard
+
+                                {% elif invoice.payment_method == "easypaisa" %}
+                                    Easypaisa
+
+                                {% elif invoice.payment_method == "jazzcash" %}
+                                    JazzCash
+
+                                {% elif invoice.payment_method == "bank_transfer" %}
+                                    Bank Transfer
+
+                                {% else %}
+                                    —
+                                {% endif %}
+
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Billing Period
+                            </span>
+
+                            <strong>
+                                {{ invoice.billing_period_days }}
+                                days
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- STATUS MESSAGE -->
+
+                    {% if invoice.status == "pending" %}
+
+                    <div class="invoice-notice">
+
+                        <span>i</span>
+
+                        <p>
+                            Payment is pending.
+                            Follow the payment instructions
+                            sent by Zafium.
+                        </p>
+
+                    </div>
+
+                    {% elif invoice.status == "paid" %}
+
+                    <div class="invoice-notice success">
+
+                        <span>✓</span>
+
+                        <p>
+                            Payment received.
+                            Your subscription is being handled
+                            according to the invoice.
+                        </p>
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <!-- ACTION -->
+
+                    <div class="saas-card-actions">
+
+                        <a
+                            href="{% url 'core:subscription_invoice' invoice.invoice_number %}"
+                            class="btn-primary"
+                        >
+                            View Invoice
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <h3>
+                No product invoices
+            </h3>
+
+            <p>
+                Your subscription invoices will appear here.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
 </section>
 
 <section class="portfolio-grid-section">
 <div class="container">
 <div class="section-header">
-<h2>Active Orders</h2>
+<h2>Ongoing Services</h2>
 <p>Your ongoing work.</p>
 </div>
 
@@ -54,21 +531,21 @@
 {% for order in active_orders %}
 <div class="portfolio-card">
 <div class="card-content">
-<h3>Order #{{ order.id }}</h3>
+<h3>Service ID #{{ order.id }}</h3>
 <p>Status: {{ order.get_project_status_display }}</p>
 <p>Progress: {{ order.progress }}%</p>
 
 <div style="height:10px;background:rgba(255,255,255,.08);border-radius:999px;margin:16px 0;">
 <div style="width:{{ order.progress }}%;height:100%;background:var(--gradient-primary);border-radius:999px;"></div>
 </div>
-{% load currency_tags %}
+
 <p><strong>Total:</strong>{{ order.total_amount|display_price:currency_data }}</p>
 
 {% if order.latest_update %}
 <p>{{ order.latest_update }}</p>
 {% endif %}
 
-<a class="btn-primary" href="{% url 'core:order_detail' order.id %}">View Order</a>
+<a class="btn-primary" href="{% url 'core:order_detail' order.id %}">View Service</a>
 </div>
 </div>
 {% endfor %}
@@ -167,7 +644,7 @@
                     href="{% url 'core:order_detail' order.id %}"
                     class="btn-primary">
 
-                    View Order
+                    View Service
 
                 </a>
 
@@ -227,7 +704,7 @@
 
             <p>
 
-                Start a new order and we'll
+                Start a new service order and we'll
                 help bring your next idea to life.
 
             </p>
@@ -236,7 +713,7 @@
                 href="{% url 'core:order' %}"
                 class="btn-primary">
 
-                Place New Order
+                Place New Service Order
 
             </a>
 

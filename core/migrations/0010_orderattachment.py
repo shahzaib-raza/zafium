@@ -11,4 +11,12 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.CreateModel(
+            name='OrderAttachment',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('file', models.FileField(upload_to='order_attachments/%Y/%m/')),
+                ('uploaded_at', models.DateTimeField(auto_now_add=True)),
+            ],
+        ),
     ]

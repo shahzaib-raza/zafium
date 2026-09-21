@@ -57,7 +57,7 @@
                         {{ user.email }}
                     </p>
 
-
+                    
                     <p>
                         <strong style="color: var(--text);">
                             Plan
@@ -65,9 +65,12 @@
                     </p>
 
                     <p>
-                        {% if profile %}
+                        {% if active_saas_subscriptions %}
 
-                            {{ profile.get_plan_display }}
+                            {% for subscription in active_saas_subscriptions %}
+                                {{ subscription.product.name }} | {{ subscription.plan.name }}
+                                {{ subscription.daily_limit }} {{ subscription.product.usage_unit|default:"uses" }}
+                            {% endfor %}
 
                         {% else %}
 
@@ -105,18 +108,18 @@
 
 
                     <a
-                        href="{% url 'core:pricing' %}"
+                        href="{% url 'core:products_subscriptions' %}"
                         class="btn-secondary"
                     >
-                        View Plans
+                        View Product Plans
                     </a>
 
 
                     <a
-                        href="{% url 'core:order' %}"
+                        href="{% url 'core:solutions' %}"
                         class="btn-secondary"
                     >
-                        Place an Order
+                        Choose a Solution
                     </a>
 
                 </div>

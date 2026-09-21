@@ -12,6 +12,12 @@ urlpatterns = [
         name='layerforge'
     ),
 
+    path(
+        'try-layerforge/',
+        layerforge_landing,
+        name='try_layerforge'
+    ),
+
     path('generate/', generate_svg),
 
     path(
@@ -153,6 +159,24 @@ urlpatterns = [
         "set-currency/",
         set_currency,
         name="set_currency",
+    ),
+
+    path(
+        "products-subscriptions/",
+        saas_purchase,
+        name="products_subscriptions",
+    ),
+
+    path(
+        "products-subscriptions/create-invoice/",
+        create_saas_invoice,
+        name="create_subscription_invoice",
+    ),
+
+    path(
+        "products-subscriptions/invoice/<str:invoice_number>/",
+        saas_invoice,
+        name="subscription_invoice",
     ),
     
 ]

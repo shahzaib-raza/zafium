@@ -12,6 +12,8 @@
 
 {% block content %}
 
+{% load currency_tags %}
+
 <section class="pricing-section">
 
     <div class="container">
@@ -61,7 +63,6 @@
                         <tr>
                             <td>{{ service.name }}</td>
 
-                            {% load currency_tags %}
                             <td class="price">
                                 {{ service.price|display_price:currency_data }}
                             </td>

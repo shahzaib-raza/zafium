@@ -1,12 +1,11 @@
 from django.db import transaction
 from django.utils import timezone
-from django.contrib.auth.models import AnonymousUser
 import hashlib
 
 from ..models import (
-    ProjectUsage,
-    ProjectUsageSettings,
-    UserProfile,
+    SaaSProduct,
+    SaaSSubscription,
+    SaaSUsage,
 )
 
 
@@ -47,75 +46,170 @@ def get_identity_key(request):
     return f"anonymous:{ip_hash}:{request.session.session_key}"
 
 
-def get_daily_limit(request):
+def get_active_subscription(user, product):
+    """
+    Return the user's active subscription for
+    the specified SaaS product.
 
-    settings_obj = ProjectUsageSettings.objects.first()
+    Returns:
+        SaaSSubscription | None
+    """
 
-    if not settings_obj:
-        return 5
+    if not user.is_authenticated:
+        return None
 
-    if request.user.is_authenticated:
-
-        profile = getattr(
-            request.user,
-            "profile",
-            None
+    subscription = (
+        SaaSSubscription.objects
+        .filter(
+            user=user,
+            product=product,
+            status=SaaSSubscription.Status.ACTIVE,
         )
+        .order_by("-created_at")
+        .first()
+    )
 
-        if profile and profile.plan == UserProfile.Plan.PAID:
-            return settings_obj.paid_daily_limit
+    if not subscription:
+        return None
 
-    return settings_obj.free_daily_limit
+    if not subscription.is_active:
+        return None
+
+    return subscription
 
 
-def get_usage(request, project):
+def get_daily_limit(request, product):
+    """
+    Determine the daily limit for a user.
 
-    identity_key = get_identity_key(request)
+    Anonymous:
+        SaaSProduct.free_daily_limit
+
+    Authenticated free:
+        SaaSProduct.free_daily_limit
+
+    Authenticated paid:
+        Active subscription.daily_limit
+    """
+
+    subscription = get_active_subscription(
+        request.user,
+        product
+    )
+
+    if subscription:
+        return subscription.daily_limit
+
+    return product.free_daily_limit
+
+
+def get_usage(request, product):
+    """
+    Return today's usage for the specified SaaS product.
+    """
+
     today = timezone.localdate()
 
-    usage = ProjectUsage.objects.filter(
-        identity_key=identity_key,
-        project=project,
-        date=today
-    ).first()
+    if request.user.is_authenticated:
+        usage = (
+            SaaSUsage.objects
+            .filter(
+                user=request.user,
+                product=product,
+                date=today,
+            )
+            .first()
+        )
+    else:
+        identity_key = get_identity_key(request)
+
+        usage = (
+            SaaSUsage.objects
+            .filter(
+                user__isnull=True,
+                identity_key=identity_key,
+                product=product,
+                date=today,
+            )
+            .first()
+        )
 
     return usage.count if usage else 0
 
 
-def check_project_usage(request, project):
+def check_project_usage(request, product):
+    """
+    Check whether another operation is allowed.
 
-    current_usage = get_usage(request, project)
-    daily_limit = get_daily_limit(request)
+    Returns:
+        True  -> usage available
+        False -> daily limit reached
+    """
+
+    current_usage = get_usage(
+        request,
+        product
+    )
+
+    daily_limit = get_daily_limit(
+        request,
+        product
+    )
 
     return current_usage < daily_limit
 
 
 @transaction.atomic
-def consume_project_usage(request, project):
+def consume_project_usage(request, product):
     """
-    Consume exactly one usage for the specified project.
+    Consume exactly one usage for the specified
+    SaaS product.
 
     Returns:
         True  -> usage was available and consumed
         False -> daily limit already reached
     """
 
-    identity_key = get_identity_key(request)
     today = timezone.localdate()
-    daily_limit = get_daily_limit(request)
 
-    usage, created = (
-        ProjectUsage.objects
-        .select_for_update()
-        .get_or_create(
-            identity_key=identity_key,
-            project=project,
-            date=today,
-            defaults={
-                "count": 0
-            }
-        )
+    daily_limit = get_daily_limit(
+        request,
+        product
     )
+
+    if request.user.is_authenticated:
+
+        usage, created = (
+            SaaSUsage.objects
+            .select_for_update()
+            .get_or_create(
+                user=request.user,
+                product=product,
+                date=today,
+                defaults={
+                    "identity_key": "",
+                    "count": 0,
+                },
+            )
+        )
+
+    else:
+
+        identity_key = get_identity_key(request)
+
+        usage, created = (
+            SaaSUsage.objects
+            .select_for_update()
+            .get_or_create(
+                user=None,
+                identity_key=identity_key,
+                product=product,
+                date=today,
+                defaults={
+                    "count": 0,
+                },
+            )
+        )
 
     if usage.count >= daily_limit:
         return False

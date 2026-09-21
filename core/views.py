@@ -24,7 +24,23 @@ from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 import os,uuid
 from .utils import _img_array_to_svg
-from .models import PortfolioItem, PortfolioCategory, PortfolioSubCategory, Order, OrderItem, OrderReview, OrderRevision, OrderAttachment, UserProfile
+from .models import (
+    PortfolioItem,
+    PortfolioCategory,
+    PortfolioSubCategory,
+    Order,
+    OrderItem,
+    OrderReview,
+    OrderRevision,
+    OrderAttachment,
+    UserProfile
+)
+from .models import (
+    SaaSProduct,
+    SaaSPlan,
+    SaaSSubscription,
+    SaaSInvoice,
+)
 from django.db import models
 
 from django.views.decorators.http import require_POST
@@ -697,6 +713,26 @@ def verify_email(request, uidb64, token):
 @login_required
 def account(request):
 
+    saas_subscriptions = (
+        SaaSSubscription.objects
+        .filter(user=request.user)
+        .select_related("product", "plan")
+        .order_by("-created_at")
+    )
+
+    saas_invoices = (
+        SaaSInvoice.objects
+        .filter(user=request.user)
+        .select_related("subscription", "subscription__product", "subscription__plan")
+        .order_by("-issued_at")
+    )
+
+    active_saas_subscriptions = [
+        subscription
+        for subscription in saas_subscriptions
+        if subscription.is_active
+    ]
+
     user = request.user
 
     profile = getattr(
@@ -711,6 +747,7 @@ def account(request):
         {
             "user": user,
             "profile": profile,
+            "active_saas_subscriptions": active_saas_subscriptions,
         }
     )
 
@@ -718,6 +755,30 @@ def account(request):
 
 @login_required
 def dashboard(request):
+
+    saas_subscriptions = (
+        SaaSSubscription.objects
+        .filter(user=request.user)
+        .select_related("product", "plan")
+        .order_by("-created_at")
+    )
+
+    saas_invoices = (
+        SaaSInvoice.objects
+        .filter(user=request.user)
+        .select_related("subscription", "subscription__product", "subscription__plan")
+        .order_by("-issued_at")
+    )
+
+    active_saas_subscriptions = [
+        subscription
+        for subscription in saas_subscriptions
+        if subscription.is_active
+    ]
+
+    pending_saas_invoices = saas_invoices.filter(
+        status=SaaSInvoice.Status.PENDING
+    )
 
     orders = (
         request.user.orders
@@ -756,6 +817,11 @@ def dashboard(request):
             "orders": orders,
             "active_orders": active_orders,
             "completed_orders": completed_orders,
+
+            "saas_subscriptions": saas_subscriptions,
+            "active_saas_subscriptions": active_saas_subscriptions,
+            "saas_invoices": saas_invoices,
+            "pending_saas_invoices": pending_saas_invoices,
         }
     )
 
@@ -1268,6 +1334,298 @@ def place_order(request):
 
 # ____________________________________________________________________________________________________________
 
+def generate_saas_invoice_number():
+    """
+    Generate a unique SaaS invoice number.
+    """
+
+    date_part = timezone.localdate().strftime("%Y%m%d")
+
+    unique_part = uuid.uuid4().hex[:8].upper()
+
+    return f"ZAF-SaaS-{date_part}-{unique_part}"
+
+
+@login_required
+def saas_purchase(request):
+
+    products = (
+        SaaSProduct.objects
+        .filter(is_active=True)
+        .prefetch_related("plans")
+    )
+
+    return render(
+        request,
+        "saas_purchase.html",
+        {
+            "products": products,
+        },
+    )
+
+def send_saas_invoice_emails(invoice):
+
+    user = invoice.user
+
+    subscription = invoice.subscription
+
+    payment_method_labels = {
+        "card": "Visa / Mastercard",
+        "easypaisa": "Easypaisa",
+        "jazzcash": "JazzCash",
+        "bank_transfer": "Bank Transfer",
+    }
+
+    payment_method_display = payment_method_labels.get(
+        invoice.payment_method,
+        invoice.payment_method or "Not selected"
+    )
+
+    # --------------------------------------------------
+    # Customer invoice email
+    # --------------------------------------------------
+
+    customer_context = {
+        "invoice": invoice,
+        "subscription": subscription,
+        "product": subscription.product,
+        "plan": subscription.plan,
+    }
+
+    html_content = render_to_string(
+        "emails/saas_invoice.html",
+        customer_context,
+    )
+
+    text_content = strip_tags(html_content)
+
+    customer_email = EmailMultiAlternatives(
+        subject=(
+            f"Zafium Product Invoice "
+            f"#{invoice.invoice_number}"
+        ),
+        body=text_content,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[user.email],
+    )
+
+    customer_email.attach_alternative(
+        html_content,
+        "text/html",
+    )
+
+    customer_email.send()
+
+    # --------------------------------------------------
+    # Admin notification
+    # --------------------------------------------------
+
+    send_mail(
+        subject=(
+            f"New SaaS Subscription Request "
+            f"#{invoice.invoice_number}"
+        ),
+        message=f"""
+            New SaaS Subscription Request
+
+            Invoice:
+            {invoice.invoice_number}
+
+            Customer:
+            {user.get_full_name() or user.username}
+
+            Email:
+            {user.email}
+
+            Product:
+            {invoice.product_name}
+
+            Plan:
+            {invoice.plan_name}
+
+            Daily Limit:
+            {invoice.daily_limit}
+
+            Amount:
+            {invoice.currency} {invoice.amount}
+
+            Billing Period:
+            {invoice.billing_period_days} days
+
+            Payment Method:
+            {payment_method_display}
+
+            Subscription Status:
+            {subscription.get_status_display()}
+
+            Invoice Status:
+            {invoice.get_status_display()}
+
+            Action Required:
+            Send the payment process/instructions to the customer.
+
+            Customer Email:
+            {user.email}
+            """,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[
+            settings.DEFAULT_FROM_EMAIL
+        ],
+        fail_silently=False,
+    )
+
+@login_required
+@transaction.atomic
+def create_saas_invoice(request):
+
+    if request.method != "POST":
+        return redirect("core:products_subscriptions")
+
+    product_id = request.POST.get("product")
+    plan_id = request.POST.get("plan")
+
+    if not product_id or not plan_id:
+        messages.error(
+            request,
+            "Please select a product and plan."
+        )
+
+        return redirect("core:products_subscriptions")
+
+    product = get_object_or_404(
+        SaaSProduct,
+        pk=product_id,
+        is_active=True,
+    )
+
+    plan = get_object_or_404(
+        SaaSPlan,
+        pk=plan_id,
+        product=product,
+        is_active=True,
+    )
+
+    # --------------------------------------------------
+    # Prevent multiple active subscriptions
+    # --------------------------------------------------
+
+    active_subscription = (
+        SaaSSubscription.objects
+        .filter(
+            user=request.user,
+            product=product,
+            status=SaaSSubscription.Status.ACTIVE,
+        )
+        .first()
+    )
+
+    if active_subscription and active_subscription.is_active:
+
+        messages.error(
+            request,
+            f"You already have an active "
+            f"{product.name} subscription."
+        )
+
+        return redirect("core:products_subscriptions")
+
+    # --------------------------------------------------
+    # Create pending subscription
+    # --------------------------------------------------
+
+    subscription = SaaSSubscription.objects.create(
+        user=request.user,
+        product=product,
+        plan=plan,
+        status=SaaSSubscription.Status.PENDING,
+
+        # Snapshot plan information
+        daily_limit=plan.daily_limit,
+        price=plan.price,
+        currency=plan.currency,
+        billing_period_days=plan.billing_period_days,
+    )
+
+    allowed_payment_methods = {
+        "card": "Visa / Mastercard",
+        "easypaisa": "Easypaisa",
+        "jazzcash": "JazzCash",
+        "bank_transfer": "Bank Transfer",
+    }
+
+    payment_method = request.POST.get("payment_method", "").strip()
+
+    if payment_method not in allowed_payment_methods:
+        messages.error(
+            request,
+            f"Please select a valid payment method. {payment_method} not supported"
+        )
+        return redirect("core:products_subscriptions")
+
+    # --------------------------------------------------
+    # Create invoice
+    # --------------------------------------------------
+
+    invoice = SaaSInvoice.objects.create(
+        user=request.user,
+        subscription=subscription,
+
+        invoice_number=generate_saas_invoice_number(),
+
+        # Snapshot product/plan information
+        product_name=product.name,
+        plan_name=plan.name,
+        daily_limit=plan.daily_limit,
+
+        amount=plan.price,
+        currency=plan.currency,
+        billing_period_days=plan.billing_period_days,
+
+        status=SaaSInvoice.Status.PENDING,
+
+        payment_method=payment_method
+    )
+
+    # --------------------------------------------------
+    # Send emails
+    # --------------------------------------------------
+
+    send_saas_invoice_emails(invoice)
+
+    return redirect(
+        "core:subscription_invoice",
+        invoice_number=invoice.invoice_number,
+    )
+
+@login_required
+def saas_invoice(request, invoice_number):
+
+    invoice = get_object_or_404(
+        SaaSInvoice.objects.select_related(
+            "user",
+            "subscription",
+            "subscription__product",
+            "subscription__plan",
+        ),
+        invoice_number=invoice_number,
+        user=request.user,
+    )
+
+    return render(
+        request,
+        "emails/saas_invoice.html",
+        {
+            "invoice": invoice,
+        },
+    )
+
+
+# ____________________________________________________________________________________________________________
+
+def layerforge_landing(request):
+    return render(request,'layerforge_landing.html')
+
+
 MEDIA_ROOT='media'
 os.makedirs(MEDIA_ROOT,exist_ok=True)
 
@@ -1278,11 +1636,17 @@ def layerforge(request):
 def generate_svg(request):
 
     
-    if not consume_project_usage(request, "layerforge"):
+    product = get_object_or_404(
+        SaaSProduct,
+        slug="layerforge",
+        is_active=True,
+    )
+
+    if not consume_project_usage(request, product):
         return HttpResponse(
             "daily_limit_reached",
             content_type="text/plain",
-            status=429
+            status=429,
         )
 
     try:
@@ -1342,6 +1706,21 @@ def autolytics(request):
 
 def autolytics_search(request):
 
+    product = get_object_or_404(
+        SaaSProduct,
+        slug="autolytics",
+        is_active=True,
+    )
+
+    if not consume_project_usage(request, product):
+        return render(
+            request,
+            "autolytics/autolytics.html",
+            {
+                "usage_limit_exceeded": True,
+            }
+        )
+
     print("Search called")
 
     mm = request.GET.get("make")
@@ -1359,14 +1738,11 @@ def autolytics_search(request):
         if make is not None and model is not None and city is not None:
 
             # Check and consume Autolytics quota
-            if not consume_project_usage(request, "autolytics"):
-                return render(
-                    request,
-                    "autolytics/autolytics.html",
-                    {
-                        "usage_limit_exceeded": True
-                    },
-                    status=429
+            if not consume_project_usage(request, product):
+                return HttpResponse(
+                    "daily_limit_reached",
+                    content_type="text/plain",
+                    status=429,
                 )
 
             data = get_data_pw(mm, mn, ct)

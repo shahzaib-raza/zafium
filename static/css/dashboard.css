@@ -1107,3 +1107,403 @@
     }
 
 }
+
+
+ /* =========================================================
+    SAAS DASHBOARD
+ ========================================================= */
+
+.saas-dashboard-section {
+    padding: 90px 0 0;
+    position: relative;
+    z-index: 1;
+}
+
+
+/* =========================================================
+   SAAS CARD
+========================================================= */
+
+.saas-subscription-card,
+.invoice-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.saas-subscription-card::before,
+.invoice-card::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--accent),
+            var(--accent-2),
+            transparent
+        );
+
+    opacity: 0.7;
+}
+
+
+/* =========================================================
+   CARD TOP
+========================================================= */
+
+.saas-card-top {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 12px;
+}
+
+.saas-status {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    font-size: 0.62rem;
+
+    font-weight: 700;
+
+    letter-spacing: 0.8px;
+}
+
+
+/* ACTIVE */
+
+.saas-status.active {
+
+    color: #22d3ee;
+
+    background:
+        rgba(34, 211, 238, 0.08);
+
+    border:
+        1px solid
+        rgba(34, 211, 238, 0.2);
+}
+
+
+/* PENDING */
+
+.saas-status.pending {
+
+    color: #fbbf24;
+
+    background:
+        rgba(251, 191, 36, 0.08);
+
+    border:
+        1px solid
+        rgba(251, 191, 36, 0.2);
+}
+
+
+/* PAID */
+
+.saas-status.paid {
+
+    color: #4ade80;
+
+    background:
+        rgba(74, 222, 128, 0.08);
+
+    border:
+        1px solid
+        rgba(74, 222, 128, 0.2);
+}
+
+
+/* FAILED */
+
+.saas-status.failed {
+
+    color: #fb7185;
+
+    background:
+        rgba(251, 113, 133, 0.08);
+
+    border:
+        1px solid
+        rgba(251, 113, 133, 0.2);
+}
+
+
+/* CANCELLED */
+
+.saas-status.cancelled {
+
+    color: var(--muted);
+
+    background:
+        rgba(148, 163, 184, 0.06);
+
+    border:
+        1px solid var(--border);
+}
+
+
+/* =========================================================
+   PLAN DETAILS
+========================================================= */
+
+.saas-plan-details {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 14px;
+
+    margin-top: 22px;
+
+    padding-top: 20px;
+
+    border-top:
+        1px solid var(--border);
+}
+
+.saas-detail span,
+.invoice-details span {
+
+    display: block;
+
+    color: var(--faint);
+
+    font-size: 0.68rem;
+
+    margin-bottom: 3px;
+}
+
+.saas-detail strong,
+.invoice-details strong {
+
+    color: var(--text);
+
+    font-size: 0.82rem;
+}
+
+
+/* =========================================================
+   REMAINING DAYS
+========================================================= */
+
+.subscription-remaining {
+
+    margin-top: 24px;
+
+    padding-top: 18px;
+
+    border-top:
+        1px solid var(--border);
+}
+
+.subscription-remaining > div:first-child {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 8px;
+}
+
+.subscription-remaining span {
+
+    color: var(--muted);
+
+    font-size: 0.72rem;
+}
+
+.subscription-remaining strong {
+
+    color: var(--text);
+
+    font-size: 0.75rem;
+}
+
+.remaining-bar {
+
+    height: 5px;
+
+    border-radius: 999px;
+
+    overflow: hidden;
+
+    background:
+        rgba(255,255,255,0.07);
+}
+
+.remaining-bar div {
+
+    height: 100%;
+
+    min-width: 3px;
+
+    border-radius: inherit;
+
+    background:
+        var(--gradient-primary);
+}
+
+
+/* =========================================================
+   INVOICE
+========================================================= */
+
+.invoice-details {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 15px;
+
+    margin-top: 22px;
+
+    padding-top: 20px;
+
+    border-top:
+        1px solid var(--border);
+}
+
+.invoice-notice {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 20px;
+
+    padding: 12px 14px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(251, 191, 36, 0.05);
+
+    border:
+        1px solid
+        rgba(251, 191, 36, 0.13);
+}
+
+.invoice-notice > span {
+
+    width: 20px;
+    height: 20px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    color: #fbbf24;
+
+    border:
+        1px solid
+        rgba(251, 191, 36, 0.25);
+
+    font-size: 0.65rem;
+}
+
+.invoice-notice p {
+
+    margin: 0;
+
+    font-size: 0.72rem;
+
+    line-height: 1.55;
+}
+
+.invoice-notice.success {
+
+    background:
+        rgba(74, 222, 128, 0.05);
+
+    border-color:
+        rgba(74, 222, 128, 0.13);
+}
+
+.invoice-notice.success > span {
+
+    color: #4ade80;
+
+    border-color:
+        rgba(74, 222, 128, 0.25);
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.saas-card-actions {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 22px;
+}
+
+.saas-card-actions .btn-primary,
+.saas-card-actions .btn-secondary {
+
+    margin-top: 0;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .saas-dashboard-section {
+
+        padding-top: 65px;
+    }
+
+    .saas-plan-details,
+    .invoice-details {
+
+        grid-template-columns: 1fr;
+    }
+
+    .saas-card-top {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+}

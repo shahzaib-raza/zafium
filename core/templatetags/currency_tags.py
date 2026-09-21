@@ -17,6 +17,6 @@ def display_price(value, currency_data):
 
     if currency == "PKR":
         converted = value * rate
-        return f"₨{converted:,.0f}"
+        return f" ₨ {converted:,.0f}"
 
-    return f"${value:,.2f}"
+    return f" $ {value:,.2f}"

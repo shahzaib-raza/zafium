@@ -60,11 +60,18 @@
                 <!-- CLIENT INFO -->
                 <div class="card client-info">
                     <h3>Your Details</h3>
-
-                    <div class="input-group">
-                        <input type="text" name="name" required placeholder=" ">
-                        <label>Your Name</label>
-                    </div>
+                    
+                    {% if request.user.first_name %}
+                        <div class="input-group">
+                            <input type="text" name="name" required placeholder=" " value="{{ request.user.first_name }}" readonly>
+                            <label>Your Name</label>
+                        </div>
+                    {% else %}
+                        <div class="input-group">
+                            <input type="text" name="name" required placeholder=" ">
+                            <label>Your Name</label>
+                        </div>
+                    {% endif %}
 
                     {% if request.user.email %}
                         <div class="input-group">
@@ -79,7 +86,7 @@
                             <label>Email</label>
                             <span class="input-lock">🔒</span>
                         </div>
-                        <p class="input-note">Your registered account email is used for this order.</p>
+                        <p class="input-note">Your registered account email is used for this service purchase.</p>
                     {% else %}
                         <div class="input-group">
                             <input
@@ -163,7 +170,7 @@
             <!-- RIGHT SIDE (🔥 LIVE PANEL) -->
             <div class="order-summary card">
 
-                <h3>Order Summary</h3>
+                <h3>Service Summary</h3>
 
                 <div id="summary-items"></div>
 
