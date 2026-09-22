@@ -480,7 +480,6 @@ def signup(request):
             # Every new account starts as FREE
             UserProfile.objects.create(
                 user=user,
-                plan=UserProfile.Plan.FREE,
             )
 
         # -------------------------
