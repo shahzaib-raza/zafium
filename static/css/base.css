@@ -604,3 +604,32 @@ a {
     }
 
 }
+
+/* =========================================================
+   CLOUDFLARE TURNSTILE
+   Global visibility / layout
+========================================================= */
+
+.cf-turnstile {
+    display: block !important;
+    width: 100% !important;
+    min-height: 65px;
+    margin: 16px 0;
+    position: relative;
+    z-index: 10;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Keep the Turnstile widget itself visible */
+.cf-turnstile iframe {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    max-width: 100%;
+}
+
+/* Prevent form/layout containers from accidentally hiding it */
+form .cf-turnstile {
+    overflow: visible !important;
+}

@@ -1,0 +1,5042 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <title>AutoLytics — by Zafium</title>
+
+    <meta
+        name="description"
+        content="Autolytics turns live used-car marketplace data into structured market insights, model-year distribution, average prices and price trends."
+    >
+
+    <meta
+        name="keywords"
+        content="Autolytics, used car market analysis, car price analysis, used car scraper, automotive data, market trends, Zafium"
+    >
+
+    <meta name="theme-color" content="#020617">
+
+    <meta
+        property="og:title"
+        content="Autolytics — See the Market. Not the Listings."
+    >
+
+    <meta
+        property="og:description"
+        content="Turn used-car marketplace listings into structured market data, price trends and model-year insights."
+    >
+
+    <meta property="og:type" content="website">
+
+    <meta
+        property="og:image"
+        content="{% static 'images/zafium_transparent.png' %}"
+    >
+
+    <meta
+        name="twitter:card"
+        content="summary_large_image"
+    >
+
+    <meta
+        name="twitter:title"
+        content="Autolytics — See the Market. Not the Listings."
+    >
+
+    <meta
+        name="twitter:description"
+        content="Turn used-car listings into market intelligence."
+    >
+
+    <link
+        rel="icon"
+        href="{% static 'favicon.svg' %}"
+        type="image/svg+xml"
+    >
+
+    <style>
+
+        /* =========================================================
+           ZAFIUM / AUTOLYTICS DESIGN SYSTEM
+        ========================================================= */
+
+        :root {
+            --bg: #020617;
+            --bg-soft: #0b1220;
+
+            --card: rgba(15, 23, 42, 0.65);
+            --card-hover: rgba(15, 23, 42, 0.85);
+            --surface: rgba(2, 6, 23, 0.7);
+
+            --border: rgba(148, 163, 184, 0.12);
+            --border-strong: rgba(148, 163, 184, 0.22);
+
+            --accent: #6366f1;
+            --accent-2: #22d3ee;
+
+            --text: #e5e7eb;
+            --muted: #94a3b8;
+            --faint: #64748b;
+
+            --radius: 16px;
+
+            --nav-height: 76px;
+        }
+
+
+        /* =========================================================
+           RESET
+        ========================================================= */
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: auto;
+            background: var(--bg);
+        }
+
+        body {
+            min-height: 100%;
+            background:
+                radial-gradient(
+                    circle at 50% 0%,
+                    #111827 0%,
+                    var(--bg) 42%
+                );
+
+            color: var(--text);
+
+            font-family:
+                Inter,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            overflow-x: hidden;
+
+            text-align: center;
+        }
+
+        body::before {
+            content: "";
+
+            position: fixed;
+            inset: 0;
+
+            pointer-events: none;
+
+            background:
+                radial-gradient(
+                    circle at 20% 20%,
+                    rgba(99, 102, 241, 0.045),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 80% 60%,
+                    rgba(34, 211, 238, 0.035),
+                    transparent 30%
+                );
+
+            z-index: -1;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button {
+            font: inherit;
+        }
+
+
+        /* =========================================================
+           NAVIGATION
+        ========================================================= */
+
+        .lf-nav {
+            position: fixed;
+            inset: 0 0 auto;
+            height: 76px;
+            z-index: 90;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 42px;
+            border-bottom: 1px solid transparent;
+            transition: background .35s ease, border-color .35s ease, backdrop-filter .35s ease;
+        }
+
+        .lf-nav.scrolled {
+            background: rgba(2, 6, 23, .72);
+            backdrop-filter: blur(18px);
+            border-color: var(--border);
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+
+            font-size: 15px;
+            font-weight: 700;
+
+            letter-spacing: 0.08em;
+            text-transform: lowercase;
+
+            white-space: nowrap;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        .nav-back {
+            color: var(--muted);
+            font-size: 13px;
+            transition: color .25s ease;
+        }
+
+        .nav-back:hover {
+            color: var(--text);
+        }
+
+        .brand-mark {
+            width: 30px;
+            height: 30px;
+
+            object-fit: contain;
+        }
+
+        .nav-product {
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        .nav-product::before {
+            color: var(--faint);
+        }
+
+        .nav-cta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            min-height: 42px;
+
+            padding: 0 18px;
+
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            border-radius: 999px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(99, 102, 241, 0.18),
+                    rgba(34, 211, 238, 0.10)
+                );
+
+            color: var(--text);
+
+            font-size: 13px;
+            font-weight: 700;
+
+            transition:
+                transform 0.25s ease,
+                border-color 0.25s ease,
+                background 0.25s ease;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+
+            border-color:
+                rgba(34, 211, 238, 0.5);
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(99, 102, 241, 0.28),
+                    rgba(34, 211, 238, 0.18)
+                );
+        }
+
+
+        /* =========================================================
+           SCROLL PROGRESS
+        ========================================================= */
+
+        .scroll-progress {
+            position: fixed;
+
+            top: 76px;
+            left: 0;
+
+            width: 0%;
+            height: 2px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--accent),
+                    var(--accent-2)
+                );
+
+            box-shadow:
+                0 0 12px rgba(34, 211, 238, 0.5);
+
+            z-index: 1100;
+            pointer-events: none;
+        }
+
+
+        /* =========================================================
+           GLOBAL
+        ========================================================= */
+
+        .gradient {
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--accent),
+                    var(--accent-2)
+                );
+
+            -webkit-background-clip: text;
+            background-clip: text;
+
+            color: transparent;
+        }
+
+        .container {
+            width: min(1180px, 90vw);
+            margin: 0 auto;
+        }
+
+
+        /* =========================================================
+           HERO
+        ========================================================= */
+
+        .hero {
+            min-height: 155vh;
+
+            position: relative;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding:
+                calc(var(--nav-height) - 80px)
+                5vw
+                100px;
+
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+
+            position: absolute;
+
+            width: 720px;
+            height: 720px;
+
+            left: 50%;
+            top: 42%;
+
+            transform: translate(-50%, -50%);
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(99, 102, 241, 0.12),
+                    rgba(34, 211, 238, 0.045) 35%,
+                    transparent 70%
+                );
+
+            filter: blur(10px);
+
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+
+            width: min(950px, 100%);
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            margin-bottom: 24px;
+
+            color: var(--accent-2);
+
+            font-size: 12px;
+            font-weight: 800;
+
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        .eyebrow::before {
+            content: "";
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: var(--accent-2);
+
+            box-shadow:
+                0 0 12px rgba(34, 211, 238, 0.7);
+        }
+
+        .hero h1 {
+            font-size: clamp(48px, 8vw, 104px);
+
+            line-height: 0.98;
+
+            letter-spacing: -0.055em;
+
+            font-weight: 800;
+        }
+
+        .hero-description {
+            width: min(720px, 100%);
+
+            margin: 34px auto 0;
+
+            color: var(--muted);
+
+            font-size: clamp(16px, 2vw, 20px);
+
+            line-height: 1.75;
+        }
+
+        .scroll-hint {
+            position: absolute;
+
+            left: 50%;
+            bottom: 60px;
+
+            transform: translateX(-50%);
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+
+            color: var(--faint);
+
+            font-size: 10px;
+            font-weight: 700;
+
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 50px;
+
+            background:
+                linear-gradient(
+                    to bottom,
+                    var(--accent-2),
+                    transparent
+                );
+
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollPulse {
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scaleY(0.65);
+                transform-origin: top;
+            }
+
+            50% {
+                opacity: 1;
+                transform: scaleY(1);
+            }
+        }
+
+
+        /* =========================================================
+           STORY
+        ========================================================= */
+
+        .story {
+            position: relative;
+        }
+
+        .scene {
+            position: relative;
+
+            height: 400vh;
+        }
+
+        .scene.tall {
+            height: 500vh;
+        }
+
+        .scene-stage {
+            position: sticky;
+
+            top: var(--nav-height);
+
+            height:
+                calc(100vh - var(--nav-height));
+
+            min-height: 620px;
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(280px, 0.8fr)
+                minmax(500px, 1.2fr);
+
+            gap: 5vw;
+
+            align-items: center;
+
+            width: min(1380px, 92vw);
+
+            margin: 0 auto;
+
+            overflow: hidden;
+        }
+
+        .scene-copy {
+            position: relative;
+            z-index: 5;
+
+            text-align: left;
+
+            opacity: 0;
+
+            will-change:
+                transform,
+                opacity;
+        }
+
+        .scene-copy.right {
+            order: 2;
+        }
+
+        .scene-copy.left {
+            order: 1;
+        }
+
+        .step {
+            display: inline-block;
+
+            margin-bottom: 20px;
+
+            color: var(--accent-2);
+
+            font-size: 11px;
+            font-weight: 800;
+
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .scene-copy h2 {
+            max-width: 620px;
+
+            font-size:
+                clamp(
+                    40px,
+                    5vw,
+                    76px
+                );
+
+            line-height: 0.98;
+
+            letter-spacing: -0.045em;
+
+            font-weight: 800;
+        }
+
+        .scene-copy p {
+            max-width: 560px;
+
+            margin-top: 26px;
+
+            color: var(--muted);
+
+            font-size:
+                clamp(
+                    15px,
+                    1.5vw,
+                    18px
+                );
+
+            line-height: 1.8;
+        }
+
+        .copy-small {
+            margin-top: 26px;
+
+            color: var(--faint) !important;
+
+            font-size: 12px !important;
+
+            line-height: 1.6 !important;
+
+            letter-spacing: 0.02em;
+        }
+
+
+        /* =========================================================
+           VISUAL CONTAINER
+        ========================================================= */
+
+        .visual {
+            position: relative;
+
+            width: 100%;
+            height: min(680px, 76vh);
+
+            min-height: 440px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            opacity: 0;
+
+            will-change:
+                transform,
+                opacity;
+        }
+
+        .visual::before {
+            content: "";
+
+            position: absolute;
+
+            width: 75%;
+            height: 75%;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(99, 102, 241, 0.09),
+                    transparent 70%
+                );
+
+            filter: blur(25px);
+
+            pointer-events: none;
+        }
+
+
+        /* =========================================================
+           GENERIC GLASS PANEL
+        ========================================================= */
+
+        .glass-panel {
+            position: relative;
+
+            border:
+                1px solid var(--border);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(15, 23, 42, 0.82),
+                    rgba(2, 6, 23, 0.76)
+                );
+
+            box-shadow:
+                0 30px 100px rgba(0, 0, 0, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.025);
+
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+
+        /* =========================================================
+           SCENE 01 — PROBLEM
+           LISTING OVERLOAD
+        ========================================================= */
+
+        .problem-visual {
+            perspective: 1000px;
+        }
+
+        .listing-wall {
+            position: relative;
+
+            width: min(680px, 92%);
+            height: 500px;
+        }
+
+        .listing-card {
+            position: absolute;
+
+            width: 310px;
+            height: 118px;
+
+            padding: 16px 18px;
+
+            border:
+                1px solid rgba(148, 163, 184, 0.13);
+
+            border-radius: 14px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(15, 23, 42, 0.94),
+                    rgba(8, 15, 31, 0.9)
+                );
+
+            box-shadow:
+                0 20px 45px rgba(0, 0, 0, 0.25);
+
+            text-align: left;
+
+            overflow: hidden;
+
+            will-change:
+                transform,
+                opacity;
+        }
+
+        .listing-card::after {
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            right: 0;
+
+            width: 40%;
+            height: 1px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(34, 211, 238, 0.5)
+                );
+        }
+
+        .listing-card:nth-child(1) {
+            left: 3%;
+            top: 3%;
+            transform: rotate(-4deg);
+        }
+
+        .listing-card:nth-child(2) {
+            right: 2%;
+            top: 12%;
+            transform: rotate(3deg);
+        }
+
+        .listing-card:nth-child(3) {
+            left: 10%;
+            top: 27%;
+            transform: rotate(2deg);
+        }
+
+        .listing-card:nth-child(4) {
+            right: 7%;
+            top: 38%;
+            transform: rotate(-3deg);
+        }
+
+        .listing-card:nth-child(5) {
+            left: 0;
+            top: 53%;
+            transform: rotate(-2deg);
+        }
+
+        .listing-card:nth-child(6) {
+            right: 0;
+            top: 63%;
+            transform: rotate(4deg);
+        }
+
+        .listing-card:nth-child(7) {
+            left: 15%;
+            top: 75%;
+            transform: rotate(1deg);
+        }
+
+        .listing-card:nth-child(8) {
+            right: 10%;
+            top: 82%;
+            transform: rotate(-2deg);
+        }
+
+        .listing-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 14px;
+        }
+
+        .listing-model {
+            color: var(--text);
+
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .listing-year {
+            padding: 4px 7px;
+
+            border:
+                1px solid rgba(99, 102, 241, 0.24);
+
+            border-radius: 6px;
+
+            color: #a5b4fc;
+
+            background:
+                rgba(99, 102, 241, 0.08);
+
+            font-size: 9px;
+            font-weight: 800;
+
+            letter-spacing: 0.08em;
+        }
+
+        .listing-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .listing-price {
+            color: var(--accent-2);
+
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .listing-meta {
+            color: var(--faint);
+
+            font-size: 9px;
+
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .listing-noise {
+            position: absolute;
+
+            inset: -30%;
+
+            background:
+                repeating-linear-gradient(
+                    0deg,
+                    transparent 0 18px,
+                    rgba(148, 163, 184, 0.025) 19px
+                );
+
+            opacity: 0.5;
+
+            pointer-events: none;
+        }
+
+
+        /* =========================================================
+           SCENE 02 — COLLECTION
+        ========================================================= */
+
+        .collection-visual {
+            position: relative;
+        }
+
+        .collection-board {
+            position: relative;
+
+            width: min(700px, 94%);
+            height: 460px;
+
+            padding: 30px;
+
+            border-radius: 20px;
+        }
+
+        .board-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding-bottom: 18px;
+
+            border-bottom:
+                1px solid var(--border);
+
+            text-align: left;
+        }
+
+        .board-title {
+            color: var(--text);
+
+            font-size: 11px;
+            font-weight: 800;
+
+            letter-spacing: 0.16em;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            color: var(--accent-2);
+
+            font-size: 9px;
+            font-weight: 800;
+
+            letter-spacing: 0.1em;
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+
+            background: var(--accent-2);
+
+            box-shadow:
+                0 0 12px rgba(34, 211, 238, 0.8);
+        }
+
+        .data-table {
+            position: relative;
+
+            margin-top: 25px;
+        }
+
+        .data-row {
+            display: grid;
+
+            grid-template-columns:
+                1.3fr
+                0.8fr
+                0.8fr
+                1fr;
+
+            align-items: center;
+
+            min-height: 53px;
+
+            border-bottom:
+                1px solid rgba(148, 163, 184, 0.07);
+
+            text-align: left;
+
+            opacity: 0.8;
+        }
+
+        .data-row.header {
+            min-height: 35px;
+
+            color: var(--faint);
+
+            font-size: 8px;
+            font-weight: 800;
+
+            letter-spacing: 0.12em;
+        }
+
+        .data-cell {
+            color: var(--muted);
+
+            font-size: 10px;
+        }
+
+        .data-cell.strong {
+            color: var(--text);
+
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .scan-beam {
+            position: absolute;
+
+            left: 5%;
+            right: 5%;
+
+            top: 80px;
+
+            height: 2px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    var(--accent-2),
+                    transparent
+                );
+
+            box-shadow:
+                0 0 18px rgba(34, 211, 238, 0.65);
+
+            opacity: 0;
+
+            pointer-events: none;
+        }
+
+        .scan-beam::before,
+        .scan-beam::after {
+            content: "";
+
+            position: absolute;
+
+            top: 50%;
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: var(--accent-2);
+
+            transform: translateY(-50%);
+
+            box-shadow:
+                0 0 15px rgba(34, 211, 238, 0.8);
+        }
+
+        .scan-beam::before {
+            left: 0;
+        }
+
+        .scan-beam::after {
+            right: 0;
+        }
+
+        .data-particle {
+            position: absolute;
+
+            width: 4px;
+            height: 4px;
+
+            border-radius: 50%;
+
+            background: var(--accent);
+
+            box-shadow:
+                0 0 10px rgba(99, 102, 241, 0.7);
+
+            opacity: 0;
+        }
+
+        .particle-one {
+            left: 20%;
+            top: 24%;
+        }
+
+        .particle-two {
+            left: 48%;
+            top: 40%;
+        }
+
+        .particle-three {
+            left: 72%;
+            top: 58%;
+        }
+
+        .particle-four {
+            left: 35%;
+            top: 75%;
+        }
+
+
+        /* =========================================================
+           SCENE 03 — GROUP BY MODEL YEAR
+        ========================================================= */
+
+        .grouping-visual {
+            position: relative;
+        }
+
+        .year-groups {
+            position: relative;
+
+            width: min(700px, 95%);
+            height: 480px;
+
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+
+            gap: 14px;
+
+            padding:
+                45px
+                30px
+                55px;
+        }
+
+        .year-groups::before {
+            content: "";
+
+            position: absolute;
+
+            left: 30px;
+            right: 30px;
+            bottom: 54px;
+
+            height: 1px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    var(--border-strong),
+                    transparent
+                );
+        }
+
+        .year-column {
+            position: relative;
+
+            width: 17%;
+
+            height: 320px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+
+            gap: 13px;
+        }
+
+        .year-count {
+            color: var(--text);
+
+            font-size: 13px;
+            font-weight: 800;
+
+            opacity: 0;
+        }
+
+        .year-bar {
+            width: 100%;
+
+            height: var(--bar-height);
+
+            min-height: 20px;
+
+            border:
+                1px solid rgba(99, 102, 241, 0.25);
+
+            border-radius:
+                10px 10px 5px 5px;
+
+            background:
+                linear-gradient(
+                    to top,
+                    rgba(99, 102, 241, 0.18),
+                    rgba(34, 211, 238, 0.42)
+                );
+
+            box-shadow:
+                0 0 30px rgba(99, 102, 241, 0.08);
+
+            transform-origin: bottom;
+
+            transform: scaleY(0);
+
+            will-change: transform;
+        }
+
+        .year-label {
+            position: absolute;
+
+            bottom: -34px;
+
+            color: var(--faint);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: 0.08em;
+        }
+
+        .grouping-header {
+            position: absolute;
+
+            top: 20px;
+            left: 30px;
+
+            color: var(--faint);
+
+            font-size: 9px;
+            font-weight: 800;
+
+            letter-spacing: 0.16em;
+        }
+
+        .grouping-caption {
+            position: absolute;
+
+            right: 30px;
+            top: 20px;
+
+            color: var(--accent-2);
+
+            font-size: 9px;
+            font-weight: 800;
+
+            letter-spacing: 0.12em;
+        }
+
+
+        /* =========================================================
+           SCENE 04 — ANALYTICS / REGRESSION
+        ========================================================= */
+
+        .analytics-visual {
+            position: relative;
+        }
+
+        .analytics-panel {
+            width: min(720px, 96%);
+            height: 500px;
+
+            padding: 28px;
+
+            border-radius: 20px;
+        }
+
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+
+            text-align: left;
+        }
+
+        .analytics-title {
+            color: var(--text);
+
+            font-size: 12px;
+            font-weight: 800;
+
+            letter-spacing: 0.12em;
+        }
+
+        .analytics-subtitle {
+            margin-top: 6px;
+
+            color: var(--faint);
+
+            font-size: 9px;
+
+            letter-spacing: 0.04em;
+        }
+
+        .trend-status {
+            padding: 7px 10px;
+
+            border:
+                1px solid rgba(34, 211, 238, 0.2);
+
+            border-radius: 8px;
+
+            color: var(--accent-2);
+
+            background:
+                rgba(34, 211, 238, 0.05);
+
+            font-size: 8px;
+            font-weight: 800;
+
+            letter-spacing: 0.12em;
+        }
+
+        .chart {
+            position: relative;
+
+            width: 100%;
+            height: 350px;
+
+            margin-top: 20px;
+        }
+
+        .chart-grid {
+            position: absolute;
+
+            inset:
+                25px
+                15px
+                35px
+                45px;
+
+            background:
+                repeating-linear-gradient(
+                    to bottom,
+                    rgba(148, 163, 184, 0.075) 0,
+                    rgba(148, 163, 184, 0.075) 1px,
+                    transparent 1px,
+                    transparent 25%
+                ),
+                repeating-linear-gradient(
+                    to right,
+                    rgba(148, 163, 184, 0.035) 0,
+                    rgba(148, 163, 184, 0.035) 1px,
+                    transparent 1px,
+                    transparent 20%
+                );
+        }
+
+        .chart-y-labels {
+            position: absolute;
+
+            left: 0;
+            top: 22px;
+            bottom: 34px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .chart-y-labels span,
+        .chart-x-labels span {
+            color: var(--faint);
+
+            font-size: 8px;
+
+            letter-spacing: 0.04em;
+        }
+
+        .chart-x-labels {
+            position: absolute;
+
+            left: 45px;
+            right: 15px;
+            bottom: 8px;
+
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .chart-svg {
+            position: absolute;
+
+            inset:
+                15px
+                10px
+                30px
+                40px;
+
+            width: calc(100% - 50px);
+            height: calc(100% - 45px);
+
+            overflow: visible;
+        }
+
+        .trend-line {
+            fill: none;
+
+            stroke: url(#trendGradient);
+
+            stroke-width: 3;
+
+            stroke-linecap: round;
+            stroke-linejoin: round;
+
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+
+        .average-line {
+            fill: none;
+
+            stroke: rgba(148, 163, 184, 0.4);
+
+            stroke-width: 1.5;
+
+            stroke-dasharray: 5 7;
+
+            opacity: 0;
+        }
+
+        .chart-point {
+            fill: var(--accent-2);
+
+            stroke: #020617;
+            stroke-width: 3;
+
+            opacity: 0;
+
+            filter:
+                drop-shadow(
+                    0 0 7px
+                    rgba(34, 211, 238, 0.55)
+                );
+        }
+
+        .chart-axis-label {
+            position: absolute;
+
+            color: var(--faint);
+
+            font-size: 8px;
+            font-weight: 800;
+
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .axis-price {
+            left: 45px;
+            top: 5px;
+        }
+
+        .axis-year {
+            right: 20px;
+            bottom: 4px;
+        }
+
+
+        /* =========================================================
+           SCENE 05 — MARKET SUMMARY
+        ========================================================= */
+
+        .summary-visual {
+            position: relative;
+        }
+
+        .market-dashboard {
+            width: min(760px, 95%);
+            min-height: 500px;
+
+            padding: 28px;
+
+            border-radius: 22px;
+
+            text-align: left;
+        }
+
+        .dashboard-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding-bottom: 22px;
+
+            border-bottom:
+                1px solid var(--border);
+        }
+
+        .dashboard-brand {
+            color: var(--text);
+
+            font-size: 13px;
+            font-weight: 800;
+
+            letter-spacing: 0.13em;
+        }
+
+        .dashboard-status {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            color: var(--accent-2);
+
+            font-size: 8px;
+            font-weight: 800;
+
+            letter-spacing: 0.12em;
+        }
+
+        .dashboard-status span {
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+
+            background: var(--accent-2);
+
+            box-shadow:
+                0 0 12px rgba(34, 211, 238, 0.7);
+        }
+
+        .metrics-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 12px;
+
+            margin-top: 18px;
+        }
+
+        .metric-card {
+            min-height: 100px;
+
+            padding: 17px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 13px;
+
+            background:
+                rgba(15, 23, 42, 0.48);
+
+            opacity: 0;
+
+            transform:
+                translateY(18px);
+        }
+
+        .metric-label {
+            color: var(--faint);
+
+            font-size: 8px;
+            font-weight: 800;
+
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .metric-value {
+            margin-top: 14px;
+
+            color: var(--text);
+
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .metric-value.accent {
+            color: var(--accent-2);
+        }
+
+        .dashboard-chart {
+            position: relative;
+
+            height: 210px;
+
+            margin-top: 15px;
+
+            padding: 20px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 14px;
+
+            overflow: hidden;
+        }
+
+        .dashboard-chart-title {
+            color: var(--faint);
+
+            font-size: 8px;
+            font-weight: 800;
+
+            letter-spacing: 0.13em;
+        }
+
+        .mini-chart {
+            position: absolute;
+
+            left: 20px;
+            right: 20px;
+            bottom: 18px;
+
+            height: 130px;
+        }
+
+        .mini-chart-grid {
+            position: absolute;
+
+            inset: 0;
+
+            background:
+                repeating-linear-gradient(
+                    to bottom,
+                    rgba(148, 163, 184, 0.065) 0,
+                    rgba(148, 163, 184, 0.065) 1px,
+                    transparent 1px,
+                    transparent 33%
+                );
+        }
+
+        .mini-chart svg {
+            position: absolute;
+
+            inset: 0;
+
+            width: 100%;
+            height: 100%;
+        }
+
+        .mini-trend {
+            fill: none;
+
+            stroke: url(#miniTrendGradient);
+
+            stroke-width: 3;
+
+            stroke-linecap: round;
+
+            stroke-dasharray: 600;
+            stroke-dashoffset: 600;
+        }
+
+        .dashboard-insight {
+            position: absolute;
+
+            right: 20px;
+            top: 42px;
+
+            padding: 7px 10px;
+
+            border:
+                1px solid rgba(34, 211, 238, 0.18);
+
+            border-radius: 7px;
+
+            background:
+                rgba(34, 211, 238, 0.05);
+
+            color: var(--accent-2);
+
+            font-size: 8px;
+            font-weight: 800;
+
+            letter-spacing: 0.08em;
+        }
+
+
+        /* =========================================================
+           CTA
+        ========================================================= */
+
+        .final-cta {
+            min-height: 130vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            position: relative;
+
+            padding:
+                120px
+                5vw;
+        }
+
+        .final-cta::before {
+            content: "";
+
+            position: absolute;
+
+            width: 700px;
+            height: 700px;
+
+            left: 50%;
+            top: 50%;
+
+            transform:
+                translate(-50%, -50%);
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(99, 102, 241, 0.11),
+                    transparent 68%
+                );
+
+            pointer-events: none;
+        }
+
+        .cta-content {
+            position: relative;
+
+            z-index: 2;
+
+            width: min(850px, 100%);
+        }
+
+        .cta-content h2 {
+            font-size:
+                clamp(
+                    46px,
+                    7vw,
+                    88px
+                );
+
+            line-height: 0.98;
+
+            letter-spacing: -0.05em;
+        }
+
+        .cta-content p {
+            max-width: 650px;
+
+            margin: 30px auto 0;
+
+            color: var(--muted);
+
+            font-size: 17px;
+
+            line-height: 1.8;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            min-height: 54px;
+
+            margin-top: 38px;
+
+            padding: 0 26px;
+
+            border-radius: 999px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--accent),
+                    var(--accent-2)
+                );
+
+            color: #020617;
+
+            font-size: 13px;
+            font-weight: 900;
+
+            letter-spacing: 0.03em;
+
+            box-shadow:
+                0 12px 35px rgba(99, 102, 241, 0.22);
+
+            transition:
+                transform 0.25s ease,
+                box-shadow 0.25s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+
+            box-shadow:
+                0 18px 45px rgba(34, 211, 238, 0.2);
+        }
+
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
+        .site-footer {
+            padding:
+                35px
+                5vw
+                45px;
+
+            border-top:
+                1px solid var(--border);
+
+            color: var(--faint);
+
+            font-size: 11px;
+        }
+
+        .footer-inner {
+            width: min(1180px, 90vw);
+
+            margin: 0 auto;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 20px;
+        }
+
+        .footer-product {
+            color: var(--muted);
+        }
+
+
+        /* =========================================================
+           SCROLL ANIMATION STATES
+        ========================================================= */
+
+        .scene-copy,
+        .visual {
+            transform:
+                translate3d(0, 30px, 0);
+        }
+
+
+        /* =========================================================
+           TABLET / SMALL DESKTOP
+           IMPORTANT:
+           <=1280px COPY GOES ABOVE VISUAL
+        ========================================================= */
+
+        @media (max-width: 1280px) {
+
+            .scene {
+                height: 320vh;
+            }
+
+            .scene.tall {
+                height: 420vh;
+            }
+
+            .scene-stage {
+                height:
+                    calc(100vh - var(--nav-height));
+
+                min-height: 620px;
+
+                display: flex;
+                flex-direction: column;
+
+                justify-content: flex-start;
+
+                gap: 0;
+
+                padding:
+                    55px
+                    0
+                    35px;
+
+                overflow: visible;
+            }
+
+            .scene-copy,
+            .scene-copy.left,
+            .scene-copy.right {
+                order: 1;
+
+                width: min(850px, 92vw);
+
+                flex-shrink: 0;
+
+                text-align: center;
+
+                margin:
+                    0 auto;
+            }
+
+            .scene-copy h2 {
+                margin: 0 auto;
+
+                max-width: 850px;
+            }
+
+            .scene-copy p {
+                margin:
+                    22px auto 0;
+
+                max-width: 720px;
+            }
+
+            .copy-small {
+                margin-top: 17px !important;
+            }
+
+            .visual {
+                order: 2;
+
+                width: min(900px, 94vw);
+
+                height:
+                    min(
+                        55vh,
+                        520px
+                    );
+
+                min-height: 330px;
+
+                flex-shrink: 1;
+
+                margin:
+                    30px auto 0;
+            }
+
+            .listing-wall {
+                transform:
+                    scale(0.88);
+            }
+
+            .collection-board,
+            .analytics-panel,
+            .market-dashboard {
+                transform:
+                    scale(0.9);
+            }
+
+            .year-groups {
+                transform:
+                    scale(0.9);
+            }
+        }
+
+
+        /* =========================================================
+           TABLET
+        ========================================================= */
+
+        @media (max-width: 900px) {
+
+            :root {
+                --nav-height: 64px;
+            }
+
+            .lf-nav {
+                padding:
+                    0 20px;
+            }
+
+            .brand {
+                font-size: 13px;
+            }
+
+            .brand-mark {
+                width: 27px;
+                height: 27px;
+            }
+
+            .nav-cta {
+                min-height: 38px;
+
+                padding:
+                    0 13px;
+
+                font-size: 11px;
+            }
+
+            .scene {
+                height: 340vh;
+            }
+
+            .scene.tall {
+                height: 440vh;
+            }
+
+            .scene-stage {
+                min-height: 580px;
+
+                padding-top: 40px;
+            }
+
+            .scene-copy h2 {
+                font-size:
+                    clamp(
+                        38px,
+                        8vw,
+                        62px
+                    );
+            }
+
+            .scene-copy p {
+                font-size: 15px;
+            }
+
+            .visual {
+                height: 46vh;
+                min-height: 310px;
+
+                margin-top: 22px;
+            }
+
+            .listing-wall {
+                transform:
+                    scale(0.72);
+            }
+
+            .collection-board {
+                transform:
+                    scale(0.78);
+            }
+
+            .year-groups {
+                transform:
+                    scale(0.75);
+            }
+
+            .analytics-panel {
+                transform:
+                    scale(0.78);
+            }
+
+            .market-dashboard {
+                transform:
+                    scale(0.76);
+            }
+
+            .metrics-grid {
+                grid-template-columns:
+                    repeat(3, 1fr);
+            }
+        }
+
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (max-width: 640px) {
+
+            body {
+                font-size: 14px;
+            }
+
+            .hero {
+                min-height: 155vh;
+
+                padding:
+                    110px
+                    20px
+                    80px;
+            }
+
+            .hero h1 {
+                font-size:
+                    clamp(
+                        48px,
+                        14vw,
+                        70px
+                    );
+            }
+
+            .hero-description {
+                font-size: 15px;
+
+                line-height: 1.7;
+            }
+
+            .scroll-hint {
+                bottom: 35px;
+            }
+
+            /*
+             * Keep scenes LONG.
+             * This is intentional so the animations remain visible
+             * during fast mobile scrolling.
+             */
+
+            .scene {
+                height: 370vh;
+            }
+
+            .scene.tall {
+                height: 480vh;
+            }
+
+            .scene-stage {
+                min-height: 550px;
+
+                padding:
+                    30px
+                    0
+                    20px;
+            }
+
+            .scene-copy {
+                width: 90vw;
+            }
+
+            .step {
+                margin-bottom: 14px;
+
+                font-size: 9px;
+            }
+
+            .scene-copy h2 {
+                font-size:
+                    clamp(
+                        35px,
+                        10vw,
+                        52px
+                    );
+            }
+
+            .scene-copy p {
+                max-width: 92vw;
+
+                margin-top: 18px;
+
+                font-size: 14px;
+
+                line-height: 1.7;
+            }
+
+            .copy-small {
+                font-size: 10px !important;
+            }
+
+            .visual {
+                width: 96vw;
+
+                height: 43vh;
+
+                min-height: 270px;
+
+                margin-top: 18px;
+            }
+
+            .listing-wall {
+                width: 100%;
+
+                transform:
+                    scale(0.52);
+            }
+
+            .collection-board {
+                width: 100%;
+                height: 360px;
+
+                padding: 20px;
+
+                transform:
+                    scale(0.7);
+            }
+
+            .year-groups {
+                width: 100%;
+                height: 350px;
+
+                gap: 7px;
+
+                padding:
+                    35px
+                    12px
+                    48px;
+
+                transform:
+                    scale(0.72);
+            }
+
+            .year-groups::before {
+                left: 10px;
+                right: 10px;
+            }
+
+            .grouping-header {
+                left: 12px;
+            }
+
+            .grouping-caption {
+                right: 12px;
+            }
+
+            .analytics-panel {
+                width: 100%;
+                height: 390px;
+
+                padding: 18px;
+
+                transform:
+                    scale(0.72);
+            }
+
+            .chart {
+                height: 270px;
+            }
+
+            .market-dashboard {
+                width: 100%;
+                min-height: 400px;
+
+                padding: 18px;
+
+                transform:
+                    scale(0.68);
+            }
+
+            .metrics-grid {
+                gap: 7px;
+            }
+
+            .metric-card {
+                min-height: 78px;
+
+                padding: 10px;
+            }
+
+            .metric-value {
+                margin-top: 9px;
+
+                font-size: 16px;
+            }
+
+            .dashboard-chart {
+                height: 160px;
+            }
+
+            .final-cta {
+                min-height: 120vh;
+
+                padding:
+                    100px 20px;
+            }
+
+            .cta-content h2 {
+                font-size:
+                    clamp(
+                        44px,
+                        13vw,
+                        65px
+                    );
+            }
+
+            .cta-content p {
+                font-size: 14px;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+            }
+        }
+
+
+        /* =========================================================
+           VERY SHORT MOBILE SCREENS
+        ========================================================= */
+
+        @media (max-width: 640px) and (max-height: 700px) {
+
+            .scene {
+                height: 390vh;
+            }
+
+            .scene.tall {
+                height: 500vh;
+            }
+
+            .scene-stage {
+                padding-top: 22px;
+            }
+
+            .scene-copy h2 {
+                font-size: 34px;
+            }
+
+            .scene-copy p {
+                font-size: 13px;
+
+                margin-top: 14px;
+            }
+
+            .visual {
+                height: 42vh;
+
+                min-height: 260px;
+
+                margin-top: 12px;
+            }
+        }
+
+
+        /* =========================================================
+           REDUCED MOTION
+        ========================================================= */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- =========================================================
+         NAVIGATION
+    ========================================================= -->
+
+    <header class="lf-nav">
+
+        <a
+            href="/"
+            class="brand"
+            aria-label="Zafium home"
+        >
+
+            <img
+                class="brand-mark"
+                src="{% static 'images/zafium_transparent.png' %}"
+                alt="Zafium"
+            >
+
+            <span>zafium</span>
+
+            <span class="nav-product">
+                / Autolytics
+            </span>
+
+        </a>
+
+
+        <!--
+            Change this URL if your actual Autolytics application
+            route is different.
+        -->
+
+        <div class="nav-right">
+
+            <a href="/" class="nav-back">
+                Visit Zafium
+            </a>
+
+            <a
+                href="{% url 'core:autolytics_app' %}"
+                class="nav-cta"
+            >
+                Try AutoLytics
+            </a>
+
+        </div>
+
+    </header>
+
+    <!-- =========================================================
+         PROGRESS
+    ========================================================= -->
+
+    <div
+        class="scroll-progress"
+        id="scrollProgress"
+    ></div>
+
+
+
+    <!-- =========================================================
+         HERO
+    ========================================================= -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <div class="eyebrow">
+                Zafium Product
+            </div>
+
+
+            <h1>
+                See the market.
+                <br>
+
+                <span class="gradient">
+                    Not the listings.
+                </span>
+            </h1>
+
+
+            <p class="hero-description">
+
+                Autolytics turns live used-car marketplace data
+                into a structured view of prices, model years,
+                listing volume and market trends — without hours
+                of manual research.
+
+            </p>
+
+        </div>
+
+
+        <div class="scroll-hint">
+
+            <span>
+                Scroll to see the market
+            </span>
+
+            <span class="scroll-line"></span>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================================================
+         STORY
+    ========================================================= -->
+
+    <main class="story">
+
+
+        <!-- =====================================================
+             SCENE 01 — PROBLEM
+        ===================================================== -->
+
+        <section
+            class="scene problem-scene"
+            data-scene="problem"
+        >
+
+            <div class="scene-stage">
+
+
+                <div class="scene-copy left">
+
+                    <span class="step">
+                        The problem
+                    </span>
+
+
+                    <h2>
+                        A market is
+                        <br>
+
+                        <span class="gradient">
+                            too big to scroll.
+                        </span>
+                    </h2>
+
+
+                    <p>
+
+                        Hundreds of used-car listings can hide
+                        the answer you need.
+
+                        Finding a car within budget, comparing
+                        a model across years, or pricing your own
+                        car means opening listings, checking
+                        prices and repeating the process.
+
+                    </p>
+
+
+                    <p class="copy-small">
+
+                        The data is there.
+                        The time-consuming part is finding the pattern.
+
+                    </p>
+
+                </div>
+
+
+
+                <div class="visual problem-visual">
+
+
+                    <div class="listing-wall">
+
+
+                        <div class="listing-card">
+
+                            <div class="listing-top">
+
+                                <span class="listing-model">
+                                    Toyota Corolla
+                                </span>
+
+                                <span class="listing-year">
+                                    2019
+                                </span>
+
+                            </div>
+
+                            <div class="listing-bottom">
+
+                                <span class="listing-price">
+                                    Rs. ———
+                                </span>
+
+                                <span class="listing-meta">
+                                    Marketplace
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="listing-card">
+
+                            <div class="listing-top">
+
+                                <span class="listing-model">
+                                    Honda Civic
+                                </span>
+
+                                <span class="listing-year">
+                                    2021
+                                </span>
+
+                            </div>
+
+                            <div class="listing-bottom">
+
+                                <span class="listing-price">
+                                    Rs. ———
+                                </span>
+
+                                <span class="listing-meta">
+                                    Marketplace
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="listing-card">
+
+                            <div class="listing-top">
+
+                                <span class="listing-model">
+                                    Toyota Yaris
+                                </span>
+
+                                <span class="listing-year">
+                                    2020
+                                </span>
+
+                            </div>
+
+                            <div class="listing-bottom">
+
+                                <span class="listing-price">
+                                    Rs. ———
+                                </span>
+
+                                <span class="listing-meta">
+                                    Marketplace
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="listing-card">
+
+                            <div class="listing-top">
+
+                                <span class="listing-model">
+                                    Suzuki Swift
+                                </span>
+
+                                <span class="listing-year">
+                                    2018
+                                </span>
+
+                            </div>
+
+                            <div class="listing-bottom">
+
+                                <span class="listing-price">
+                                    Rs. ———
+                                </span>
+
+                                <span class="listing-meta">
+                                    Marketplace
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="listing-card">
+
+                            <div class="listing-top">
+
+                                <span class="listing-model">
+                                    Honda City
+                                </span>
+
+                                <span class="listing-year">
+                                    2022
+                                </span>
+
+                            </div>
+
+                            <div class="listing-bottom">
+
+                                <span class="listing-price">
+                                    Rs. ———
+                                </span>
+
+                                <span class="listing-meta">
+                                    Marketplace
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="listing-card">
+
+                            <div class="listing-top">
+
+                                <span class="listing-model">
+                                    Toyota Prius
+                                </span>
+
+                                <span class="listing-year">
+                                    2020
+                                </span>
+
+                            </div>
+
+                            <div class="listing-bottom">
+
+                                <span class="listing-price">
+                                    Rs. ———
+                                </span>
+
+                                <span class="listing-meta">
+                                    Marketplace
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="listing-card">
+
+                            <div class="listing-top">
+
+                                <span class="listing-model">
+                                    Honda BR-V
+                                </span>
+
+                                <span class="listing-year">
+                                    2019
+                                </span>
+
+                            </div>
+
+                            <div class="listing-bottom">
+
+                                <span class="listing-price">
+                                    Rs. ———
+                                </span>
+
+                                <span class="listing-meta">
+                                    Marketplace
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="listing-card">
+
+                            <div class="listing-top">
+
+                                <span class="listing-model">
+                                    Toyota Fortuner
+                                </span>
+
+                                <span class="listing-year">
+                                    2021
+                                </span>
+
+                            </div>
+
+                            <div class="listing-bottom">
+
+                                <span class="listing-price">
+                                    Rs. ———
+                                </span>
+
+                                <span class="listing-meta">
+                                    Marketplace
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="listing-noise"></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             SCENE 02 — COLLECTION
+        ===================================================== -->
+
+        <section
+            class="scene tall collection-scene"
+            data-scene="collection"
+        >
+
+            <div class="scene-stage">
+
+
+                <div class="scene-copy left">
+
+                    <span class="step">
+                        Step 01
+                    </span>
+
+
+                    <h2>
+                        Scan the
+                        <br>
+
+                        <span class="gradient">
+                            market.
+                        </span>
+                    </h2>
+
+
+                    <p>
+
+                        Autolytics collects live used-car
+                        marketplace listings and turns scattered
+                        marketplace pages into a single dataset
+                        ready for analysis.
+
+                    </p>
+
+
+                    <p class="copy-small">
+
+                        Listings become structured data.
+
+                    </p>
+
+                </div>
+
+
+
+                <div class="visual collection-visual">
+
+
+                    <div class="collection-board glass-panel">
+
+
+                        <div class="board-header">
+
+                            <span class="board-title">
+                                LIVE MARKET DATA
+                            </span>
+
+
+                            <span class="live-indicator">
+
+                                <span class="live-dot"></span>
+
+                                COLLECTING
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="data-table">
+
+
+                            <div class="data-row header">
+
+                                <span>
+                                    MODEL
+                                </span>
+
+                                <span>
+                                    YEAR
+                                </span>
+
+                                <span>
+                                    TYPE
+                                </span>
+
+                                <span>
+                                    PRICE
+                                </span>
+
+                            </div>
+
+
+                            <div class="data-row">
+
+                                <span class="data-cell strong">
+                                    Toyota Corolla
+                                </span>
+
+                                <span class="data-cell">
+                                    2019
+                                </span>
+
+                                <span class="data-cell">
+                                    Sedan
+                                </span>
+
+                                <span class="data-cell">
+                                    ———
+                                </span>
+
+                            </div>
+
+
+                            <div class="data-row">
+
+                                <span class="data-cell strong">
+                                    Honda Civic
+                                </span>
+
+                                <span class="data-cell">
+                                    2020
+                                </span>
+
+                                <span class="data-cell">
+                                    Sedan
+                                </span>
+
+                                <span class="data-cell">
+                                    ———
+                                </span>
+
+                            </div>
+
+
+                            <div class="data-row">
+
+                                <span class="data-cell strong">
+                                    Toyota Yaris
+                                </span>
+
+                                <span class="data-cell">
+                                    2021
+                                </span>
+
+                                <span class="data-cell">
+                                    Sedan
+                                </span>
+
+                                <span class="data-cell">
+                                    ———
+                                </span>
+
+                            </div>
+
+
+                            <div class="data-row">
+
+                                <span class="data-cell strong">
+                                    Suzuki Swift
+                                </span>
+
+                                <span class="data-cell">
+                                    2018
+                                </span>
+
+                                <span class="data-cell">
+                                    Hatchback
+                                </span>
+
+                                <span class="data-cell">
+                                    ———
+                                </span>
+
+                            </div>
+
+
+                            <div class="data-row">
+
+                                <span class="data-cell strong">
+                                    Honda City
+                                </span>
+
+                                <span class="data-cell">
+                                    2022
+                                </span>
+
+                                <span class="data-cell">
+                                    Sedan
+                                </span>
+
+                                <span class="data-cell">
+                                    ———
+                                </span>
+
+                            </div>
+
+
+                            <div class="scan-beam"></div>
+
+                            <span class="data-particle particle-one"></span>
+                            <span class="data-particle particle-two"></span>
+                            <span class="data-particle particle-three"></span>
+                            <span class="data-particle particle-four"></span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             SCENE 03 — GROUPING
+        ===================================================== -->
+
+        <section
+            class="scene tall grouping-scene"
+            data-scene="grouping"
+        >
+
+            <div class="scene-stage">
+
+
+                <div class="scene-copy right">
+
+                    <span class="step">
+                        Step 02
+                    </span>
+
+
+                    <h2>
+                        Group the
+                        <br>
+
+                        <span class="gradient">
+                            market.
+                        </span>
+                    </h2>
+
+
+                    <p>
+
+                        Listings are organized by model year,
+                        making it easier to see where supply is
+                        concentrated and how many cars are available
+                        at each point in the market.
+
+                    </p>
+
+
+                    <p class="copy-small">
+
+                        From individual listings to market structure.
+
+                    </p>
+
+                </div>
+
+
+
+                <div class="visual grouping-visual">
+
+
+                    <div class="year-groups glass-panel">
+
+
+                        <span class="grouping-header">
+                            LISTINGS BY MODEL YEAR
+                        </span>
+
+
+                        <span class="grouping-caption">
+                            MARKET DISTRIBUTION
+                        </span>
+
+
+                        <div
+                            class="year-column"
+                            data-value="42"
+                        >
+
+                            <span class="year-count">
+                                18
+                            </span>
+
+                            <div
+                                class="year-bar"
+                                style="--bar-height: 135px;"
+                            ></div>
+
+                            <span class="year-label">
+                                2018
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="year-column"
+                            data-value="65"
+                        >
+
+                            <span class="year-count">
+                                31
+                            </span>
+
+                            <div
+                                class="year-bar"
+                                style="--bar-height: 190px;"
+                            ></div>
+
+                            <span class="year-label">
+                                2019
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="year-column"
+                            data-value="90"
+                        >
+
+                            <span class="year-count">
+                                42
+                            </span>
+
+                            <div
+                                class="year-bar"
+                                style="--bar-height: 255px;"
+                            ></div>
+
+                            <span class="year-label">
+                                2020
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="year-column"
+                            data-value="72"
+                        >
+
+                            <span class="year-count">
+                                27
+                            </span>
+
+                            <div
+                                class="year-bar"
+                                style="--bar-height: 215px;"
+                            ></div>
+
+                            <span class="year-label">
+                                2021
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="year-column"
+                            data-value="48"
+                        >
+
+                            <span class="year-count">
+                                14
+                            </span>
+
+                            <div
+                                class="year-bar"
+                                style="--bar-height: 150px;"
+                            ></div>
+
+                            <span class="year-label">
+                                2022
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             SCENE 04 — ANALYTICS
+        ===================================================== -->
+
+        <section
+            class="scene tall analytics-scene"
+            data-scene="analytics"
+        >
+
+            <div class="scene-stage">
+
+
+                <div class="scene-copy left">
+
+                    <span class="step">
+                        Step 03
+                    </span>
+
+
+                    <h2>
+                        Find the
+                        <br>
+
+                        <span class="gradient">
+                            price trend.
+                        </span>
+                    </h2>
+
+
+                    <p>
+
+                        Average prices are calculated and plotted
+                        against model year, revealing whether prices
+                        rise, fall or cluster across the market.
+
+                    </p>
+
+
+                    <p class="copy-small">
+
+                        The individual listings become a visible market trend.
+
+                    </p>
+
+                </div>
+
+
+
+                <div class="visual analytics-visual">
+
+
+                    <div class="analytics-panel glass-panel">
+
+
+                        <div class="analytics-header">
+
+                            <div>
+
+                                <div class="analytics-title">
+                                    PRICE VS. MODEL YEAR
+                                </div>
+
+                                <div class="analytics-subtitle">
+                                    MARKET PRICE DISTRIBUTION
+                                </div>
+
+                            </div>
+
+
+                            <div class="trend-status">
+                                TREND ANALYSIS
+                            </div>
+
+                        </div>
+
+
+                        <div class="chart">
+
+
+                            <div class="chart-grid"></div>
+
+
+                            <div class="chart-y-labels">
+
+                                <span>
+                                    HIGH
+                                </span>
+
+                                <span>
+                                    —
+                                </span>
+
+                                <span>
+                                    —
+                                </span>
+
+                                <span>
+                                    LOW
+                                </span>
+
+                            </div>
+
+
+                            <div class="chart-x-labels">
+
+                                <span>
+                                    2018
+                                </span>
+
+                                <span>
+                                    2019
+                                </span>
+
+                                <span>
+                                    2020
+                                </span>
+
+                                <span>
+                                    2021
+                                </span>
+
+                                <span>
+                                    2022
+                                </span>
+
+                            </div>
+
+
+                            <span
+                                class="chart-axis-label axis-price"
+                            >
+                                PRICE
+                            </span>
+
+
+                            <span
+                                class="chart-axis-label axis-year"
+                            >
+                                MODEL YEAR
+                            </span>
+
+
+                            <svg
+                                class="chart-svg"
+                                viewBox="0 0 600 300"
+                                preserveAspectRatio="none"
+                            >
+
+                                <defs>
+
+                                    <linearGradient
+                                        id="trendGradient"
+                                        x1="0%"
+                                        y1="0%"
+                                        x2="100%"
+                                        y2="0%"
+                                    >
+
+                                        <stop
+                                            offset="0%"
+                                            stop-color="#6366f1"
+                                        />
+
+                                        <stop
+                                            offset="100%"
+                                            stop-color="#22d3ee"
+                                        />
+
+                                    </linearGradient>
+
+                                </defs>
+
+
+                                <!-- Average -->
+
+                                <path
+                                    class="average-line"
+                                    d="
+                                        M 20 165
+                                        L 580 165
+                                    "
+                                />
+
+
+                                <!-- Regression / trend -->
+
+                                <path
+                                    class="trend-line"
+                                    d="
+                                        M 20 245
+                                        C 125 225,
+                                          170 205,
+                                          245 180
+                                        C 330 152,
+                                          380 120,
+                                          470 90
+                                        C 515 76,
+                                          550 62,
+                                          580 45
+                                    "
+                                />
+
+
+                                <!-- Data points -->
+
+                                <circle
+                                    class="chart-point"
+                                    cx="35"
+                                    cy="238"
+                                    r="6"
+                                />
+
+                                <circle
+                                    class="chart-point"
+                                    cx="70"
+                                    cy="226"
+                                    r="5"
+                                />
+
+                                <circle
+                                    class="chart-point"
+                                    cx="115"
+                                    cy="235"
+                                    r="5"
+                                />
+
+                                <circle
+                                    class="chart-point"
+                                    cx="150"
+                                    cy="207"
+                                    r="6"
+                                />
+
+                                <circle
+                                    class="chart-point"
+                                    cx="195"
+                                    cy="218"
+                                    r="5"
+                                />
+
+                                <circle
+                                    class="chart-point"
+                                    cx="235"
+                                    cy="178"
+                                    r="6"
+                                />
+
+                                <circle
+                                    class="chart-point"
+                                    cx="275"
+                                    cy="190"
+                                    r="5"
+                                />
+
+                                <circle
+                                    class="chart-point"
+                                    cx="320"
+                                    cy="151"
+                                    r="6"
+                                />
+
+                                <circle
+                                    class="chart-point"
+                                    cx="365"
+                                    cy="143"
+                                    r="5"
+                                />
+
+                                <circle
+                                    class="chart-point"
+                                    cx="410"
+                                    cy="112"
+                                    r="6"
+                                />
+
+                                <circle
+                                    class="chart-point"
+                                    cx="455"
+                                    cy="102"
+                                    r="5"
+                                />
+
+                                <circle
+                                    class="chart-point"
+                                    cx="500"
+                                    cy="78"
+                                    r="6"
+                                />
+
+                                <circle
+                                    class="chart-point"
+                                    cx="545"
+                                    cy="60"
+                                    r="5"
+                                />
+
+                            </svg>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             SCENE 05 — SUMMARY
+        ===================================================== -->
+
+        <section
+            class="scene tall summary-scene"
+            data-scene="summary"
+        >
+
+            <div class="scene-stage">
+
+
+                <div class="scene-copy right">
+
+                    <span class="step">
+                        The result
+                    </span>
+
+
+                    <h2>
+                        From listings
+                        <br>
+                        to
+
+                        <span class="gradient">
+                            insight.
+                        </span>
+                    </h2>
+
+
+                    <p>
+
+                        Instead of manually studying hundreds of
+                        advertisements, you get a compact market
+                        view containing listing volume, average
+                        pricing, model-year distribution and the
+                        direction of the price trend.
+
+                    </p>
+
+
+                    <p class="copy-small">
+
+                        A market-aware view for buying research,
+                        selling decisions and price discovery.
+
+                    </p>
+
+                </div>
+
+
+
+                <div class="visual summary-visual">
+
+
+                    <div class="market-dashboard glass-panel">
+
+
+                        <div class="dashboard-top">
+
+                            <span class="dashboard-brand">
+                                AUTOLYTICS / MARKET SNAPSHOT
+                            </span>
+
+
+                            <span class="dashboard-status">
+
+                                <span></span>
+
+                                ANALYSIS READY
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="metrics-grid">
+
+
+                            <div class="metric-card">
+
+                                <div class="metric-label">
+                                    Listings
+                                </div>
+
+                                <div class="metric-value">
+                                    DATA
+                                </div>
+
+                            </div>
+
+
+                            <div class="metric-card">
+
+                                <div class="metric-label">
+                                    Avg. Price
+                                </div>
+
+                                <div class="metric-value accent">
+                                    AVG
+                                </div>
+
+                            </div>
+
+
+                            <div class="metric-card">
+
+                                <div class="metric-label">
+                                    Model Years
+                                </div>
+
+                                <div class="metric-value">
+                                    GROUPED
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="dashboard-chart">
+
+
+                            <div class="dashboard-chart-title">
+                                MARKET PRICE TREND
+                            </div>
+
+
+                            <div class="dashboard-insight">
+                                TREND DETECTED
+                            </div>
+
+
+                            <div class="mini-chart">
+
+                                <div class="mini-chart-grid"></div>
+
+
+                                <svg
+                                    viewBox="0 0 600 130"
+                                    preserveAspectRatio="none"
+                                >
+
+                                    <defs>
+
+                                        <linearGradient
+                                            id="miniTrendGradient"
+                                            x1="0%"
+                                            y1="0%"
+                                            x2="100%"
+                                            y2="0%"
+                                        >
+
+                                            <stop
+                                                offset="0%"
+                                                stop-color="#6366f1"
+                                            />
+
+                                            <stop
+                                                offset="100%"
+                                                stop-color="#22d3ee"
+                                            />
+
+                                        </linearGradient>
+
+                                    </defs>
+
+
+                                    <path
+                                        class="mini-trend"
+                                        d="
+                                            M 0 105
+                                            C 90 95,
+                                              130 91,
+                                              190 80
+                                            C 255 70,
+                                              290 76,
+                                              350 57
+                                            C 420 40,
+                                              480 48,
+                                              600 18
+                                        "
+                                    />
+
+                                </svg>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =========================================================
+         FINAL CTA
+    ========================================================= -->
+
+    <section class="final-cta">
+
+        <div class="cta-content">
+
+
+            <div class="eyebrow">
+                Autolytics
+            </div>
+
+
+            <h2>
+
+                What is the
+                <br>
+
+                <span class="gradient">
+                    market really saying?
+                </span>
+
+            </h2>
+
+
+            <p>
+
+                Stop spending hours scrolling through listings.
+                Turn the used-car market into structured data
+                you can actually evaluate.
+
+            </p>
+
+
+            <!--
+                Change this URL if your actual Autolytics
+                application route is different.
+            -->
+
+            <a
+                href="{% url 'core:autolytics_app' %}"
+                class="cta-button"
+            >
+                Explore Autolytics
+            </a>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================================================
+         FOOTER
+    ========================================================= -->
+
+    <footer class="site-footer">
+
+        <div class="footer-inner">
+
+            <span>
+                © 2026 Zafium
+            </span>
+
+            <span class="footer-product">
+                Autolytics
+            </span>
+
+        </div>
+
+    </footer>
+
+
+
+    <!-- =========================================================
+         JAVASCRIPT
+    ========================================================= -->
+
+    <script>
+
+        (() => {
+
+            "use strict";
+
+
+            /* =====================================================
+               ELEMENTS
+            ===================================================== */
+
+            const progressBar =
+                document.getElementById(
+                    "scrollProgress"
+                );
+
+
+            const scenes =
+                Array.from(
+                    document.querySelectorAll(
+                        ".scene"
+                    )
+                );
+
+
+            const prefersReducedMotion =
+                window.matchMedia(
+                    "(prefers-reduced-motion: reduce)"
+                ).matches;
+
+
+            let ticking = false;
+
+
+            /* =====================================================
+               UTILITY
+            ===================================================== */
+
+            const clamp = (
+                value,
+                min = 0,
+                max = 1
+            ) => {
+
+                return Math.min(
+                    Math.max(
+                        value,
+                        min
+                    ),
+                    max
+                );
+
+            };
+
+
+            const lerp = (
+                start,
+                end,
+                progress
+            ) => {
+
+                return (
+                    start +
+                    (end - start) *
+                    progress
+                );
+
+            };
+
+
+            const easeOutCubic = (
+                value
+            ) => {
+
+                return 1 -
+                    Math.pow(
+                        1 - value,
+                        3
+                    );
+
+            };
+
+
+            const easeInOutCubic = (
+                value
+            ) => {
+
+                return value < 0.5
+
+                    ? 4 *
+                      value *
+                      value *
+                      value
+
+                    : 1 -
+                      Math.pow(
+                          -2 * value + 2,
+                          3
+                      ) / 2;
+
+            };
+
+
+            /* =====================================================
+               SCENE PROGRESS
+            ===================================================== */
+
+            function sceneProgress(
+                scene
+            ) {
+
+                const rect =
+                    scene.getBoundingClientRect();
+
+
+                const viewport =
+                    window.innerHeight;
+
+
+                const total =
+                    rect.height -
+                    viewport;
+
+
+                if (total <= 0) {
+                    return 0;
+                }
+
+
+                return clamp(
+                    -rect.top / total
+                );
+
+            }
+
+
+            /* =====================================================
+               CINEMATIC TIMING
+            ===================================================== */
+
+            function cinematicProgress(progress) {
+
+                const enterStart = 0.05;
+                const animateStart = 0.20;
+                const animateEnd = 0.78;
+                const holdEnd = 0.90;
+
+                /*
+                * Keep scenes slightly visible before their animation starts.
+                * This prevents the blink caused by opacity: 0.
+                */
+
+                if (progress < enterStart) {
+
+                    return {
+                        progress: 0,
+                        opacity: 0.18
+                    };
+
+                }
+
+
+                if (progress < animateStart) {
+
+                    const p =
+                        clamp(
+                            (
+                                progress -
+                                enterStart
+                            ) /
+                            (
+                                animateStart -
+                                enterStart
+                            )
+                        );
+
+                    return {
+                        progress: 0,
+                        opacity:
+                            lerp(
+                                0.18,
+                                1,
+                                easeOutCubic(p)
+                            )
+                    };
+
+                }
+
+
+                if (progress <= animateEnd) {
+
+                    const p =
+                        clamp(
+                            (
+                                progress -
+                                animateStart
+                            ) /
+                            (
+                                animateEnd -
+                                animateStart
+                            )
+                        );
+
+                    return {
+                        progress:
+                            easeInOutCubic(p),
+
+                        opacity: 1
+                    };
+
+                }
+
+
+                if (progress <= holdEnd) {
+
+                    return {
+                        progress: 1,
+                        opacity: 1
+                    };
+
+                }
+
+
+                const p =
+                    clamp(
+                        (
+                            progress -
+                            holdEnd
+                        ) /
+                        (
+                            1 -
+                            holdEnd
+                        )
+                    );
+
+
+                return {
+                    progress: 1,
+
+                    /*
+                    * Don't completely disappear.
+                    * This prevents the scene from flashing out.
+                    */
+                    opacity:
+                        lerp(
+                            1,
+                            0.18,
+                            easeInOutCubic(p)
+                        )
+                };
+
+            }
+
+
+            /* =====================================================
+               COPY ANIMATION
+            ===================================================== */
+
+            function animateCopy(
+                scene,
+                progress
+            ) {
+
+                const copy =
+                    scene.querySelector(
+                        ".scene-copy"
+                    );
+
+
+                if (!copy) {
+                    return;
+                }
+
+
+                const timing =
+                    cinematicProgress(
+                        progress
+                    );
+
+
+                const mobile =
+                    window.innerWidth <= 1280;
+
+
+                const hiddenDistance =
+                    mobile
+                        ? 45
+                        : 70;
+
+
+                let translate;
+
+
+                if (
+                    progress <
+                    0.28
+                ) {
+
+                    const p =
+                        clamp(
+                            progress / 0.28
+                        );
+
+
+                    translate =
+                        lerp(
+                            hiddenDistance,
+                            0,
+                            easeOutCubic(p)
+                        );
+
+                }
+                else if (
+                    progress >
+                    0.88
+                ) {
+
+                    const p =
+                        clamp(
+                            (
+                                progress -
+                                0.88
+                            ) /
+                            0.12
+                        );
+
+
+                    translate =
+                        lerp(
+                            0,
+                            -hiddenDistance,
+                            easeInOutCubic(p)
+                        );
+
+                }
+                else {
+
+                    translate = 0;
+
+                }
+
+
+                copy.style.opacity =
+                    timing.opacity;
+
+
+                copy.style.transform =
+                    `translate3d(0, ${translate}px, 0)`;
+
+            }
+
+
+            /* =====================================================
+               PROBLEM SCENE
+            ===================================================== */
+
+            function animateProblem(
+                scene,
+                progress
+            ) {
+
+                const visual =
+                    scene.querySelector(
+                        ".problem-visual"
+                    );
+
+
+                const cards =
+                    scene.querySelectorAll(
+                        ".listing-card"
+                    );
+
+
+                const timing =
+                    cinematicProgress(
+                        progress
+                    );
+
+
+                if (visual) {
+
+                    visual.style.opacity =
+                        timing.opacity;
+
+                    visual.style.transform =
+                        `translate3d(0, ${
+                            lerp(
+                                50,
+                                0,
+                                timing.progress
+                            )
+                        }px, 0)`;
+
+                }
+
+
+                cards.forEach(
+                    (
+                        card,
+                        index
+                    ) => {
+
+                        const spread =
+                            (
+                                index -
+                                (
+                                    cards.length -
+                                    1
+                                ) / 2
+                            );
+
+
+                        const move =
+                            spread *
+                            3 *
+                            timing.progress;
+
+
+                        const depth =
+                            lerp(
+                                0,
+                                index * 4,
+                                timing.progress
+                            );
+
+
+                        const rotate =
+                            spread *
+                            0.4;
+
+
+                        card.style.opacity =
+                            timing.opacity;
+
+
+                        card.style.transform =
+                            `
+                            translate3d(
+                                ${move}px,
+                                ${depth}px,
+                                0
+                            )
+                            rotate(${rotate}deg)
+                            `;
+
+                    }
+                );
+
+            }
+
+
+            /* =====================================================
+               COLLECTION SCENE
+            ===================================================== */
+
+            function animateCollection(
+                scene,
+                progress
+            ) {
+
+                const visual =
+                    scene.querySelector(
+                        ".collection-visual"
+                    );
+
+
+                const board =
+                    scene.querySelector(
+                        ".collection-board"
+                    );
+
+
+                const scan =
+                    scene.querySelector(
+                        ".scan-beam"
+                    );
+
+
+                const rows =
+                    scene.querySelectorAll(
+                        ".data-row:not(.header)"
+                    );
+
+
+                const particles =
+                    scene.querySelectorAll(
+                        ".data-particle"
+                    );
+
+
+                const timing =
+                    cinematicProgress(
+                        progress
+                    );
+
+
+                if (visual) {
+
+                    visual.style.opacity =
+                        timing.opacity;
+
+                    visual.style.transform =
+                        `translate3d(0, ${
+                            lerp(
+                                55,
+                                0,
+                                timing.progress
+                            )
+                        }px, 0)`;
+
+                }
+
+
+                if (board) {
+
+                    const scale =
+                        lerp(
+                            0.93,
+                            1,
+                            timing.progress
+                        );
+
+
+                    board.style.transform =
+                        `scale(${scale})`;
+
+                }
+
+
+                if (scan) {
+
+                    const scanProgress =
+                        clamp(
+                            (
+                                timing.progress -
+                                0.05
+                            ) /
+                            0.8
+                        );
+
+
+                    scan.style.opacity =
+                        timing.progress > 0.05
+                            ? 0.9
+                            : 0;
+
+
+                    scan.style.transform =
+                        `translateY(${
+                            scanProgress *
+                            300
+                        }px)`;
+
+                }
+
+
+                rows.forEach(
+                    (
+                        row,
+                        index
+                    ) => {
+
+                        const delay =
+                            index *
+                            0.06;
+
+
+                        const rowProgress =
+                            clamp(
+                                (
+                                    timing.progress -
+                                    delay
+                                ) /
+                                0.65
+                            );
+
+
+                        row.style.opacity =
+                            lerp(
+                                0.2,
+                                1,
+                                rowProgress
+                            );
+
+
+                        row.style.transform =
+                            `translateX(${
+                                lerp(
+                                    25,
+                                    0,
+                                    easeOutCubic(
+                                        rowProgress
+                                    )
+                                )
+                            }px)`;
+
+                    }
+                );
+
+
+                particles.forEach(
+                    (
+                        particle,
+                        index
+                    ) => {
+
+                        const p =
+                            clamp(
+                                (
+                                    timing.progress -
+                                    index *
+                                    0.08
+                                ) /
+                                0.45
+                            );
+
+
+                        particle.style.opacity =
+                            p;
+
+
+                        particle.style.transform =
+                            `
+                            translate(
+                                ${
+                                    p *
+                                    (
+                                        40 +
+                                        index *
+                                        15
+                                    )
+                                }px,
+                                ${
+                                    -p *
+                                    (
+                                        30 +
+                                        index *
+                                        10
+                                    )
+                                }px
+                            )
+                            `;
+
+                    }
+                );
+
+            }
+
+
+            /* =====================================================
+               GROUPING SCENE
+            ===================================================== */
+
+            function animateGrouping(
+                scene,
+                progress
+            ) {
+
+                const visual =
+                    scene.querySelector(
+                        ".grouping-visual"
+                    );
+
+
+                const columns =
+                    scene.querySelectorAll(
+                        ".year-column"
+                    );
+
+
+                const timing =
+                    cinematicProgress(
+                        progress
+                    );
+
+
+                if (visual) {
+
+                    visual.style.opacity =
+                        timing.opacity;
+
+                    visual.style.transform =
+                        `translate3d(0, ${
+                            lerp(
+                                55,
+                                0,
+                                timing.progress
+                            )
+                        }px, 0)`;
+
+                }
+
+
+                columns.forEach(
+                    (
+                        column,
+                        index
+                    ) => {
+
+                        const delay =
+                            index *
+                            0.09;
+
+
+                        const p =
+                            clamp(
+                                (
+                                    timing.progress -
+                                    delay
+                                ) /
+                                0.7
+                            );
+
+
+                        const bar =
+                            column.querySelector(
+                                ".year-bar"
+                            );
+
+
+                        const count =
+                            column.querySelector(
+                                ".year-count"
+                            );
+
+
+                        if (bar) {
+
+                            bar.style.transform =
+                                `scaleY(${
+                                    easeOutCubic(p)
+                                })`;
+
+                        }
+
+
+                        if (count) {
+
+                            count.style.opacity =
+                                p;
+
+                            count.style.transform =
+                                `translateY(${
+                                    lerp(
+                                        12,
+                                        0,
+                                        easeOutCubic(p)
+                                    )
+                                }px)`;
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+            /* =====================================================
+               ANALYTICS SCENE
+            ===================================================== */
+
+            function animateAnalytics(
+                scene,
+                progress
+            ) {
+
+                const visual =
+                    scene.querySelector(
+                        ".analytics-visual"
+                    );
+
+
+                const trend =
+                    scene.querySelector(
+                        ".trend-line"
+                    );
+
+
+                const average =
+                    scene.querySelector(
+                        ".average-line"
+                    );
+
+
+                const points =
+                    scene.querySelectorAll(
+                        ".chart-point"
+                    );
+
+
+                const timing =
+                    cinematicProgress(
+                        progress
+                    );
+
+
+                if (visual) {
+
+                    visual.style.opacity =
+                        timing.opacity;
+
+                    visual.style.transform =
+                        `translate3d(0, ${
+                            lerp(
+                                60,
+                                0,
+                                timing.progress
+                            )
+                        }px, 0)`;
+
+                }
+
+
+                if (trend) {
+
+                    /*
+                     * getTotalLength is cached by the browser after
+                     * first calculation instead of recalculating
+                     * continuously.
+                     */
+
+                    if (
+                        !trend.dataset.length
+                    ) {
+
+                        trend.dataset.length =
+                            trend.getTotalLength();
+
+                    }
+
+
+                    const length =
+                        Number(
+                            trend.dataset.length
+                        );
+
+
+                    trend.style.strokeDasharray =
+                        length;
+
+
+                    trend.style.strokeDashoffset =
+                        length *
+                        (
+                            1 -
+                            timing.progress
+                        );
+
+                }
+
+
+                if (average) {
+
+                    average.style.opacity =
+                        clamp(
+                            (
+                                timing.progress -
+                                0.35
+                            ) /
+                            0.35
+                        );
+
+                }
+
+
+                points.forEach(
+                    (
+                        point,
+                        index
+                    ) => {
+
+                        const delay =
+                            index *
+                            0.025;
+
+
+                        const p =
+                            clamp(
+                                (
+                                    timing.progress -
+                                    delay
+                                ) /
+                                0.45
+                            );
+
+
+                        point.style.opacity =
+                            easeOutCubic(p);
+
+
+                        point.style.transform =
+                            `scale(${
+                                lerp(
+                                    0.35,
+                                    1,
+                                    p
+                                )
+                            })`;
+
+                    }
+                );
+
+            }
+
+
+            /* =====================================================
+               SUMMARY SCENE
+            ===================================================== */
+
+            function animateSummary(
+                scene,
+                progress
+            ) {
+
+                const visual =
+                    scene.querySelector(
+                        ".summary-visual"
+                    );
+
+
+                const dashboard =
+                    scene.querySelector(
+                        ".market-dashboard"
+                    );
+
+
+                const metrics =
+                    scene.querySelectorAll(
+                        ".metric-card"
+                    );
+
+
+                const miniTrend =
+                    scene.querySelector(
+                        ".mini-trend"
+                    );
+
+
+                const timing =
+                    cinematicProgress(
+                        progress
+                    );
+
+
+                if (visual) {
+
+                    visual.style.opacity =
+                        timing.opacity;
+
+                    visual.style.transform =
+                        `translate3d(0, ${
+                            lerp(
+                                65,
+                                0,
+                                timing.progress
+                            )
+                        }px, 0)`;
+
+                }
+
+
+                if (dashboard) {
+
+                    dashboard.style.transform =
+                        `
+                        scale(
+                            ${lerp(
+                                0.92,
+                                1,
+                                timing.progress
+                            )}
+                        )
+                        `;
+
+                }
+
+
+                metrics.forEach(
+                    (
+                        metric,
+                        index
+                    ) => {
+
+                        const delay =
+                            index *
+                            0.12;
+
+
+                        const p =
+                            clamp(
+                                (
+                                    timing.progress -
+                                    delay
+                                ) /
+                                0.45
+                            );
+
+
+                        metric.style.opacity =
+                            easeOutCubic(p);
+
+
+                        metric.style.transform =
+                            `
+                            translateY(
+                                ${lerp(
+                                    18,
+                                    0,
+                                    easeOutCubic(p)
+                                )}px
+                            )
+                            `;
+
+                    }
+                );
+
+
+                if (miniTrend) {
+
+                    if (
+                        !miniTrend.dataset.length
+                    ) {
+
+                        miniTrend.dataset.length =
+                            miniTrend.getTotalLength();
+
+                    }
+
+
+                    const length =
+                        Number(
+                            miniTrend.dataset.length
+                        );
+
+
+                    miniTrend.style.strokeDasharray =
+                        length;
+
+
+                    miniTrend.style.strokeDashoffset =
+                        length *
+                        (
+                            1 -
+                            timing.progress
+                        );
+
+                }
+
+            }
+
+
+            /* =====================================================
+               SCENE DISPATCHER
+            ===================================================== */
+
+            function animateScene(
+                scene
+            ) {
+
+                const progress =
+                    sceneProgress(
+                        scene
+                    );
+
+
+                animateCopy(
+                    scene,
+                    progress
+                );
+
+
+                const type =
+                    scene.dataset.scene;
+
+
+                switch (type) {
+
+                    case "problem":
+
+                        animateProblem(
+                            scene,
+                            progress
+                        );
+
+                        break;
+
+
+                    case "collection":
+
+                        animateCollection(
+                            scene,
+                            progress
+                        );
+
+                        break;
+
+
+                    case "grouping":
+
+                        animateGrouping(
+                            scene,
+                            progress
+                        );
+
+                        break;
+
+
+                    case "analytics":
+
+                        animateAnalytics(
+                            scene,
+                            progress
+                        );
+
+                        break;
+
+
+                    case "summary":
+
+                        animateSummary(
+                            scene,
+                            progress
+                        );
+
+                        break;
+
+                }
+
+            }
+
+
+            /* =====================================================
+               GLOBAL SCROLL
+            ===================================================== */
+
+            function updateScroll() {
+
+                ticking = false;
+
+
+                const scrollTop =
+                    window.scrollY;
+
+
+                const documentHeight =
+                    document.documentElement
+                        .scrollHeight -
+                    window.innerHeight;
+
+
+                const pageProgress =
+                    documentHeight > 0
+                        ? scrollTop /
+                          documentHeight
+                        : 0;
+
+
+                if (progressBar) {
+
+                    progressBar.style.width =
+                        `${pageProgress * 100}%`;
+
+                }
+
+
+                scenes.forEach(
+                    animateScene
+                );
+
+            }
+
+
+            function requestUpdate() {
+
+                if (!ticking) {
+
+                    ticking = true;
+
+                    requestAnimationFrame(
+                        updateScroll
+                    );
+
+                }
+
+            }
+
+
+            /* =====================================================
+               INITIAL STATE
+            ===================================================== */
+
+            function initialize() {
+
+                if (
+                    prefersReducedMotion
+                ) {
+
+                    scenes.forEach(
+                        scene => {
+
+                            const copy =
+                                scene.querySelector(
+                                    ".scene-copy"
+                                );
+
+                            const visual =
+                                scene.querySelector(
+                                    ".visual"
+                                );
+
+
+                            if (copy) {
+
+                                copy.style.opacity =
+                                    1;
+
+                                copy.style.transform =
+                                    "none";
+
+                            }
+
+
+                            if (visual) {
+
+                                visual.style.opacity =
+                                    1;
+
+                                visual.style.transform =
+                                    "none";
+
+                            }
+
+                        }
+                    );
+
+                    return;
+
+                }
+
+
+                updateScroll();
+
+            }
+
+
+            /* =====================================================
+               EVENTS
+            ===================================================== */
+
+            window.addEventListener(
+                "scroll",
+                requestUpdate,
+                {
+                    passive: true
+                }
+            );
+
+
+            window.addEventListener(
+                "resize",
+                requestUpdate,
+                {
+                    passive: true
+                }
+            );
+
+
+            window.addEventListener(
+                "orientationchange",
+                requestUpdate,
+                {
+                    passive: true
+                }
+            );
+
+
+            /* =====================================================
+               RESIZE OBSERVER
+            ===================================================== */
+
+            if (
+                "ResizeObserver" in window
+            ) {
+
+                const observer =
+                    new ResizeObserver(
+                        () => {
+
+                            requestUpdate();
+
+                        }
+                    );
+
+
+                observer.observe(
+                    document.body
+                );
+
+            }
+
+
+            /* =====================================================
+               START
+            ===================================================== */
+
+            if (
+                document.readyState ===
+                "loading"
+            ) {
+
+                document.addEventListener(
+                    "DOMContentLoaded",
+                    initialize,
+                    {
+                        once: true
+                    }
+                );
+
+            }
+            else {
+
+                initialize();
+
+            }
+
+        })();
+
+    </script>
+
+</body>
+</html>

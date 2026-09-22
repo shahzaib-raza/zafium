@@ -104,7 +104,7 @@ def home(request):
             "services": services,
             "price": price,
         }
-    return render(request, "home.html", {"solution_data": solution_data,})
+    return render(request, "home.html", {"solution_data": solution_data, 'CF_SITE_KEY': settings.CF_SITE_KEY})
 
 def services(request):
     return render(request, "services.html")
@@ -380,6 +380,26 @@ def signup(request):
         return redirect("core:account")
 
     if request.method == "POST":
+            
+        token = request.POST.get("cf-turnstile-response")
+        
+        if not token:
+            messages.error(
+                request,
+                "Please complete the CAPTCHA verification."
+            )
+            return redirect("core:signup")
+
+        result = validate_turnstile(
+            token,
+            settings.CF_SECRET_KEY,
+        )
+
+        if not result.get("success"):
+            messages.error(request, "Failed to validate captcha")
+            return redirect("core:signup")
+
+    if request.method == "POST":
 
         first_name = request.POST.get("first_name", "").strip()
         last_name = request.POST.get("last_name", "").strip()
@@ -409,6 +429,7 @@ def signup(request):
                     "first_name": first_name,
                     "last_name": last_name,
                     "email": email,
+                    'CF_SITE_KEY': settings.CF_SITE_KEY
                 }
             )
 
@@ -421,6 +442,7 @@ def signup(request):
                     "first_name": first_name,
                     "last_name": last_name,
                     "email": email,
+                    'CF_SITE_KEY': settings.CF_SITE_KEY
                 }
             )
 
@@ -433,6 +455,7 @@ def signup(request):
                     "first_name": first_name,
                     "last_name": last_name,
                     "email": email,
+                    'CF_SITE_KEY': settings.CF_SITE_KEY
                 }
             )
 
@@ -521,78 +544,37 @@ def signup(request):
 
     return render(
         request,
-        "authentication/signup.html"
+        "authentication/signup.html",
+        {'CF_SITE_KEY': settings.CF_SITE_KEY}
     )
 
 
-def login_view(request):
 
+
+
+def login_view(request):
     if request.user.is_authenticated:
         return redirect("core:account")
 
     if request.method == "POST":
+        
+        token = request.POST.get("cf-turnstile-response")
+        
+        if not token:
+            messages.error(
+                request,
+                "Please complete the CAPTCHA verification."
+            )
+            return redirect("core:login")
 
-        email = request.POST.get("email", "").strip().lower()
-        password = request.POST.get("password", "")
-
-        user = authenticate(
-            request,
-            username=email,
-            password=password,
+        result = validate_turnstile(
+            token,
+            settings.CF_SECRET_KEY,
         )
 
-        if user is None:
-
-            # Check whether the email exists but is not verified
-            existing_user = User.objects.filter(
-                email=email
-            ).first()
-
-            if existing_user and not existing_user.is_active:
-
-                return render(
-                    request,
-                    "authentication/login.html",
-                    {
-                        "error":
-                            "Please verify your email address "
-                            "before signing in."
-                    }
-                )
-
-            return render(
-                request,
-                "authentication/login.html",
-                {
-                    "error":
-                        "Invalid email address or password.",
-                    "email": email,
-                }
-            )
-
-        login(request, user)
-
-        next_url = request.POST.get("next")
-
-        if next_url:
-            return redirect(next_url)
-
-        return redirect("core:account")
-
-    next_url = request.GET.get("next", "")
-
-    return render(
-        request,
-        "authentication/login.html",
-        {
-            "next": next_url
-        }
-    )
-
-
-def login_view(request):
-    if request.user.is_authenticated:
-        return redirect("core:account")
+        if not result.get("success"):
+            messages.error(request, "Failed to validate captcha")
+            return redirect("core:login")
 
     if request.method == "POST":
         email = request.POST.get("email", "").strip().lower()
@@ -607,6 +589,7 @@ def login_view(request):
                 {
                     "error": "Invalid email address or password.",
                     "email": email,
+                    'CF_SITE_KEY': settings.CF_SITE_KEY
                 }
             )
 
@@ -617,6 +600,7 @@ def login_view(request):
                 {
                     "error": "Please verify your email address before signing in.",
                     "email": email,
+                    'CF_SITE_KEY': settings.CF_SITE_KEY
                 }
             )
 
@@ -633,6 +617,7 @@ def login_view(request):
                 {
                     "error": "Invalid email address or password.",
                     "email": email,
+                    'CF_SITE_KEY': settings.CF_SITE_KEY
                 }
             )
 
@@ -652,6 +637,7 @@ def login_view(request):
         "authentication/login.html",
         {
             "next": next_url,
+            'CF_SITE_KEY': settings.CF_SITE_KEY
         }
     )
 
@@ -1008,6 +994,27 @@ def success_page(request):
     return render(request, "success.html")
 
 def order(request):
+
+    if request.method == "POST":
+    
+        token = request.POST.get("cf-turnstile-response")
+            
+        if not token:
+            messages.error(
+                request,
+                "Please complete the CAPTCHA verification."
+            )
+            return redirect("core:place_order")
+
+        result = validate_turnstile(
+            token,
+            settings.CF_SECRET_KEY,
+        )
+
+        if not result.get("success"):
+            messages.error(request, "Failed to validate captcha")
+            return redirect("core:place_order")
+    
     categories = PortfolioCategory.objects.prefetch_related(
         "subcategories"
     )
@@ -1033,6 +1040,7 @@ def order(request):
             "categories": categories,
             "selected_services": selected_services,
             "selected_solution": selected_solution,
+            'CF_SITE_KEY': settings.CF_SITE_KEY
         },
     )
 
@@ -1360,6 +1368,7 @@ def saas_purchase(request):
         "saas_purchase.html",
         {
             "products": products,
+            'CF_SITE_KEY': settings.CF_SITE_KEY
         },
     )
 
@@ -1477,6 +1486,26 @@ def send_saas_invoice_emails(invoice):
 @login_required
 @transaction.atomic
 def create_saas_invoice(request):
+
+    if request.method == "POST":
+    
+        token = request.POST.get("cf-turnstile-response")
+        
+        if not token:
+            messages.error(
+                request,
+                "Please complete the CAPTCHA verification."
+            )
+            return redirect("core:products_subscriptions")
+
+        result = validate_turnstile(
+            token,
+            settings.CF_SECRET_KEY,
+        )
+
+        if not result.get("success"):
+            messages.error(request, "Failed to validate captcha")
+            return redirect("core:products_subscriptions")
 
     if request.method != "POST":
         return redirect("core:products_subscriptions")
@@ -1623,7 +1652,7 @@ def saas_invoice(request, invoice_number):
 # ____________________________________________________________________________________________________________
 
 def layerforge_landing(request):
-    return render(request,'layerforge_landing.html')
+    return render(request,'layerforge/layerforge_landing.html')
 
 
 MEDIA_ROOT='media'
@@ -1700,6 +1729,9 @@ def generate_svg(request):
         return HttpResponse(html, content_type="text/html", status=400)
 
 # _______________________________________________________________________________________________________________
+
+def autolytics_landing(request):
+    return render(request,'autolytics/autolytics_landing.html')
 
 def autolytics(request):
     return render(request,'autolytics/autolytics.html')

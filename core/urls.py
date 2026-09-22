@@ -7,27 +7,33 @@ urlpatterns = [
     path("", home, name="home"),
 
     path(
-        'layerforge/',
+        'app/layerforge/',
         layerforge,
-        name='layerforge'
+        name='layerforge_app'
     ),
 
     path(
-        'try-layerforge/',
+        'layerforge/',
         layerforge_landing,
-        name='try_layerforge'
+        name='layerforge'
     ),
 
     path('generate/', generate_svg),
 
     path(
         'autolytics/',
-        autolytics,
+        autolytics_landing,
         name='autolytics'
     ),
 
     path(
-        'autolytics/results/',
+        'app/autolytics/',
+        autolytics,
+        name='autolytics_app'
+    ),
+
+    path(
+        'app/autolytics/results/',
         autolytics_search,
         name='autolytics_search'
     ),

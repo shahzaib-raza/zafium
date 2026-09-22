@@ -106,6 +106,13 @@
 
                     </div>
 
+                    <div
+                        class="cf-turnstile"
+                        data-sitekey="{{ CF_SITE_KEY }}"
+                        data-theme="dark"
+                        data-size="normal"
+                    ></div>
+
 
                     <button
                         type="submit"
@@ -147,4 +154,13 @@
     </div>
 </section>
 
+{% endblock %}
+
+{% block extra_js %}
+
+<script
+	src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+	async
+	defer
+></script>
 {% endblock %}
