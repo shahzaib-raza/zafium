@@ -1591,6 +1591,22 @@
 
 @media (max-width: 700px) {
 
+    .featured-project {
+        grid-template-columns: 1fr;
+        min-height: auto;
+    }
+
+    /* Content first, visual second */
+    .featured-project-content,
+    .featured-project-reverse .featured-project-content {
+        order: 1;
+    }
+
+    .featured-project-visual,
+    .featured-project-reverse .featured-project-visual {
+        order: 2;
+    }
+
     .problem-solution {
         grid-template-columns: 1fr;
         gap: 10px;
