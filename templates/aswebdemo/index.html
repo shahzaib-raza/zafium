@@ -1,0 +1,982 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A&S Apparel — premium wardrobe-inspired clothing store demo.">
+<link rel="icon" type="image/png" href="{% static 'images/aswebdemo/favicon-96x96.png' %}" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="{% static 'images/aswebdemo/favicon.svg' %}" />
+<link rel="shortcut icon" href="{% static 'images/aswebdemo/favicon.ico' %}" />
+<link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/aswebdemo/apple-touch-icon.png' %}" />
+<meta name="apple-mobile-web-app-title" content="ASAPPAREL" />
+<link rel="manifest" href="images/aswebdemo/site.webmanifest" />
+<title>A&S Apparel — Royal Wardrobe</title>
+
+<style>
+:root{
+  --gold:#f0aa38;
+  --gold-soft:#d89327;
+  --ink:#101113;
+  --ink-2:#17181b;
+  --cream:#f2f2ef;
+  --cream-2:#e8e8e2;
+  --muted:#9b9b96;
+  --line:rgba(240,170,56,.42);
+  --white:#fff;
+  --shadow:0 24px 70px rgba(0,0,0,.36);
+  --radius:18px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  color:var(--cream);
+  background:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  overflow-x:hidden;
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:#0b0c0d}
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--gold),#9e6417);border-radius:10px;border:2px solid #0b0c0d}
+
+/* ---------- HEADER ---------- */
+.site-header{
+  position:fixed;
+  z-index:1000;
+  top:0;left:0;right:0;
+  height:82px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 clamp(20px,5vw,72px);
+  background:rgba(16,17,19,.78);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(240,170,56,.25);
+  transition:.3s ease;
+}
+.site-header.scrolled{background:rgba(10,11,12,.96);box-shadow:0 14px 40px rgba(0,0,0,.35)}
+
+.brand{
+  display:flex;align-items:center;gap:13px;
+  min-width:max-content;
+}
+.brand-mark{
+  width:42px;height:42px;
+  border:1px solid var(--gold);
+  display:grid;place-items:center;
+  position:relative;
+  overflow: hidden;
+  background-color: white;
+  transform:rotate(45deg);
+  box-shadow:inset 0 0 0 4px rgba(240,170,56,.07);
+}
+.brand-mark img{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform:rotate(-45deg);
+  font-family:Georgia,serif;
+  font-size:17px;
+  color:var(--gold);
+  letter-spacing:-2px;
+}
+.brand-text strong{
+  display:block;
+  font:700 19px/1 Georgia,serif;
+  letter-spacing:3px;
+}
+.brand-text small{
+  display:block;
+  margin-top:5px;
+  color:var(--gold);
+  font-size:8px;
+  letter-spacing:3px;
+}
+
+.nav{
+  display:flex;align-items:center;gap:30px;
+  color:#c8c8c4;
+  font-size:13px;
+  letter-spacing:1.2px;
+  text-transform:uppercase;
+}
+.nav a{transition:.2s}
+.nav a:hover{color:var(--gold)}
+
+.header-actions{display:flex;align-items:center;gap:10px}
+.icon-btn{
+  width:44px;height:44px;
+  display:grid;place-items:center;
+  border:1px solid rgba(240,170,56,.3);
+  background:rgba(255,255,255,.035);
+  color:var(--cream);
+  border-radius:50%;
+  transition:.2s;
+  position:relative;
+}
+.icon-btn svg{
+    color: var(--cream-2);
+    fill: currentColor;
+    stroke: none;
+}
+.icon-btn svg:hover{color: var(--gold);;transform:translateY(-2px) ease}
+.icon-btn:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px)}
+.cart-count{
+  position:absolute;
+  top:-5px;right:-3px;
+  min-width:19px;height:19px;
+  padding:0 5px;
+  display:grid;place-items:center;
+  background:var(--gold);
+  color:#111;
+  border-radius:20px;
+  font-size:10px;font-weight:800;
+}
+.menu-btn{display:none}
+
+/* ---------- HERO ---------- */
+.hero{
+  min-height:100svh;
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  align-items:flex-end;
+  padding:150px clamp(24px,7vw,100px) 80px;
+  background:#090a0b;
+}
+.hero-media{
+  position:absolute;inset:0;
+}
+.hero-media video{
+  width:100%;height:100%;object-fit:cover;
+  filter:saturate(.72) contrast(1.08) brightness(.55);
+}
+.hero-media:after{
+  content:"";
+  position:absolute;inset:0;
+  background:
+    linear-gradient(90deg,rgba(5,6,7,.92) 0%,rgba(5,6,7,.56) 43%,rgba(5,6,7,.24) 100%),
+    linear-gradient(0deg,#101113 0%,transparent 42%,rgba(0,0,0,.25) 100%);
+}
+.hero-copy{position:relative;z-index:2;max-width:750px}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  color:var(--gold);
+  font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;
+  margin-bottom:22px;
+}
+.eyebrow:before{content:"";width:38px;height:1px;background:var(--gold)}
+.hero h1{
+  margin:0;
+  font:400 clamp(54px,8vw,110px)/.88 Georgia,serif;
+  letter-spacing:-4px;
+  max-width:850px;
+}
+.hero h1 em{color:var(--gold);font-style:italic}
+.hero p{
+  max-width:610px;
+  margin:28px 0 32px;
+  color:#d2d2cc;
+  font-size:16px;line-height:1.8;
+}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.btn{
+  border:1px solid var(--gold);
+  min-height:48px;
+  padding:23px;
+  background:var(--gold);
+  color:#111;
+  font-weight:800;
+  letter-spacing:.6px;
+  transition:.2s;
+}
+.btn:hover{background:#ffc55e;transform:translateY(-2px);box-shadow:0 12px 35px rgba(240,170,56,.2)}
+.btn.secondary{background:transparent;color:var(--cream)}
+.btn.secondary:hover{background:rgba(240,170,56,.08);color:var(--gold)}
+.hero-badge{
+  position:absolute;right:7vw;bottom:80px;z-index:2;
+  width:138px;height:138px;border:1px solid rgba(240,170,56,.6);
+  border-radius:50%;display:grid;place-items:center;text-align:center;
+  background:rgba(16,17,19,.55);backdrop-filter:blur(12px);
+}
+.hero-badge:before{content:"";position:absolute;inset:9px;border:1px dashed rgba(240,170,56,.5);border-radius:50%}
+.hero-badge span{font:italic 21px Georgia,serif;color:var(--gold)}
+.hero-badge small{display:block;font-size:8px;letter-spacing:2px;margin-top:6px;color:#ddd}
+
+/* ---------- SECTION SYSTEM ---------- */
+.section{
+  padding:105px clamp(20px,5vw,72px);
+  position:relative;
+}
+.section.dark{background:var(--ink)}
+.section.cream{background:var(--cream);color:var(--ink)}
+.section-head{
+  max-width:1250px;margin:0 auto 36px;
+  display:flex;align-items:end;justify-content:space-between;gap:30px;
+}
+.section-kicker{
+  color:var(--gold);
+  text-transform:uppercase;letter-spacing:3px;
+  font-size:10px;font-weight:900;
+  margin-bottom:10px;
+}
+.section h2{
+  margin:0;
+  font:400 clamp(38px,5vw,64px)/.95 Georgia,serif;
+}
+.section-intro{
+  max-width:440px;
+  color:#a9a9a4;
+  line-height:1.7;
+  font-size:14px;
+}
+.cream .section-intro{color:#65655f}
+.gold-rule{
+  width:100%;max-width:1250px;height:1px;
+  margin:0 auto 36px;
+  background:linear-gradient(90deg,var(--gold),transparent);
+}
+
+/* ---------- WARDROBE PRODUCT RAIL ---------- */
+.wardrobe{
+  max-width:1250px;margin:auto;
+  position:relative;
+}
+.rail-wrap{position:relative}
+.product-rail{
+  display:flex;
+  gap:18px;
+  overflow-x:auto;
+  scroll-behavior:smooth;
+  scroll-snap-type:x proximity;
+  padding:12px 4px 26px;
+  scrollbar-width:thin;
+  scrollbar-color:var(--gold) #151617;
+}
+.product-rail::-webkit-scrollbar{height:7px}
+.product-rail::-webkit-scrollbar-thumb{background:var(--gold)}
+.product-card{
+  flex:0 0 clamp(250px,26vw,315px);
+  min-height:460px;
+  scroll-snap-align:start;
+  position:relative;
+
+  /* Clean luxury showroom surface */
+  background:#151618;
+
+  /* No visible frame */
+  border:none;
+
+  /* Very subtle depth */
+  box-shadow:
+    0 14px 35px rgba(0,0,0,.22);
+
+  padding:0;
+  overflow:hidden;
+  cursor:pointer;
+
+  transition:
+    transform .4s cubic-bezier(.2,.7,.2,1),
+    box-shadow .4s ease;
+}
+
+.product-card:hover{
+  transform:translateY(-7px);
+
+  box-shadow:
+    0 25px 55px rgba(0,0,0,.42),
+    0 10px 30px rgba(240,170,56,.06);
+}
+.product-image{
+  height:350px;
+  position:relative;
+  overflow:hidden;
+  background:#111;
+  border:none;
+}
+.product-image img{
+  width:100%;height:100%;object-fit:contain;
+  display:block;
+  transition:transform .55s ease,filter .35s ease;
+  filter:saturate(.82);
+}
+.product-card:hover .product-image img{
+  transform:scale(1.07);
+  filter:saturate(1.04);
+}
+.product-overlay{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;justify-content:end;
+  padding:22px;
+  background:linear-gradient(0deg,rgba(5,5,5,.95),rgba(5,5,5,.05) 72%);
+  opacity:0;
+  transition:.3s;
+}
+.product-card:hover .product-overlay{opacity:1}
+.product-overlay p{margin:0;color:#ddd;font-size:12px;line-height:1.55}
+.product-meta{
+  padding:15px 7px 5px;
+  display:flex;align-items:end;justify-content:space-between;gap:12px;
+}
+.product-name{
+  font:400 20px Georgia,serif;
+  color:#f7e4c3;
+}
+.product-tag{
+  color:#c28b43;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;margin-top:5px
+}
+.product-price{color:var(--gold);font-weight:900;font-size:15px;white-space:nowrap}
+.product-add{
+  width:36px;height:36px;border:1px solid rgba(240,170,56,.65);
+  background:rgba(16,17,19,.75);color:var(--gold);
+  display:grid;place-items:center;border-radius:50%;
+  transition:.2s;
+}
+.product-add:hover{background:var(--gold);color:#111}
+
+.rail-controls{display:flex;gap:8px}
+.rail-btn{
+  width:43px;height:43px;
+  border:1px solid rgba(240,170,56,.5);
+  background:transparent;color:var(--gold);
+  font-size:18px;
+}
+.rail-btn:hover{background:var(--gold);color:#111}
+
+/* ---------- BRAND STORY ---------- */
+.story{
+  max-width:1250px;margin:auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:65px;align-items:center;
+}
+.story-photo{
+  min-height:610px;
+  border:1px solid var(--gold);
+  position:relative;
+  overflow:hidden;
+  background:#111;
+}
+.story-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.story-photo:after{
+  content:"A&S";
+  position:absolute;bottom:20px;right:22px;
+  font:italic 64px Georgia,serif;color:rgba(240,170,56,.85)
+}
+.story-copy h2{font:400 clamp(40px,5vw,65px)/.95 Georgia,serif;margin:0 0 24px}
+.story-copy p{color:#bbb;line-height:1.9;font-size:15px}
+.story-points{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px}
+.point{border-top:1px solid rgba(240,170,56,.4);padding-top:15px}
+.point strong{display:block;color:var(--gold);font:400 22px Georgia,serif}
+.point span{display:block;color:#999;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-top:5px}
+
+/* ---------- REVIEWS ---------- */
+.review-section{overflow:hidden}
+.review-track{
+  max-width:none;
+  display:flex;gap:18px;
+  width:max-content;
+  animation:marquee 35s linear infinite;
+}
+.review-track:hover{animation-play-state:paused}
+.review{
+  width:330px;
+  background:#161719;
+  border:1px solid rgba(240,170,56,.28);
+  padding:24px;
+  border-radius:2px;
+}
+.review-stars{color:var(--gold);letter-spacing:3px;font-size:12px}
+.review p{color:#c8c8c3;font:italic 16px/1.7 Georgia,serif}
+.review-author{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#888}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ---------- FOOTER ---------- */
+footer{
+  background:#090a0b;
+  border-top:1px solid rgba(240,170,56,.22);
+  padding:70px clamp(20px,5vw,72px) 30px;
+}
+.footer-grid{max-width:1250px;margin:auto;display:grid;grid-template-columns:1.4fr .8fr .8fr .8fr;gap:50px}
+footer h3{font:400 22px Georgia,serif;margin:0 0 18px;color:#f4e7d1}
+footer p,footer a{color:#8f8f8a;font-size:13px;line-height:1.8}
+footer a:hover{color:var(--gold)}
+.footer-bottom{
+  max-width:1250px;margin:50px auto 0;padding-top:20px;
+  border-top:1px solid rgba(255,255,255,.08);
+  color:#686863;font-size:11px;display:flex;justify-content:space-between
+}
+
+/* ---------- DRAWERS / MODALS ---------- */
+.overlay{
+  position:fixed;z-index:2000;inset:0;
+  background:rgba(0,0,0,.68);
+  opacity:0;pointer-events:none;
+  transition:.25s;
+}
+.overlay.open{opacity:1;pointer-events:auto}
+.drawer{
+  position:fixed;z-index:2100;top:0;right:0;
+  height:100dvh;width:min(560px,100%);
+  background:#101113;
+  border-left:1px solid var(--gold);
+  transform:translateX(105%);
+  transition:.35s cubic-bezier(.2,.8,.2,1);
+  display:flex;flex-direction:column;
+  box-shadow:-30px 0 90px rgba(0,0,0,.55);
+}
+.drawer.open{transform:translateX(0)}
+.drawer-head{
+  padding:24px 26px;border-bottom:1px solid rgba(240,170,56,.25);
+  display:flex;align-items:center;justify-content:space-between
+}
+.drawer-head h2{font:400 30px Georgia,serif;margin:0}
+.close-btn{
+  width:38px;height:38px;background:transparent;color:#ddd;border:1px solid #444
+}
+.close-btn:hover{color:var(--gold);border-color:var(--gold)}
+.drawer-body{padding:22px 26px;overflow:auto;flex:1}
+.cart-item{
+  display:grid;grid-template-columns:72px 1fr auto;gap:13px;
+  padding:15px 0;border-bottom:1px solid rgba(255,255,255,.08)
+}
+.cart-thumb{width:72px;height:88px;object-fit:cover;border:1px solid rgba(240,170,56,.4)}
+.cart-item strong{font:400 17px Georgia,serif}
+.cart-item small{display:block;color:#888;margin-top:5px}
+.qty{display:flex;align-items:center;gap:7px;margin-top:10px}
+.qty button{width:26px;height:26px;background:#1b1c1f;border:1px solid #444;color:#ddd}
+.remove{background:none;border:0;color:#777;font-size:11px;margin-top:7px;padding:0}
+.remove:hover{color:#eaa}
+.cart-price{color:var(--gold);font-weight:800}
+.cart-summary{
+  padding:22px 26px;border-top:1px solid rgba(240,170,56,.25);
+}
+.total-row{display:flex;justify-content:space-between;font-size:15px;margin-bottom:18px}
+.total-row strong{color:var(--gold);font-size:21px}
+.checkout-form{display:grid;gap:10px}
+.checkout-form label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#999}
+.checkout-form input,.checkout-form textarea{
+  width:100%;border:1px solid #36383b;background:#17181a;color:#eee;
+  padding:12px 13px;outline:none;
+}
+.checkout-form input:focus,.checkout-form textarea:focus{border-color:var(--gold)}
+.checkout-form textarea{min-height:75px;resize:vertical}
+.payment{
+  display:flex;align-items:center;justify-content:space-between;
+  border:1px solid rgba(240,170,56,.45);padding:13px;background:#151618
+}
+.payment b{font-size:12px}
+.payment span{font-size:10px;color:var(--gold);letter-spacing:1px}
+.empty-cart{text-align:center;color:#777;padding:80px 15px}
+.empty-cart .hanger{font:400 64px Georgia,serif;color:#5f4b2e}
+
+/* product detail */
+.modal{
+  position:fixed;z-index:2200;inset:0;
+  display:grid;place-items:center;
+  padding:20px;
+  opacity:0;pointer-events:none;transition:.25s;
+}
+.modal.open{opacity:1;pointer-events:auto}
+.modal-card{
+  width:min(920px,100%);
+  max-height:90dvh;overflow:auto;
+  background:#101113;border:1px solid var(--gold);
+  box-shadow:var(--shadow);
+  display:grid;grid-template-columns:1fr 1fr;
+  transform:translateY(20px);transition:.3s;
+}
+.modal.open .modal-card{transform:none}
+.modal-photo{min-height:560px}
+.modal-photo img{width:100%;height:100%;object-fit:cover}
+.modal-info{padding:45px 40px}
+.modal-info .tag{color:var(--gold);font-size:10px;letter-spacing:2px;text-transform:uppercase}
+.modal-info h2{font:400 43px/1 Georgia,serif;margin:13px 0}
+.modal-info .modal-price{font-size:21px;color:var(--gold);font-weight:900;margin-bottom:25px}
+.modal-info p{color:#aaa;line-height:1.8;font-size:14px}
+.detail-list{list-style:none;padding:0;margin:25px 0;display:grid;gap:9px}
+.detail-list li{color:#aaa;font-size:12px}
+.detail-list li:before{content:"✦";color:var(--gold);margin-right:9px}
+.modal-close{float:right}
+
+/* toast */
+.toast{
+  position:fixed;z-index:3000;right:24px;bottom:24px;
+  background:#f0aa38;color:#111;
+  padding:13px 18px;font-size:12px;font-weight:800;
+  transform:translateY(90px);opacity:0;transition:.3s;
+  box-shadow:0 12px 35px rgba(0,0,0,.3)
+}
+.toast.show{transform:none;opacity:1}
+
+/* ---------- RESPONSIVE ---------- */
+@media(max-width:900px){
+  .nav{display:none}
+  .menu-btn{display:grid}
+  .hero-badge{display:none}
+  .story{grid-template-columns:1fr;gap:35px}
+  .story-photo{min-height:480px}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .modal-card{grid-template-columns:1fr}
+  .modal-photo{min-height:340px;max-height:45vh}
+}
+@media(max-width:600px){
+  .site-header{height:70px;padding:0 16px}
+  .brand-text strong{font-size:16px}
+  .brand-text small{font-size:7px}
+  .brand-mark{width:36px;height:36px}
+  .header-actions .search-btn{display:none}
+  .hero{padding:120px 20px 60px;min-height:90svh}
+  .hero h1{letter-spacing:-2px}
+  .hero p{font-size:14px}
+  .section{padding:75px 16px}
+  .section-head{align-items:start;flex-direction:column;gap:20px}
+  .product-card{flex-basis:78vw;min-height:445px}
+  .product-image{height:315px}
+  .story-points{grid-template-columns:1fr}
+  .story-photo{min-height:420px}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;gap:10px}
+  .modal-info{padding:28px 22px}
+  .modal-info h2{font-size:36px}
+}
+</style>
+</head>
+
+<body>
+
+<header class="site-header" id="header">
+  <a class="brand" href="#home" aria-label="A&S Apparel home">
+    <div class="brand-mark"><img src="{% static 'images/aswebdemo/logo.jpg' %}"></img></div>
+    <div class="brand-text">
+      <strong>A&amp;S APPAREL</strong>
+      <small>SHOP LIKE NEVER BEFORE · PREMIUM WARDROBE</small>
+    </div>
+  </a>
+
+  <nav class="nav">
+    <a href="#men">Men</a>
+    <a href="#women">Women</a>
+    <a href="#children">Children</a>
+    <a href="#story">Our House</a>
+    <a href="#reviews">Reviews</a>
+  </nav>
+
+  <div class="header-actions">
+    <button class="icon-btn search-btn" aria-label="Search" onclick="focusSearch()">⌕</button>
+    <button class="icon-btn" aria-label="Open cart" onclick="openCart()">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M24 48C10.7 48 0 58.7 0 72C0 85.3 10.7 96 24 96L69.3 96C73.2 96 76.5 98.8 77.2 102.6L129.3 388.9C135.5 423.1 165.3 448 200.1 448L456 448C469.3 448 480 437.3 480 424C480 410.7 469.3 400 456 400L200.1 400C188.5 400 178.6 391.7 176.5 380.3L171.4 352L475 352C505.8 352 532.2 330.1 537.9 299.8L568.9 133.9C572.6 114.2 557.5 96 537.4 96L124.7 96L124.3 94C119.5 67.4 96.3 48 69.2 48L24 48zM208 576C234.5 576 256 554.5 256 528C256 501.5 234.5 480 208 480C181.5 480 160 501.5 160 528C160 554.5 181.5 576 208 576zM432 576C458.5 576 480 554.5 480 528C480 501.5 458.5 480 432 480C405.5 480 384 501.5 384 528C384 554.5 405.5 576 432 576z"/></svg>
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+    <button class="icon-btn menu-btn" aria-label="Menu" onclick="toggleMobileNav()">☰</button>
+  </div>
+</header>
+
+<main id="home">
+
+  <section class="hero">
+    <div class="hero-media">
+      <!-- Replace this MP4 URL with your own brand/store fashion video when ready. -->
+      <video autoplay muted loop playsinline>
+        <source src="{% static 'videos/aswebdemo/video.mp4' %}" type="video/mp4">
+      </video>
+    </div>
+
+    <div class="hero-copy">
+      <div class="eyebrow">The House of A&amp;S</div>
+      <h1>Dress like<br>you own the <em>room.</em></h1>
+      <p>
+        A premium wardrobe curated around confident silhouettes, timeless
+        fabrics and modern essentials. Discover the collection arranged
+        like a royal wardrobe — piece by piece.
+      </p>
+      <div class="hero-actions">
+        <a class="btn" href="#men">Explore Collection</a>
+        <a class="btn secondary" href="#story">Our Story</a>
+      </div>
+    </div>
+
+    <div class="hero-badge">
+      <div><span>A&amp;S</span><small>ROYAL<br>WARDROBE</small></div>
+    </div>
+  </section>
+
+  <section class="section dark" id="men">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">01 · The Gentleman's Wardrobe</div>
+        <h2>Men's Collection</h2>
+      </div>
+      <p class="section-intro">Tailored layers, relaxed essentials and polished pieces designed to move from everyday confidence to after-hours elegance.</p>
+    </div>
+    <div class="gold-rule"></div>
+
+    <div class="wardrobe">
+      <div class="rail-wrap">
+        <div class="product-rail" id="menRail"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section cream" id="women">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">02 · The Modern Muse</div>
+        <h2>Women's Collection</h2>
+      </div>
+      <p class="section-intro">Refined textures, contemporary silhouettes and wardrobe staples created for effortless presence.</p>
+    </div>
+    <div class="gold-rule"></div>
+
+    <div class="wardrobe">
+      <div class="product-rail" id="womenRail"></div>
+    </div>
+  </section>
+
+  <section class="section dark" id="children">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">03 · Little Royalty</div>
+        <h2>Children's Collection</h2>
+      </div>
+      <p class="section-intro">Comfort-first pieces with the A&amp;S finish — made for everyday adventures, celebrations and everything between.</p>
+    </div>
+    <div class="gold-rule"></div>
+
+    <div class="wardrobe">
+      <div class="product-rail" id="childrenRail"></div>
+    </div>
+  </section>
+
+  <section class="section dark" id="story">
+    <div class="story">
+      <div class="story-photo">
+        <img src="{% static 'images/aswebdemo/store.jpg' %}" alt="A&S Apparel store interior">
+      </div>
+      <div class="story-copy">
+        <div class="section-kicker">The A&amp;S House</div>
+        <h2>A wardrobe built like a statement.</h2>
+        <p>
+          Inspired by the dramatic black-and-gold character of our physical
+          store, A&amp;S Apparel brings that same sense of occasion online.
+          Every collection is presented like a carefully arranged wardrobe:
+          rich, tactile, considered and easy to explore.
+        </p>
+        <p>
+          From everyday denim to occasion-ready layers, our goal is simple:
+          make the clothes feel as memorable as the person wearing them.
+        </p>
+        <div class="story-points">
+          <div class="point"><strong>Premium</strong><span>Curated fabrics</span></div>
+          <div class="point"><strong>Modern</strong><span>Current silhouettes</span></div>
+          <div class="point"><strong>Royal</strong><span>Signature presentation</span></div>
+          <div class="point"><strong>Local</strong><span>Made for your wardrobe</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section dark review-section" id="reviews">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">04 · From Our Clients</div>
+        <h2>Worn. Loved. Repeated.</h2>
+      </div>
+      <p class="section-intro">A selection of customer notes. The rail pauses whenever you hover over it.</p>
+    </div>
+    <div class="gold-rule"></div>
+
+    <div class="review-track" id="reviewTrack"></div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="brand">
+        <div class="brand-mark"><img src="{% static 'images/aswebdemo/logo.jpg' %}"></img></div>
+        <div class="brand-text"><strong>A&amp;S APPAREL</strong><small>THE ROYAL WARDROBE</small></div>
+      </div>
+      <p style="max-width:350px;margin-top:20px">Premium clothing presented with a wardrobe-first shopping experience.</p>
+    </div>
+    <div>
+      <h3>Collections</h3>
+      <a href="#men">Men</a><br>
+      <a href="#women">Women</a><br>
+      <a href="#children">Children</a>
+    </div>
+    <div>
+      <h3>House</h3>
+      <a href="#story">Our Story</a><br>
+      <a href="#reviews">Reviews</a><br>
+      <a href="#" onclick="openCart();return false">Cart</a>
+    </div>
+    <div>
+      <h3>Contact</h3>
+      <p>Bahadurabad | DHA | Gulshan | Johar | N. Nazimabad | Malir Cantt</p>
+      <a href="https://www.instagram.com/asapparelofficial/">Follow on Instagram</p>
+      <a href="htps://wa.me/923008202350">Connect on Whatsapp</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 A&amp;S Apparel. Demo storefront.</span>
+    <span>Designed as a one-page wardrobe experience.</span>
+  </div>
+</footer>
+
+<div class="overlay" id="overlay" onclick="closeAll()"></div>
+
+<!-- CART DRAWER -->
+<aside class="drawer" id="cartDrawer" aria-label="Shopping cart">
+  <div class="drawer-head">
+    <h2>Your Wardrobe</h2>
+    <button class="close-btn" onclick="closeCart()">×</button>
+  </div>
+  <div class="drawer-body" id="cartBody"></div>
+  <div class="cart-summary" id="cartSummary"></div>
+</aside>
+
+<!-- PRODUCT DETAILS -->
+<div class="modal" id="productModal">
+  <div class="modal-card" id="productModalCard"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const products = [
+  {id:1,cat:'men',name:'Blank Esential',tag:'Signature Design',price:3490,image:"{% static 'images/aswebdemo/MEN1.jpg' %}",desc:'Men\'s Branded Drop Shoulder T-Shirts, soft hand-feel and the understated confidence of the A&S house.',details:['Premium cotton blend','Regular tailored fit','Signature collar finish']},
+  {id:2,cat:'men',name:'Drop Shoulder',tag:'Branded T-Shirts',price:4990,image:"{% static 'images/aswebdemo/MEN2.jpg' %}",desc:'Men\'s Branded Drop Shoulder T-Shirts. Clean lines, understated hardware and an easy silhouette.',details:['Heavyweight fabric','Relaxed fit','Metal button hardware']},
+  {id:3,cat:'men',name:'Casual Shirts',tag:'Men\'s Branded T-Shirts',price:4290,image:"{% static 'images/aswebdemo/MEN3.jpg' %}",desc:'Men\'s Branded Casual Shirts — designed to become the most-used piece in your wardrobe.',details:['Stretch','Tapered modern cut','Deep indigo wash']},
+  {id:4,cat:'men',name:'European High Street',tag:'Everyday Style',price:2290,image:"{% static 'images/aswebdemo/MEN4.jpg' %}",desc:'European High Street. Everyday Style., elevated through fabric weight, cut and finish.',details:['Premium cotton','Dense jersey knit','Signature neck rib']},
+  {id:5,cat:'men',name:'Branded Shorts',tag:'Terry Shorts',price:5190,image:"{% static 'images/aswebdemo/MEN5.jpg' %}",desc:'Men\'s Branded Terry Shorts for cooler evenings.',details:['Soft knit texture','Classic fit','Layer-friendly profile']},
+  {id:6,cat:'men',name:'A&S Exclusive Trousers',tag:'Men\'s Exclusive Trousers',price:3890,image:"{% static 'images/aswebdemo/MEN6.jpg' %}",desc:'Relaxed Men\'s Exclusive Trousers with a polished A&S finish.',details:['Breathable linen blend','Relaxed fit','Mother-of-pearl style']},
+
+  {id:7,cat:'women',name:'Baggy Trousers',tag:'Branded Baggy Trousers',price:6490,image:"{% static 'images/aswebdemo/WOMEN5.jpg' %}",desc:'Women\'s Branded Baggy Trousers.',details:['Fluid fabric','Defined waist','Evening-ready finish']},
+  {id:8,cat:'women',name:'Branded Polo T-Shirts',tag:'Polo Shirt',price:3790,image:"{% static 'images/aswebdemo/WOMEN1.jpg' %}",desc:'Branded Polo T-Shirts that brings subtle drama to tailored and relaxed looks.',details:['Soft-touch fabric','Relaxed drape','Statement cuff']},
+  {id:9,cat:'women',name:'Women Tracksuit',tag:'Summer Casual',price:5590,image:"{% static 'images/aswebdemo/WOMEN2.jpg' %}",desc:'Rich texture and a clean silhouette for evenings when the wardrobe needs a little more presence.',details:['Velvet-touch finish','Elegant silhouette','Designed for evening']},
+  {id:10,cat:'women',name:'Ivory Tailored Set',tag:'Tailoring',price:7290,image:'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=900&q=85',desc:'A refined matching set that blends sharp tailoring with modern ease.',details:['Structured tailoring','Soft inner finish','Two-piece look']},
+  {id:11,cat:'women',name:'Silkline Top',tag:'Premium',price:4190,image:'https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&w=900&q=85',desc:'A minimal premium top designed to sit effortlessly beneath jackets or stand alone.',details:['Silky hand-feel','Minimal neckline','Easy-care fabric']},
+  {id:12,cat:'women',name:'City Trench',tag:'Outerwear',price:7990,image:'https://images.unsplash.com/photo-1544022613-e87ca75a784a?auto=format&fit=crop&w=900&q=85',desc:'A statement trench with classic proportions and a modern A&S edge.',details:['Longline cut','Adjustable waist','Weather-resistant shell']},
+
+  {id:13,cat:'children',name:'Little Regent',tag:'Boys',price:2790,image:'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=900&q=85',desc:'A polished everyday set for little gentlemen with room to move and play.',details:['Soft cotton','Comfort fit','Easy-care finish']},
+  {id:14,cat:'children',name:'Mini Muse Dress',tag:'Girls',price:3290,image:'https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=900&q=85',desc:'A charming dress with soft movement and a premium boutique feel.',details:['Soft-touch fabric','Comfort lining','Statement details']},
+  {id:15,cat:'children',name:'Denim Junior',tag:'Everyday',price:2490,image:'https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=900&q=85',desc:'Easy denim designed for everyday adventures.',details:['Durable denim','Flexible fit','Everyday wash']},
+  {id:16,cat:'children',name:'Royal Hoodie',tag:'Casual',price:2690,image:'https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&w=900&q=85',desc:'A cozy premium hoodie with a clean silhouette and signature detailing.',details:['Brushed interior','Soft cotton blend','Relaxed fit']},
+  {id:17,cat:'children',name:'Tiny Oxford',tag:'Shirting',price:2290,image:'https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?auto=format&fit=crop&w=900&q=85',desc:'A miniature classic, designed for birthdays, dinners and family occasions.',details:['Cotton oxford','Classic collar','Comfort construction']},
+  {id:18,cat:'children',name:'Weekend Set',tag:'Two Piece',price:2990,image:'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=900&q=85',desc:'An easy two-piece set for weekends and holiday mornings.',details:['Breathable cotton','Two-piece set','Relaxed movement']}
+];
+
+let cart = JSON.parse(localStorage.getItem('as_apparel_cart') || '[]');
+
+const reviews = [
+  ['“The store-inspired presentation makes shopping feel like opening a wardrobe.”','Ayesha K.'],
+  ['“The denim quality is excellent and the fit was exactly what I expected.”','Hamza R.'],
+  ['“Beautiful packaging, fast delivery and the dress looked even better in person.”','Maha S.'],
+  ['“My kids loved the pieces. Comfortable enough for all-day wear.”','Sana A.'],
+  ['“The black-and-gold aesthetic is gorgeous. The whole brand feels premium.”','Bilal M.'],
+  ['“The polo has become my go-to piece for smart casual days.”','Omar F.']
+];
+
+function money(n){return 'Rs. ' + n.toLocaleString('en-PK')}
+function getProduct(id){return products.find(p=>p.id===id)}
+
+function renderRail(category, elId){
+  const el=document.getElementById(elId);
+  el.innerHTML=products.filter(p=>p.cat===category).map(p=>`
+    <article class="product-card" onclick="openProduct(${p.id})">
+      <div class="product-image">
+        <img src="${p.image}" alt="${p.name}" loading="lazy">
+        <div class="product-overlay">
+          <p>${p.desc}</p>
+        </div>
+      </div>
+      <div class="product-meta">
+        <div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-tag">${p.tag}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="product-price">${money(p.price)}</div>
+          <button class="product-add" title="Add to cart" onclick="event.stopPropagation();addToCart(${p.id})">+</button>
+        </div>
+      </div>
+    </article>
+  `).join('');
+}
+
+function renderReviews(){
+  const html=reviews.map(r=>`
+    <article class="review">
+      <div class="review-stars">★★★★★</div>
+      <p>${r[0]}</p>
+      <div class="review-author">${r[1]} · Verified customer</div>
+    </article>`).join('');
+  document.getElementById('reviewTrack').innerHTML=html+html;
+}
+
+function saveCart(){localStorage.setItem('as_apparel_cart',JSON.stringify(cart))}
+function updateCartCount(){
+  document.getElementById('cartCount').textContent=cart.reduce((a,i)=>a+i.qty,0);
+}
+
+function addToCart(id){
+  const existing=cart.find(i=>i.id===id);
+  if(existing) existing.qty++;
+  else cart.push({id,qty:1});
+  saveCart();updateCartCount();renderCart();
+  toast(getProduct(id).name+' added to your wardrobe');
+}
+
+function changeQty(id,delta){
+  const item=cart.find(i=>i.id===id);
+  if(!item)return;
+  item.qty+=delta;
+  if(item.qty<=0)cart=cart.filter(i=>i.id!==id);
+  saveCart();updateCartCount();renderCart();
+}
+
+function removeItem(id){
+  cart=cart.filter(i=>i.id!==id);
+  saveCart();updateCartCount();renderCart();
+}
+
+function renderCart(){
+  const body=document.getElementById('cartBody');
+  const summary=document.getElementById('cartSummary');
+  if(!cart.length){
+    body.innerHTML='<div class="empty-cart"><div class="hanger">♧</div><h3>Your wardrobe is empty</h3><p>Add something you love from the collections.</p></div>';
+    summary.innerHTML='';
+    return;
+  }
+  body.innerHTML=cart.map(item=>{
+    const p=getProduct(item.id);
+    return `<div class="cart-item">
+      <img class="cart-thumb" src="${p.image}" alt="${p.name}">
+      <div>
+        <strong>${p.name}</strong>
+        <small>${p.tag}</small>
+        <div class="qty">
+          <button onclick="changeQty(${p.id},-1)">−</button>
+          <span>${item.qty}</span>
+          <button onclick="changeQty(${p.id},1)">+</button>
+        </div>
+        <button class="remove" onclick="removeItem(${p.id})">Remove</button>
+      </div>
+      <div class="cart-price">${money(p.price*item.qty)}</div>
+    </div>`;
+  }).join('');
+
+  const total=cart.reduce((a,item)=>a+getProduct(item.id).price*item.qty,0);
+  summary.innerHTML=`
+    <div class="total-row"><span>Wardrobe total</span><strong>${money(total)}</strong></div>
+    <form class="checkout-form" onsubmit="placeOrder(event)">
+      <label>Full name</label>
+      <input id="checkoutName" required placeholder="Your name">
+      <label>Phone number</label>
+      <input id="checkoutPhone" required type="tel" placeholder="+92 3XX XXXXXXX">
+      <label>Delivery address</label>
+      <textarea id="checkoutAddress" required placeholder="House / street / area / city"></textarea>
+      <label>Payment</label>
+      <div class="payment"><b>Cash on Delivery</b><span>SELECTED</span></div>
+      <button class="btn" type="submit">Place COD Order</button>
+    </form>`;
+}
+
+function placeOrder(e){
+  e.preventDefault();
+  if(!cart.length)return;
+  const name=document.getElementById('checkoutName').value.trim();
+  const phone=document.getElementById('checkoutPhone').value.trim();
+  const address=document.getElementById('checkoutAddress').value.trim();
+  const total=cart.reduce((a,item)=>a+getProduct(item.id).price*item.qty,0);
+  const orderNo='AS-'+Date.now().toString().slice(-7);
+  alert(`Thank you, ${name}!\\n\\nOrder ${orderNo} has been created.\\nTotal: ${money(total)}\\nPayment: Cash on Delivery\\nPhone: ${phone}\\nAddress: ${address}\\n\\nDemo checkout only — connect this form to your backend/order API for production.`);
+  cart=[];saveCart();updateCartCount();renderCart();closeCart();
+}
+
+function openCart(){
+  renderCart();
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('cartDrawer').classList.add('open');
+}
+function closeCart(){
+  document.getElementById('cartDrawer').classList.remove('open');
+  if(!document.getElementById('productModal').classList.contains('open'))document.getElementById('overlay').classList.remove('open');
+}
+function openProduct(id){
+  const p=getProduct(id);
+  document.getElementById('productModalCard').innerHTML=`
+    <div class="modal-photo"><img src='${p.image}" alt="${p.name}"></div>
+    <div class="modal-info">
+      <button class="close-btn modal-close" onclick="closeProduct()">×</button>
+      <div class="tag">${p.cat} · ${p.tag}</div>
+      <h2>${p.name}</h2>
+      <div class="modal-price">${money(p.price)}</div>
+      <p>${p.desc}</p>
+      <ul class="detail-list">${p.details.map(d=>`<li>${d}</li>`).join('')}</ul>
+      <button class="btn" onclick="addToCart(${p.id});closeProduct();openCart()">Add to Wardrobe</button>
+    </div>`;
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('productModal').classList.add('open');
+}
+function closeProduct(){
+  document.getElementById('productModal').classList.remove('open');
+  if(!document.getElementById('cartDrawer').classList.contains('open'))document.getElementById('overlay').classList.remove('open');
+}
+function closeAll(){closeProduct();closeCart()}
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(window.__toast);
+  window.__toast=setTimeout(()=>t.classList.remove('show'),2200);
+}
+function focusSearch(){
+  const term=prompt('Search the A&S wardrobe:');
+  if(!term)return;
+  const q=term.toLowerCase();
+  const p=products.find(x=>(x.name+' '+x.tag+' '+x.desc).toLowerCase().includes(q));
+  if(p){document.getElementById(p.cat).scrollIntoView({behavior:'smooth'});setTimeout(()=>openProduct(p.id),650)}
+  else toast('No matching piece found');
+}
+function toggleMobileNav(){
+  const nav=document.querySelector('.nav');
+  if(getComputedStyle(nav).display==='none'){
+    nav.style.display='flex';
+    nav.style.position='absolute';nav.style.top='70px';nav.style.left='0';nav.style.right='0';
+    nav.style.padding='22px';nav.style.background='#101113';
+    nav.style.flexDirection='column';nav.style.alignItems='flex-start';
+    nav.style.borderBottom='1px solid rgba(240,170,56,.3)';
+  }else nav.removeAttribute('style');
+}
+
+document.querySelectorAll('.product-rail').forEach(rail=>{
+  rail.addEventListener('wheel',e=>{
+    if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){e.preventDefault();rail.scrollLeft+=e.deltaY}
+  },{passive:false});
+});
+
+window.addEventListener('scroll',()=>{
+  document.getElementById('header').classList.toggle('scrolled',window.scrollY>20);
+});
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeAll();
+});
+
+renderRail('men','menRail');
+renderRail('women','womenRail');
+renderRail('children','childrenRail');
+renderReviews();
+updateCartCount();
+renderCart();
+</script>
+
+</body>
+</html>

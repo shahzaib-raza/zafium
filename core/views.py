@@ -75,6 +75,10 @@ from django.contrib.auth.tokens import default_token_generator
 from .helpers import get_usd_to_pkr_rate_per_day
 from .solutions import SOLUTIONS
 
+
+def aswebdemo(request):
+    return render(request, "aswebdemo/index.html")
+
 def get_int(x):
     try:
         return float(x)

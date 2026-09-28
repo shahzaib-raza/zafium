@@ -184,5 +184,11 @@ urlpatterns = [
         saas_invoice,
         name="subscription_invoice",
     ),
+
+    path(
+        "website-demo/asapperal/",
+        aswebdemo,
+        name="asapperal",
+    ),
     
 ]
