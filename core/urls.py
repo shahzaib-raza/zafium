@@ -190,5 +190,10 @@ urlpatterns = [
         aswebdemo,
         name="asapperal",
     ),
+    path(
+        "website-demo/buntar/",
+        buntarwebdemo,
+        name="buntar",
+    ),
     
 ]

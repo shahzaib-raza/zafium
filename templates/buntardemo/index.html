@@ -1,0 +1,826 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#151313" />
+  <meta name="description" content="Buntar — bridal couture, occasion wear and timeless Pakistani craftsmanship." />
+  <link rel="icon" type="image/png" href="{% static 'images/buntardemo/favicon-96x96.png' %}" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="{% static 'images/buntardemo/favicon.svg' %}" />
+  <link rel="shortcut icon" href="{% static 'images/buntardemo/favicon.ico' %}" />
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/buntardemo/apple-touch-icon.png' %}" />
+  <meta name="apple-mobile-web-app-title" content="Buntar" />
+  <link rel="manifest" href="{% static 'images/buntardemo/site.webmanifest' %}" />
+  <title>Buntar — Bridal Couture</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+    --ink:#171515;
+    --paper:#f4efe7;
+    --cream:#e8dfd1;
+    --beige:#d5c4ad;
+    --stone:#aaa49b;
+    --white:#fffdf9;
+    --line:rgba(23,21,21,.16);
+    --serif:"Cormorant Garamond", Georgia, serif;
+    --sans:"DM Sans", Arial, sans-serif;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);overflow-x:hidden}
+    body.menu-open{overflow:hidden}
+    img{display:block;width:100%;height:100%;object-fit:cover}
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+    .grain{position:fixed;inset:0;z-index:100;pointer-events:none;opacity:.045;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E")}
+    .cursor-glow{position:fixed;width:220px;height:220px;border-radius:50%;pointer-events:none;z-index:90;background:radial-gradient(circle,rgba(213,196,173,.2),transparent 65%);transform:translate(-50%,-50%);mix-blend-mode:multiply}
+    .site-header{height:86px;padding:12px 4vw;position:fixed;z-index:80;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(244,239,231,.94),rgba(244,239,231,0));backdrop-filter:blur(7px)}
+    .brand{
+    width:64px;
+    height:64px;
+    display:block;
+    border-radius:50%;
+    overflow:hidden;
+    mix-blend-mode:multiply;
+    }
+
+    .brand img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:50%;
+    }
+    .nav{display:flex;gap:34px;margin-left:auto;margin-right:36px;font-size:11px;text-transform:uppercase;letter-spacing:.18em}
+    .nav a{position:relative;padding:8px 0}
+    .nav a:after{content:"";position:absolute;left:0;bottom:0;width:0;height:1px;background:currentColor;transition:.4s}
+    .nav a:hover:after{width:100%}
+    .header-cta{font-size:10px;text-transform:uppercase;letter-spacing:.16em;border:1px solid var(--ink);padding:12px 17px;transition:.3s}
+    .header-cta:hover{background:var(--ink);color:var(--paper)}
+    .menu-btn{display:none;border:0;background:none;width:44px;height:44px}
+    .menu-btn span{display:block;width:20px;height:1px;background:var(--ink);margin:5px auto}
+    .scene{position:relative;min-height:100vh;overflow:hidden}
+    .eyebrow{font-size:10px;letter-spacing:.25em;text-transform:uppercase;margin:0 0 22px}
+    h1,h2{font-family:var(--serif);font-weight:500;line-height:.84;letter-spacing:-.035em;margin:0}
+    em{font-weight:400}
+    .hero{min-height:100svh;background:var(--paper)}
+    .hero-backdrop{position:absolute;width:58vw;height:80vh;right:-5vw;top:12vh;background:var(--cream);border-radius:52% 0 0 52%;transform:rotate(-7deg)}
+    .hero-orbit{position:absolute;border:1px solid rgba(23,21,21,.13);border-radius:50%;pointer-events:none}
+    .orbit-a{width:55vw;height:55vw;right:-16vw;top:7vh}
+    .orbit-b{width:35vw;height:35vw;right:8vw;top:19vh}
+    .hero-copy{position:absolute;left:9vw;top:22vh;width:45%;z-index:4}
+    .hero h1{font-size:clamp(64px,8.4vw,132px);max-width:720px}
+    .hero-intro{max-width:390px;font-size:13px;line-height:1.8;margin:32px 0 28px;color:#57514a}
+    .circle-link{width:108px;height:108px;border:1px solid var(--ink);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;font-size:9px;text-transform:uppercase;letter-spacing:.12em;text-align:center;transition:.5s}
+    .circle-link b{font-size:18px;font-weight:400}
+    .circle-link:hover{background:var(--ink);color:var(--paper);transform:rotate(12deg)}
+    .hero-image-wrap{position:absolute;width:36vw;height:65vh;right:12vw;top:19vh;z-index:3}
+    .image-frame{height:100%;position:relative;overflow:hidden;background:#d1c6b7}
+    .image-frame img{filter:saturate(.72) contrast(.95)}
+    .hero-frame{box-shadow:24px 24px 0 rgba(23,21,21,.06)}
+    .frame-caption{position:absolute;bottom:0;left:0;right:0;padding:14px 16px;display:flex;justify-content:space-between;background:linear-gradient(transparent,rgba(0,0,0,.58));color:#fff;font-size:9px;letter-spacing:.2em}
+    .vertical-note{position:absolute;right:2.3vw;bottom:18vh;writing-mode:vertical-rl;font-size:8px;letter-spacing:.35em;opacity:.55}
+    .scroll-hint{position:absolute;left:4vw;bottom:8vh;font-size:8px;letter-spacing:.24em;display:flex;gap:10px;align-items:center}
+    .scroll-hint span{width:38px;height:1px;background:var(--ink);display:block}
+    .manifesto{background:var(--ink);color:var(--paper);display:grid;place-items:center}
+    .manifesto-number{position:absolute;left:5vw;top:15vh;font-size:10px;letter-spacing:.2em;opacity:.5}
+    .manifesto-inner{text-align:center;max-width:900px;padding:12vh 5vw}
+    .manifesto h2{font-size:clamp(72px,11vw,160px)}
+    .manifesto-text{font-family:var(--serif);font-size:clamp(19px,2vw,28px);line-height:1.3;max-width:650px;margin:48px auto;color:#d7cec2}
+    .thread-line{display:flex;align-items:center;gap:14px;justify-content:center;font-size:8px;letter-spacing:.28em;opacity:.55}
+    .thread-line i{width:80px;height:1px;background:#d7cec2}
+    .collection{background:var(--paper);padding:15vh 7vw 18vh}
+    .section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:12vh}
+    .section-head h2{font-size:clamp(60px,8vw,118px)}
+    .section-note{font-family:var(--serif);font-size:18px;line-height:1.25;color:#746c62;margin:0 3vw 6px 0}
+    .lookbook{display:grid;grid-template-columns:1.05fr .75fr;gap:13vw 8vw;align-items:start}
+    .look{min-width:0}
+    .look:nth-child(even){margin-top:13vw}
+    .look-image{position:relative;overflow:hidden;background:var(--cream);height:67vh;min-height:500px;}
+    .look:nth-child(2) .look-image,.look:nth-child(4) .look-image{height:58vh}
+    .look img{transition:transform 1.2s cubic-bezier(.2,.7,.2,1);filter:saturate(.78)}
+    .look:hover img{transform:scale(1.045)}
+    .look-index{position:absolute;top:18px;left:18px;border:1px solid rgba(255,255,255,.7);color:white;border-radius:50%;width:42px;height:42px;display:grid;place-items:center;font-size:9px;backdrop-filter:blur(4px)}
+    .look-meta{display:grid;grid-template-columns:1fr 2fr 24px;gap:10px;padding:17px 0;border-bottom:1px solid var(--line);font-size:8px;letter-spacing:.2em}
+    .look-meta strong{font-weight:500}
+    .craft{background:var(--cream);display:grid;grid-template-columns:1fr 1fr;min-height:115vh}
+    .craft-image{height:100%;min-height:115vh;overflow:hidden;position:relative}
+    .craft-image img{filter:grayscale(.18) saturate(.7)}
+    .craft-stamp{position:absolute;right:25px;bottom:35px;color:white;font-size:12px;line-height:1.05;letter-spacing:.4em;text-align:center}
+    .craft-copy{padding:18vh 8vw 12vh 8vw;display:flex;flex-direction:column;justify-content:center}
+    .craft h2{font-size:clamp(55px,6vw,94px);max-width:620px}
+    .craft-list{margin-top:70px;border-top:1px solid var(--line)}
+    .craft-item{display:grid;grid-template-columns:45px 1fr;gap:16px;padding:25px 0;border-bottom:1px solid var(--line)}
+    .craft-item>span{font-size:9px;letter-spacing:.2em;padding-top:3px}
+    .craft-item b{font-family:var(--serif);font-size:25px;font-weight:500}
+    .craft-item p{font-size:11px;line-height:1.6;color:#625b53;max-width:380px;margin:7px 0 0}
+    .statement{min-height:80vh;background:#1c1a19;color:var(--paper);display:grid;place-items:center}
+    .statement-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 55%,rgba(213,196,173,.14),transparent 52%),linear-gradient(120deg,#1c1a19,#312b25);opacity:.9}
+    .statement:before,.statement:after{content:"";position:absolute;border:1px solid rgba(244,239,231,.15);border-radius:50%;width:75vw;height:75vw;left:50%;top:50%;transform:translate(-50%,-50%) rotate(12deg)}
+    .statement:after{width:55vw;height:55vw;transform:translate(-50%,-50%) rotate(-22deg)}
+    .statement-content{text-align:center;position:relative;z-index:2;width: 100%;}
+    .statement-word{font-family:var(--serif);font-size:clamp(48px, 15vw, 90px);;letter-spacing:-.05em;line-height:.75;overflow-wrap: anywhere;word-break: break-word;}
+    .statement-small{font-family:var(--serif);font-size:22px;margin-top:40px;color:#c9bfb2}
+    .story{display:grid;grid-template-columns:1fr 1fr;gap:7vw;padding:16vh 8vw;background:var(--white);min-height:110vh;align-items:center}
+    .story-copy{max-width:620px}
+    .story h2{font-size:clamp(58px,7vw,105px)}
+    .story-copy>p:not(.eyebrow){font-family:var(--serif);font-size:21px;line-height:1.45;color:#655e56;max-width:520px;margin:42px 0}
+    .text-link{font-size:10px;text-transform:uppercase;letter-spacing:.2em;border-bottom:1px solid var(--ink);padding-bottom:10px;display:inline-flex;gap:20px}
+    .story-collage{height:700px;position:relative}
+    .collage-card{position:absolute;overflow:hidden;background:var(--cream)}
+    .collage-card img{filter:saturate(.7)}
+    .card-a{width:55%;height:65%;left:0;top:5%}
+    .card-b{width:52%;height:62%;right:0;bottom:0}
+    .collage-caption{position:absolute;left:24%;top:44%;font-size:8px;line-height:1.6;letter-spacing:.2em;background:var(--paper);padding:14px 17px;z-index:3}
+    .contact{background:var(--paper);display:grid;place-items:center;text-align:center;padding:14vh 5vw}
+    .contact-ring{position:absolute;width:min(70vw,820px);height:min(70vw,820px);border:1px solid var(--line);border-radius:50%}
+    .contact-ring:after{content:"";position:absolute;inset:11%;border:1px solid var(--line);border-radius:50%}
+    .contact-inner{position:relative;z-index:2;max-width:850px}
+    .contact h2{font-size:clamp(66px,9vw,130px)}
+    .contact-inner>p:not(.eyebrow){font-family:var(--serif);font-size:21px;color:#6d655c;max-width:500px;margin:35px auto}
+    .contact-actions{display:flex;gap:12px;justify-content:center;margin-top:38px;flex-wrap:wrap}
+    .primary-btn,.secondary-btn{padding:16px 23px;font-size:9px;text-transform:uppercase;letter-spacing:.17em;transition:.3s}
+    .primary-btn{background:var(--ink);color:var(--paper)}
+    .secondary-btn{border:1px solid var(--ink)}
+    .primary-btn:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(23,21,21,.14)}
+    .secondary-btn:hover{background:var(--ink);color:var(--paper)}
+    .contact-footer{position:absolute;left:4vw;right:4vw;bottom:5vh;display:flex;justify-content:space-between;font-size:8px;letter-spacing:.2em;opacity:.55}
+    footer{background:var(--ink);color:var(--paper);padding:45px 5vw;display:flex;justify-content:space-between;align-items:center;font-size:9px;letter-spacing:.12em}
+    .footer-brand{font-family:var(--serif);font-size:32px;letter-spacing:.05em}
+    footer p{opacity:.55}
+    .mobile-menu{display:none}
+    .reveal{opacity:0;transform:translateY(35px);transition:opacity .9s ease,transform 1s cubic-bezier(.2,.75,.2,1)}
+    .reveal.is-visible{opacity:1;transform:none}
+    .look.reveal:nth-child(2){transition-delay:.08s}.look.reveal:nth-child(3){transition-delay:.16s}.look.reveal:nth-child(4){transition-delay:.24s}
+    @media (max-width:900px){
+    .site-header{height:72px;padding:9px 20px}
+    .brand{width:54px;height:54px}
+    .nav,.header-cta{display:none}.menu-btn{display:block}
+    .mobile-menu{position:fixed;inset:0;background:var(--ink);color:var(--paper);z-index:120;display:flex;flex-direction:column;justify-content:center;padding:15vw;gap:20px;transform:translateX(100%);transition:.55s cubic-bezier(.2,.75,.2,1)}
+    .mobile-menu.open{transform:none}
+    .mobile-menu a{font-family:var(--serif);font-size:50px}
+    .close-menu{position:absolute;right:22px;top:20px;background:none;border:0;color:var(--paper);font-size:35px}
+    .hero{min-height:100svh;display:flex;flex-direction:column}
+    .hero-backdrop{width:90vw;height:64vh;right:-25vw;top:18vh}
+    .hero-copy{position:relative;left:auto;top:auto;width:auto;padding:19vh 24px 0;z-index:4}
+    .hero h1{font-size:clamp(60px,16vw,92px)}
+    .hero-intro{font-size:12px;max-width:310px;margin:24px 0}
+    .circle-link{width:84px;height:84px;font-size:8px}
+    .hero-image-wrap{width:57vw;height:38vh;right:7vw;top:52vh}
+    .vertical-note{display:none}
+    .scroll-hint{bottom:4vh;left:24px}
+    .manifesto-inner{padding:15vh 24px}
+    .manifesto h2{font-size:21vw}
+    .manifesto-text{font-size:18px}
+    .thread-line i{width:30px}
+    .collection{padding:13vh 20px}
+    .section-head{display:block;margin-bottom:8vh}
+    .section-head h2{font-size:18vw}
+    .section-note{margin-top:30px}
+    .lookbook{display:block}
+    .look{margin:0 0 15vh!important}
+    .look-image,.look:nth-child(2) .look-image,.look:nth-child(4) .look-image{height:72vh;min-height:480px}
+    .craft{display:block}
+    .craft-image{height:72vh;min-height:0}
+    .craft-copy{padding:12vh 24px}
+    .craft h2{font-size:16vw}
+    .craft-list{margin-top:50px}
+    .statement{min-height:80vh}
+    .statement-word{font-size:18vw}
+    .statement:before{width:120vw;height:120vw}.statement:after{width:90vw;height:90vw}
+    .story{display:block;padding:13vh 24px}
+    .story h2{font-size:16vw}
+    .story-copy>p:not(.eyebrow){font-size:19px}
+    .story-collage{height:560px;margin-top:8vh}
+    .contact{min-height:90vh;padding:13vh 24px}
+    .contact h2{font-size:17vw}
+    .contact-inner>p:not(.eyebrow){font-size:19px}
+    .contact-ring{width:105vw;height:105vw}
+    .contact-footer{display:none}
+    footer{padding:32px 20px;display:block;text-align:center}
+    footer p{margin:15px 0}
+    .cursor-glow{display:none}
+    }
+    @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*:before,*:after{animation:none!important;transition:none!important}
+    .reveal{opacity:1;transform:none}
+    }
+
+    /* =========================================
+    BUNTAR — EVENTS & EXHIBITIONS
+    ========================================= */
+
+    /* =========================================
+    EVENTS
+    ========================================= */
+
+    section:has(.event-card) {
+    padding: 15vh 7vw 18vh;
+    background: var(--paper);
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7vw 3vw;
+    }
+
+    /* Event Card */
+
+    .event-card {
+    min-width: 0;
+    }
+
+    /* Poster */
+
+    .event-poster {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 18vw;
+    max-height: 620px;
+    min-height: 420px;
+    overflow: hidden;
+    background: var(--cream);
+    }
+
+    /* Image */
+
+    .event-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+
+    filter: saturate(.75);
+
+    transition:
+        transform 1.2s cubic-bezier(.2,.7,.2,1),
+        filter .6s ease;
+    }
+
+    /* Hover */
+
+    .event-poster:hover img {
+    transform: scale(1.045);
+    filter: saturate(.9);
+    }
+
+    /* Overlay */
+
+    .event-overlay {
+    position: absolute;
+    inset: auto 0 0 0;
+
+    z-index: 3;
+
+    padding: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    color: white;
+
+    background: linear-gradient(
+        transparent,
+        rgba(0,0,0,.72)
+    );
+
+    font-size: 9px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    }
+
+    /* Arrow */
+
+    .event-overlay b {
+    width: 34px;
+    height: 34px;
+
+    border: 1px solid rgba(255,255,255,.7);
+    border-radius: 50%;
+
+    display: grid;
+    place-items: center;
+
+    font-size: 15px;
+    font-weight: 400;
+
+    transition:
+        background .3s ease,
+        color .3s ease,
+        transform .3s ease;
+    }
+
+    .event-poster:hover .event-overlay b {
+    background: white;
+    color: var(--ink);
+    transform: rotate(45deg);
+    }
+
+    /* Meta */
+
+    .event-meta {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+
+    padding: 18px 0 22px;
+
+    border-bottom: 1px solid var(--line);
+    }
+
+    /* Number */
+
+    .event-number {
+    display: block;
+
+    margin-bottom: 10px;
+
+    font-size: 8px;
+    letter-spacing: .2em;
+    opacity: .55;
+    }
+
+    /* Title */
+
+    .event-meta h3 {
+    margin: 0;
+
+    font-family: var(--serif);
+    font-size: clamp(24px, 2.2vw, 34px);
+    font-weight: 500;
+    line-height: .95;
+    letter-spacing: -.025em;
+    }
+
+    /* Details */
+
+    .event-meta p {
+    margin: 0;
+
+    font-size: 9px;
+    line-height: 1.7;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+
+    color: #746c62;
+    }
+
+
+    /* =========================================
+    TABLET
+    ========================================= */
+
+    @media (max-width: 1000px) {
+
+    section:has(.event-card) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10vw 4vw;
+        padding: 13vh 5vw 15vh;
+    }
+
+    .event-poster {
+        height: 60vw;
+        min-height: 400px;
+    }
+
+    .event-meta h3 {
+        font-size: 28px;
+    }
+    }
+
+
+    /* =========================================
+    MOBILE
+    ========================================= */
+
+    @media (max-width: 600px) {
+
+    section:has(.event-card) {
+        display: block;
+        padding: 13vh 20px 15vh;
+    }
+
+    .event-card {
+        margin-bottom: 13vh;
+    }
+
+    .event-poster {
+        width: 100%;
+        height: 125vw;
+        min-height: 0;
+        max-height: none;
+    }
+
+    .event-poster img {
+        object-fit: cover;
+    }
+
+    .event-overlay {
+        padding: 16px;
+    }
+
+    .event-overlay b {
+        width: 30px;
+        height: 30px;
+    }
+
+    .event-meta {
+        padding: 16px 0 20px;
+        gap: 16px;
+    }
+
+    .event-meta h3 {
+        font-size: 30px;
+    }
+
+    .event-meta p {
+        font-size: 8px;
+        line-height: 1.8;
+    }
+    }
+
+    /* =========================================
+    GLOBAL DARK IMAGE OVERLAY
+    ========================================= */
+
+    .image-frame,
+    .look-image,
+    .craft-image,
+    .collage-card,
+    .event-poster {
+        position: relative;
+        overflow: hidden;
+    }
+
+
+    /* Dark overlay */
+
+    .image-frame::after,
+    .look-image::after,
+    .craft-image::after,
+    .collage-card::after,
+    .event-poster::after {
+        content: "";
+
+        position: absolute;
+        inset: 0;
+
+        background: rgba(0, 0, 0, 0.4);
+
+        z-index: 2;
+
+        pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="grain"></div>
+  <div class="cursor-glow"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Buntar home">
+      <img src="{% static 'images/buntardemo/buntar-logo.jpg' %}" alt="Buntar logo">
+    </a>
+
+    <nav class="nav">
+      <a href="#collection">Collection</a>
+      <a href="#craft">The Craft</a>
+      <a href="#story">Our Story</a>
+      <a href="#contact">Visit</a>
+    </nav>
+
+    <a class="header-cta" href="https://www.instagram.com/buntar.store/" target="_blank" rel="noopener">
+      Instagram <span>↗</span>
+    </a>
+
+    <button class="menu-btn" aria-label="Open menu"><span></span><span></span></button>
+  </header>
+
+  <main id="top">
+
+    <!-- HERO / SCROLL STORY -->
+    <section class="hero scene">
+      <div class="hero-backdrop"></div>
+      <div class="hero-orbit orbit-a"></div>
+      <div class="hero-orbit orbit-b"></div>
+
+      <div class="hero-copy reveal">
+        <p class="eyebrow">BUNTAR / BRIDAL ATELIER</p>
+        <h1>Made for the<br><em>moment</em> that<br>becomes a memory.</h1>
+        <p class="hero-intro">A contemporary expression of Pakistani bridal elegance — crafted around the bride, the occasion and the details she will remember forever.</p>
+        <a class="circle-link" href="#collection">
+          <span>Explore<br>the edit</span>
+          <b>↓</b>
+        </a>
+      </div>
+
+      <div class="hero-image-wrap parallax" data-speed="-0.08">
+        <div class="image-frame hero-frame">
+          <img src="{% static 'images/buntardemo/bridal_unveiled.jpg' %}" alt="Crimson Elegance: The Vintage Velvet Ensemble" />
+          <div class="frame-caption"><span>01</span><span>THE BRIDE / UNVEILED</span></div>
+        </div>
+      </div>
+
+      <div class="vertical-note">LAHORE · PAKISTAN · COUTURE</div>
+      
+    </section>
+
+    <!-- MANIFESTO -->
+    <section class="manifesto scene">
+      <div class="manifesto-number">01</div>
+      <div class="manifesto-inner">
+        <p class="eyebrow reveal">THE BUNTAR POINT OF VIEW</p>
+        <h2 class="reveal">Tradition,<br><em>reframed.</em></h2>
+        <p class="manifesto-text reveal">From heirloom silhouettes to quieter modern pieces, Buntar brings the richness of South Asian bridal dressing into a clean, considered visual language.</p>
+        <div class="thread-line reveal"><i></i><span>HANDWORK / TEXTURE / MOVEMENT</span><i></i></div>
+      </div>
+    </section>
+
+    <!-- COLLECTION -->
+    <section id="collection" class="collection scene">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow">02 / THE COLLECTION</p>
+          <h2>For every<br><em>chapter</em> of the celebration.</h2>
+        </div>
+        <p class="section-note">Swipe, pause, linger.<br>Every piece deserves a closer look.</p>
+      </div>
+
+      <div class="lookbook">
+        <article class="look look-1 reveal">
+          <div class="look-image">
+            <img src="{% static 'images/buntardemo/editorial_fasion.jpg' %}" alt="Editorial bridal fashion look" loading="lazy">
+            <span class="look-index">01</span>
+          </div>
+          <div class="look-meta"><span>MEHNDI</span><strong>THE CELEBRATION</strong><span>↗</span></div>
+        </article>
+
+        <article class="look look-2 reveal">
+          <div class="look-image">
+            <img src="{% static 'images/buntardemo/editorial_bride.jpg' %}" alt="Editorial fashion look" loading="lazy">
+            <span class="look-index">02</span>
+          </div>
+          <div class="look-meta"><span>NIKAH</span><strong>THE PROMISE</strong><span>↗</span></div>
+        </article>
+
+        <article class="look look-3 reveal">
+          <div class="look-image">
+            <img src="{% static 'images/buntardemo/editorial_fasion_2.jpg' %}" alt="Editorial fashion look" loading="lazy">
+            <span class="look-index">03</span>
+          </div>
+          <div class="look-meta"><span>BARAT</span><strong>THE ENTRANCE</strong><span>↗</span></div>
+        </article>
+
+        <article class="look look-4 reveal">
+          <div class="look-image">
+            <img src="{% static 'images/buntardemo/waleema.jpg' %}" alt="Fashion atelier detail" loading="lazy">
+            <span class="look-index">04</span>
+          </div>
+          <div class="look-meta"><span>WALIMA</span><strong>THE AFTERGLOW</strong><span>↗</span></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- DETAIL / CRAFT -->
+    <section id="craft" class="craft scene">
+      <div class="craft-image parallax" data-speed="0.06">
+        <img src="{% static 'images/buntardemo/look_closer.jpg' %}" alt="Luxury fashion detail" loading="lazy">
+        <div class="craft-stamp">B<br>U<br>N<br>T<br>A<br>R</div>
+      </div>
+
+      <div class="craft-copy">
+        <p class="eyebrow reveal">03 / THE CRAFT</p>
+        <h2 class="reveal">Look closer.<br><em>There is a story in the detail.</em></h2>
+        <div class="craft-list">
+          <div class="craft-item reveal"><span>01</span><div><b>Zardozi & handwork</b><p>Texture that catches the light before it catches the eye.</p></div></div>
+          <div class="craft-item reveal"><span>02</span><div><b>Silhouette & movement</b><p>Designed to feel beautiful from the first step to the last photograph.</p></div></div>
+          <div class="craft-item reveal"><span>03</span><div><b>Personal expression</b><p>A bridal look shaped around your celebration, not a template.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CINEMATIC STATEMENT -->
+    <section class="statement scene">
+      <div class="statement-bg"></div>
+      <div class="statement-content">
+        <p class="eyebrow reveal">THE BUNTAR BRIDE</p>
+        <div class="statement-word reveal">UNFORGETTABLE</div>
+        <p class="statement-small reveal">Not louder. Not more. Simply yours.</p>
+      </div>
+    </section>
+
+    <section>
+      <article class="event-card">
+        <a class="event-poster" href="https://www.instagram.com/p/DdGX1G0KOVd/?stkn=MzRlODBiNWFlZA==">
+            <img src="{% static 'images/buntardemo/daachi_karachi.jpg' %}" alt="Event description">
+            <div class="event-overlay">
+                <span>DAACHI KARACHI</span>
+                <b>↗</b>
+            </div>
+        </a>
+
+        <div class="event-meta">
+            <div>
+                <span class="event-number">04</span>
+                <h3>DAACHI KARACHI</h3>
+            </div>
+
+            <p>
+                12th & 13th Sep 2026<br>
+                Expo Center - Hall 6<br>
+                Karachi
+            </p>
+        </div>
+      </article>
+      <article class="event-card">
+        <a class="event-poster" href="https://www.instagram.com/p/DN5FZa1At3t/?stkn=MzRlODBiNWFlZA==">
+            <img src="{% static 'images/buntardemo/eos_lahore.jpg' %}" alt="Event description">
+            <div class="event-overlay">
+                <span>END OF SUMMER</span>
+                <b>↗</b>
+            </div>
+        </a>
+
+        <div class="event-meta">
+            <div>
+                <span class="event-number">04</span>
+                <h3>END OF SUMMER</h3>
+            </div>
+
+            <p>
+                29th - 30th Aug 2025<br>
+                EME - DHA Phase 12<br>
+                Lahore
+            </p>
+        </div>
+      </article>
+      <article class="event-card">
+        <a class="event-poster" href="https://www.instagram.com/p/DN5FZa1At3t/?stkn=MzRlODBiNWFlZA==">
+            <img src="{% static 'images/buntardemo/behbood.jpg' %}" alt="Event description">
+            <div class="event-overlay">
+                <span>BEHBUD</span>
+                <b>↗</b>
+            </div>
+        </a>
+
+        <div class="event-meta">
+            <div>
+                <span class="event-number">04</span>
+                <h3>BEHBUD - ARTS BAZAAR</h3>
+            </div>
+
+            <p>
+                9th & 10th Nov 2024<br>
+                PAK CHINA Freindship Center<br>
+                Islamabad
+            </p>
+        </div>
+      </article>
+    </section>
+  
+
+    <!-- STORY -->
+    <section id="story" class="story scene">
+      <div class="story-copy">
+        <p class="eyebrow reveal">04 / THE HOUSE</p>
+        <h2 class="reveal">A wardrobe for<br><em>the wedding story.</em></h2>
+        <p class="reveal">Buntar is built around the idea that bridalwear can carry heritage without feeling frozen in time. We pair traditional South Asian visual language with restrained styling, tactile surfaces and contemporary composition.</p>
+        <a class="text-link reveal" href="https://www.instagram.com/buntar.store/" target="_blank" rel="noopener">See the latest work <span>↗</span></a>
+      </div>
+
+      <div class="story-collage">
+        <div class="collage-card card-a parallax" data-speed="-0.04"><img src="{% static 'images/buntardemo/collage1.jpg' %}" alt="Fashion detail" loading="lazy"></div>
+        <div class="collage-card card-b parallax" data-speed="0.08"><img src="{% static 'images/buntardemo/collage2.jpg' %}" alt="Fashion editorial" loading="lazy"></div>
+        <div class="collage-caption">CRAFTED IN THE SPIRIT OF<br>PAKISTANI CELEBRATION</div>
+      </div>
+    </section>
+
+    <!-- CONTACT / CTA -->
+    <section id="contact" class="contact scene">
+      <div class="contact-ring"></div>
+      <div class="contact-inner">
+        <p class="eyebrow reveal">05 / YOUR NEXT CHAPTER</p>
+        <h2 class="reveal">Find the piece<br>that feels <em>like you.</em></h2>
+        <p class="reveal">For appointments, bridal enquiries and the newest pieces, step into the Buntar world.</p>
+        <div class="contact-actions reveal">
+          <a class="primary-btn" href="https://www.instagram.com/buntar.store/" target="_blank" rel="noopener">DM on Instagram <span>↗</span></a>
+          <a class="secondary-btn" href="tel:+923004004770">Call the atelier <span>↗</span></a>
+        </div>
+      </div>
+      <div class="contact-footer">
+        <span>BUNTAR</span>
+        <span>BRIDAL / FORMAL / COUTURE</span>
+        <span>LAHORE · PAKISTAN</span>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="footer-brand">BUNTAR</div>
+    <p>© 2026 Buntar. Crafted for the moments that matter.</p>
+    <a href="https://www.instagram.com/buntar.store/" target="_blank" rel="noopener">@buntar.store ↗</a>
+  </footer>
+
+  <div class="mobile-menu">
+    <button class="close-menu">×</button>
+    <a href="#collection">Collection</a>
+    <a href="#craft">The Craft</a>
+    <a href="#story">Our Story</a>
+    <a href="#contact">Visit</a>
+  </div>
+
+  <script>
+    const revealItems = document.querySelectorAll(".reveal");
+
+    const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+        }
+    });
+    }, { threshold: 0.12, rootMargin: "0px 0px -5% 0px" });
+
+    revealItems.forEach(el => observer.observe(el));
+
+    /* Gentle scroll-linked parallax without a library. */
+    const parallaxItems = document.querySelectorAll(".parallax");
+    let ticking = false;
+
+    function updateParallax() {
+    const vh = window.innerHeight;
+    parallaxItems.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.bottom < -100 || rect.top > vh + 100) return;
+        const speed = parseFloat(el.dataset.speed || 0);
+        const progress = (rect.top + rect.height / 2 - vh / 2) / vh;
+        el.style.transform = `translate3d(0, ${progress * speed * -220}px, 0)`;
+    });
+    ticking = false;
+    }
+    window.addEventListener("scroll", () => {
+    if (!ticking) {
+        requestAnimationFrame(updateParallax);
+        ticking = true;
+    }
+    }, {passive:true});
+    updateParallax();
+
+    /* Cursor light on desktop. */
+    const glow = document.querySelector(".cursor-glow");
+    window.addEventListener("pointermove", (e) => {
+    if (window.innerWidth > 900) {
+        glow.style.left = e.clientX + "px";
+        glow.style.top = e.clientY + "px";
+    }
+    });
+
+    /* Mobile menu. */
+    const menuBtn = document.querySelector(".menu-btn");
+    const menu = document.querySelector(".mobile-menu");
+    const closeMenu = document.querySelector(".close-menu");
+
+    function setMenu(open) {
+    menu.classList.toggle("open", open);
+    document.body.classList.toggle("menu-open", open);
+    }
+    menuBtn?.addEventListener("click", () => setMenu(true));
+    closeMenu?.addEventListener("click", () => setMenu(false));
+    menu?.querySelectorAll("a").forEach(a => a.addEventListener("click", () => setMenu(false)));
+
+    /* Active section marker in the desktop nav. */
+    const sections = [...document.querySelectorAll("main section[id]")];
+    const navLinks = [...document.querySelectorAll(".nav a")];
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+        navLinks.forEach(link => link.classList.remove("active"));
+        const active = navLinks.find(link => link.getAttribute("href") === "#" + entry.target.id);
+        active?.classList.add("active");
+        }
+    });
+    }, {threshold:0.45});
+    sections.forEach(section => sectionObserver.observe(section));
+
+    /* Small magnetic effect for the primary CTA. */
+    document.querySelectorAll(".primary-btn,.circle-link").forEach(btn => {
+    btn.addEventListener("pointermove", e => {
+        const r = btn.getBoundingClientRect();
+        const x = (e.clientX - r.left - r.width/2) * .08;
+        const y = (e.clientY - r.top - r.height/2) * .08;
+        btn.style.transform = `translate(${x}px,${y}px)`;
+    });
+    btn.addEventListener("pointerleave", () => btn.style.transform = "");
+    });
+
+  </script>
+</body>
+</html>

@@ -79,6 +79,9 @@ from .solutions import SOLUTIONS
 def aswebdemo(request):
     return render(request, "aswebdemo/index.html")
 
+def buntarwebdemo(request):
+    return render(request, "buntardemo/index.html")
+
 def get_int(x):
     try:
         return float(x)

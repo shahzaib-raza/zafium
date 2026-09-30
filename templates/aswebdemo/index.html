@@ -11,7 +11,7 @@
 <link rel="shortcut icon" href="{% static 'images/aswebdemo/favicon.ico' %}" />
 <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/aswebdemo/apple-touch-icon.png' %}" />
 <meta name="apple-mobile-web-app-title" content="ASAPPAREL" />
-<link rel="manifest" href="images/aswebdemo/site.webmanifest" />
+<link rel="manifest" href="{% static 'images/aswebdemo/site.webmanifest' %}" />
 <title>A&S Apparel — Royal Wardrobe</title>
 
 <style>
@@ -555,7 +555,7 @@ footer a:hover{color:var(--gold)}
     <div class="brand-mark"><img src="{% static 'images/aswebdemo/logo.jpg' %}"></img></div>
     <div class="brand-text">
       <strong>A&amp;S APPAREL</strong>
-      <small>SHOP LIKE NEVER BEFORE · PREMIUM WARDROBE</small>
+      <small>PREMIUM WARDROBE</small>
     </div>
   </a>
 
@@ -721,7 +721,7 @@ footer a:hover{color:var(--gold)}
       <h3>Contact</h3>
       <p>Bahadurabad | DHA | Gulshan | Johar | N. Nazimabad | Malir Cantt</p>
       <a href="https://www.instagram.com/asapparelofficial/">Follow on Instagram</p>
-      <a href="htps://wa.me/923008202350">Connect on Whatsapp</p>
+      <a href="https://wa.me/923008202350">Connect on Whatsapp</a>
     </div>
   </div>
   <div class="footer-bottom">
@@ -913,7 +913,7 @@ function closeCart(){
 function openProduct(id){
   const p=getProduct(id);
   document.getElementById('productModalCard').innerHTML=`
-    <div class="modal-photo"><img src='${p.image}" alt="${p.name}"></div>
+    <div class="modal-photo"><img src='${p.image}' alt="${p.name}"></div>
     <div class="modal-info">
       <button class="close-btn modal-close" onclick="closeProduct()">×</button>
       <div class="tag">${p.cat} · ${p.tag}</div>
