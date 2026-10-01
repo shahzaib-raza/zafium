@@ -1252,7 +1252,7 @@ def create_svg_fill(dwg, fill_result):
 
         dwg.defs.add(grad)
 
-        return grad.get_paint_server()
+        return grad.get_funciri()
 
     ##########################################################
     # RADIAL
@@ -1278,7 +1278,7 @@ def create_svg_fill(dwg, fill_result):
 
         dwg.defs.add(grad)
 
-        return grad.get_paint_server()
+        return grad.get_funciri()
 
     ##########################################################
     # BILINEAR
