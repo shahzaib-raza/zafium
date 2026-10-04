@@ -82,6 +82,9 @@ def aswebdemo(request):
 def buntarwebdemo(request):
     return render(request, "buntardemo/index.html")
 
+def kolachidemo(request):
+    return render(request, "kolachi/index.html")
+
 def get_int(x):
     try:
         return float(x)

@@ -195,5 +195,9 @@ urlpatterns = [
         buntarwebdemo,
         name="buntar",
     ),
-    
+    path(
+        "website-demo/kolachi/",
+        kolachidemo,
+        name="kolachi",
+    ),
 ]

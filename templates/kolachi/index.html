@@ -1,0 +1,676 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Kolachi — The Spirit of Karachi. A cinematic dining experience by the sea.">
+<meta name="theme-color" content="#10100d">
+<title>Kolachi — The Spirit of Karachi</title>
+<link rel="icon" type="image/png" href="{% static 'images/kolachi/assets/img/favicon-96x96.png' %}" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="{% static 'images/kolachi/assets/img/favicon.svg' %}" />
+<link rel="shortcut icon" href="{% static 'images/kolachi/assets/img/favicon.ico' %}" />
+<link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/kolachi/assets/img/apple-touch-icon.png' %}" />
+<meta name="apple-mobile-web-app-title" content="Kolachi" />
+<link rel="manifest" href="{% static 'images/kolachi/assets/img/site.webmanifest' %}" />
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap');
+
+:root{
+  --ink:#0d0e0b;
+  --ink-2:#151610;
+  --cream:#eee8da;
+  --paper:#f4efe4;
+  --gold:#c6a15b;
+  --gold-soft:#e0c88d;
+  --muted:#a8a394;
+  --line:rgba(238,232,218,.16);
+  --white:#fffdf7;
+  --ease:cubic-bezier(.2,.75,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:auto;background:var(--ink)}
+body{background:var(--ink);color:var(--cream);font-family:"DM Sans",Arial,sans-serif;overflow-x:hidden}
+body.is-locked{overflow:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+img,video{display:block;max-width:100%}
+::selection{background:var(--gold);color:var(--ink)}
+
+.preloader{
+  position:fixed;inset:0;z-index:1000;background:var(--ink);display:grid;place-items:center;
+  transition:opacity .8s ease,visibility .8s ease
+}
+.preloader.done{opacity:0;visibility:hidden;pointer-events:none}
+.preloader-inner{text-align:center}
+.preloader-logo{width:min(180px,42vw);margin:0 auto 25px;opacity:.95;border-radius:50%;}
+.loader-line{width:160px;height:1px;background:rgba(255,255,255,.16);overflow:hidden}
+.loader-line i{display:block;width:35%;height:100%;background:var(--gold);animation:load 1.25s ease-in-out infinite}
+@keyframes load{0%{transform:translateX(-120%)}100%{transform:translateX(420%)}}
+
+.cursor{
+  position:fixed;left:0;top:0;width:10px;height:10px;border:1px solid var(--gold);
+  border-radius:50%;z-index:900;pointer-events:none;mix-blend-mode:difference;
+  transform:translate(-50%,-50%);transition:width .25s ease,height .25s ease,background .25s ease
+}
+.cursor.big{width:58px;height:58px;background:rgba(198,161,91,.12)}
+@media(pointer:coarse){.cursor{display:none}}
+
+.nav{
+  position:fixed;left:0;right:0;top:0;z-index:200;height:92px;display:flex;align-items:center;
+  justify-content:space-between;padding:0 clamp(22px,4vw,65px);transition:.45s var(--ease)
+}
+.nav.scrolled{height:72px;background:rgba(13,14,11,.78);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.nav-logo {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+}
+.nav-links{display:flex;gap:34px;align-items:center;font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+.nav-links a{opacity:.72;transition:.25s}.nav-links a:hover{opacity:1;color:var(--gold-soft)}
+.nav-reserve{border:1px solid rgba(198,161,91,.7);padding:12px 17px;color:var(--gold-soft);font-size:10px;letter-spacing:.18em;text-transform:uppercase}
+.menu-btn{display:none;background:none;border:0;width:42px;height:42px}
+.menu-btn span{display:block;width:22px;height:1px;background:var(--cream);margin:6px auto}
+.mobile-menu{position:fixed;inset:0;z-index:190;background:var(--ink);display:grid;place-items:center;opacity:0;visibility:hidden;transition:.4s}
+.mobile-menu.open{opacity:1;visibility:visible}
+.mobile-links{text-align:center;display:grid;gap:24px;font-family:"Cormorant Garamond",serif;font-size:42px}
+.mobile-links a{opacity:.8}
+
+.progress{position:fixed;top:0;left:0;width:3px;height:100vh;background:rgba(255,255,255,.05);z-index:210}
+.progress i{display:block;width:100%;height:0;background:var(--gold);transform-origin:top}
+
+.hero{height:100svh;min-height:680px;position:relative;overflow:hidden;background:#0c0d0a}
+.hero-bg{position:absolute;inset:-8%;background:
+  radial-gradient(circle at 75% 42%,rgba(198,161,91,.14),transparent 25%),
+  radial-gradient(circle at 20% 80%,rgba(55,77,70,.25),transparent 30%),
+  linear-gradient(90deg,rgba(8,9,7,.97) 0%,rgba(8,9,7,.72) 42%,rgba(8,9,7,.18) 100%);
+  z-index:1}
+.hero-video-wrap{position:absolute;right:5vw;top:0;width:min(42vw,650px);height:100%;overflow:hidden}
+.hero-video{height:100%;width:100%;object-fit:cover;object-position:center;filter:saturate(.8) contrast(1.06) brightness(.7)}
+.hero-video-wrap:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--ink) 0%,transparent 38%,rgba(10,11,8,.2) 100%)}
+.hero-noise{position:absolute;inset:0;z-index:4;opacity:.07;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E")}
+.hero-content{position:relative;z-index:5;height:100%;display:flex;align-items:center;padding:120px clamp(28px,9vw,145px)}
+.hero-copy{max-width:760px}
+.eyebrow{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:26px}
+.hero-title{font-family:"Cormorant Garamond",serif;font-size:clamp(78px,11vw,170px);font-weight:500;line-height:.78;letter-spacing:-.055em}
+.hero-title span{display:block}
+.hero-title .outline{-webkit-text-stroke:1px rgba(238,232,218,.68);margin-left:.55em}
+.hero-sub{font-size:14px;line-height:1.8;color:#c4bfb0;max-width:450px;margin:38px 0 34px}
+.cta-row{display:flex;gap:13px;flex-wrap:wrap}
+.cta{padding:15px 21px;border:1px solid rgba(198,161,91,.7);font-size:10px;letter-spacing:.2em;text-transform:uppercase;transition:.35s}
+.cta.fill{background:var(--gold);border-color:var(--gold);color:#12120f}
+.cta:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(198,161,91,.14)}
+.hero-meta{position:absolute;z-index:6;bottom:35px;left:clamp(28px,9vw,145px);right:clamp(28px,9vw,145px);display:flex;justify-content:space-between;align-items:end}
+.scroll-hint{display:flex;gap:12px;align-items:center;font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:#8e8b80}
+.scroll-hint i{display:block;width:38px;height:1px;background:var(--gold)}
+.hero-location{text-align:right;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#9c998d;line-height:1.8}
+
+.story{position:relative;padding:180px clamp(25px,9vw,145px);background:var(--paper);color:var(--ink);overflow:hidden}
+.story-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(50px,9vw,160px);align-items:center}
+.kicker{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:#96743b;margin-bottom:25px}
+.story h2,.experience h2,.menu-title{font-family:"Cormorant Garamond",serif;font-size:clamp(58px,7vw,108px);line-height:.86;font-weight:500;letter-spacing:-.04em}
+.story h2 em,.experience h2 em{font-style:italic;color:#96743b}
+.story-copy{font-size:15px;line-height:1.9;color:#57554d;max-width:490px;margin-top:32px}
+.story-mark{font-family:"Cormorant Garamond",serif;font-size:19px;letter-spacing:.12em;margin-top:45px}
+.story-visual{height:min(65vw,670px);position:relative}
+.story-image{position:absolute;width:76%;height:80%;right:0;top:0;object-fit:cover;filter:saturate(.72)}
+.story-image-2{position:absolute;width:48%;height:43%;left:0;bottom:0;object-fit:cover;border:12px solid var(--paper)}
+.vertical-word{position:absolute;right:-38px;bottom:7%;writing-mode:vertical-rl;font-size:9px;letter-spacing:.35em;color:#96743b;text-transform:uppercase}
+
+.marquee{overflow:hidden;background:var(--gold);color:var(--ink);padding:14px 0;border-top:1px solid #a98645;border-bottom:1px solid #a98645}
+.marquee-track{display:flex;width:max-content;animation:marquee 24s linear infinite}
+.marquee-track span{font-family:"Cormorant Garamond",serif;font-size:25px;letter-spacing:.06em;padding:0 24px;white-space:nowrap}
+.marquee-track b{font-family:Arial;font-size:12px;align-self:center}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+.experience{min-height:100svh;position:relative;display:grid;place-items:center;overflow:hidden;background:#10120f}
+.experience-bg{position:absolute;inset:-15%;background:
+ linear-gradient(180deg,rgba(8,10,8,.35),rgba(8,10,8,.9)),
+ url("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=2200&q=85") center/cover;
+ transform:scale(1.08);filter:saturate(.45)}
+.experience-inner{position:relative;z-index:2;text-align:center;padding:130px 20px}
+.experience h2{color:var(--white);font-size:clamp(70px,10vw,155px)}
+.experience h2 em{color:var(--gold-soft)}
+.experience-copy{max-width:520px;margin:35px auto;color:#c5c2b7;line-height:1.9;font-size:14px}
+.experience-stats{display:flex;justify-content:center;gap:clamp(30px,7vw,100px);margin-top:70px}
+.stat strong{display:block;font-family:"Cormorant Garamond";font-size:46px;font-weight:500;color:var(--gold-soft)}
+.stat span{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:#9c9b92}
+
+.menu-section{background:#11130f;padding:150px clamp(22px,7vw,110px);position:relative}
+.menu-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:65px;gap:30px}
+.menu-title{color:var(--cream)}
+.menu-intro{max-width:350px;color:#94948a;font-size:13px;line-height:1.8}
+.menu-tabs{display:flex;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:45px}
+.menu-tab{background:none;border:0;color:#78786f;font-size:10px;letter-spacing:.18em;text-transform:uppercase;padding:9px 0;margin-right:20px;cursor:pointer;position:relative}
+.menu-tab.active{color:var(--gold-soft)}
+.menu-tab.active:after{content:"";position:absolute;left:0;right:0;bottom:-21px;height:1px;background:var(--gold)}
+.menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.menu-card{position:relative;height:500px;overflow:hidden;background:#191a15}
+.menu-card:nth-child(2){margin-top:55px}.menu-card:nth-child(3){margin-top:110px}
+.menu-card img{width:100%;height:100%;object-fit:cover;filter:saturate(.75);transition:transform 1s var(--ease),filter .7s}
+.menu-card:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(7,8,6,.88))}
+.menu-card:hover img{transform:scale(1.07);filter:saturate(1)}
+.menu-info{position:absolute;z-index:2;left:25px;right:25px;bottom:25px}
+.menu-no{font-size:9px;letter-spacing:.2em;color:var(--gold-soft)}
+.menu-name{font-family:"Cormorant Garamond";font-size:32px;margin:6px 0}
+.menu-desc{font-size:11px;line-height:1.6;color:#bbb8ad}
+.menu-price{position:absolute;right:0;bottom:2px;color:var(--gold-soft);font-family:"Cormorant Garamond";font-size:21px}
+.menu-bottom{text-align:center;margin-top:70px}
+.text-link{display:inline-flex;gap:14px;align-items:center;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--gold-soft)}
+.text-link i{width:38px;height:1px;background:var(--gold-soft);transition:.3s}.text-link:hover i{width:58px}
+
+.gallery{background:var(--paper);color:var(--ink);padding:150px clamp(22px,7vw,110px);overflow:hidden}
+.gallery-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:60px}
+.gallery h2{font-family:"Cormorant Garamond";font-weight:500;font-size:clamp(65px,8vw,120px);line-height:.82;letter-spacing:-.05em}
+.gallery-note{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#8c754e}
+.gallery-strip{display:flex;gap:18px;width:max-content}
+.gallery-card{width:min(34vw,470px);height:min(48vw,650px);overflow:hidden;position:relative}
+.gallery-card:nth-child(2){margin-top:85px}
+.gallery-card:nth-child(3){margin-top:20px}
+.gallery-card:nth-child(4){margin-top:120px}
+.gallery-card img{width:100%;height:100%;object-fit:fill;filter:saturate(.72);transition:1s var(--ease)}
+.gallery-card:hover img{transform:scale(1.05);filter:saturate(1)}
+.gallery-card:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 70%,rgba(0,0,0,.35))}
+
+.visit{min-height:100svh;display:grid;grid-template-columns:1fr 1fr;background:#10120f}
+.visit-image{min-height:700px;background:
+ linear-gradient(90deg,rgba(16,18,15,.05),rgba(16,18,15,.3)),
+ url("{% static 'images/kolachi/assets/img/sideimage.jpg' %}") center/cover}
+.visit-content{display:flex;align-items:center;padding:100px clamp(35px,8vw,120px)}
+.visit-inner{max-width:540px}
+.visit h2{font-family:"Cormorant Garamond";font-size:clamp(70px,8vw,120px);font-weight:500;line-height:.82;letter-spacing:-.05em}
+.visit h2 span{color:var(--gold-soft);font-style:italic}
+.visit-text{color:#9e9d93;line-height:1.9;font-size:13px;margin:35px 0 45px}
+.visit-details{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.detail{padding:22px 0}.detail:nth-child(odd){padding-right:20px}.detail:nth-child(even){padding-left:20px;border-left:1px solid var(--line)}
+.detail small{display:block;font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:#77776e;margin-bottom:8px}
+.detail p{font-size:12px;line-height:1.7;color:#d0cdc2}
+
+.footer{padding:85px clamp(25px,7vw,110px) 35px;background:#0a0b09}
+.footer-main{display:flex;justify-content:space-between;gap:50px;align-items:start;padding-bottom:75px}
+
+.footer-logo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+}
+.footer-brand p{max-width:320px;color:#7f8077;font-size:12px;line-height:1.8;margin-top:22px}
+.footer-links{display:flex;gap:70px}
+.footer-col small{display:block;font-size:8px;letter-spacing:.25em;color:#6f7069;text-transform:uppercase;margin-bottom:17px}
+.footer-col a{display:block;font-size:12px;color:#c5c2b8;margin:9px 0}
+.footer-bottom{border-top:1px solid var(--line);padding-top:22px;display:flex;justify-content:space-between;color:#60615b;font-size:9px;letter-spacing:.08em}
+
+.reveal{opacity:0;transform:translateY(50px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.reveal-left{opacity:0;transform:translateX(-55px);transition:opacity 1.1s var(--ease),transform 1.1s var(--ease)}
+.reveal-left.in{opacity:1;transform:none}
+.reveal-right{opacity:0;transform:translateX(55px);transition:opacity 1.1s var(--ease),transform 1.1s var(--ease)}
+.reveal-right.in{opacity:1;transform:none}
+
+@media(max-width:900px){
+  .nav-links,.nav-reserve{display:none}.menu-btn{display:block}
+  .hero{min-height:720px}.hero-video-wrap{right:0;width:68vw;opacity:.75}.hero-video-wrap:after{background:linear-gradient(90deg,var(--ink) 0%,rgba(8,9,7,.5) 55%,rgba(8,9,7,.1))}
+  .hero-content{padding:120px 28px 90px}.hero-title{font-size:clamp(75px,18vw,125px)}.hero-sub{font-size:13px;max-width:390px}
+  .story-grid{grid-template-columns:1fr}.story{padding:120px 25px}.story-visual{height:600px;margin-top:30px}
+  .menu-grid{grid-template-columns:1fr 1fr}.menu-card{height:440px}.menu-card:nth-child(2),.menu-card:nth-child(3){margin-top:0}
+  .gallery-card{width:53vw;height:72vw}
+  .visit{grid-template-columns:1fr}.visit-image{min-height:60vh}.visit-content{padding:100px 30px}
+  .footer-main{flex-direction:column}.footer-links{gap:50px}
+}
+@media(max-width:560px){
+  .nav{height:75px}.hero{min-height:760px}.hero-video-wrap{width:100%;height:65%;top:auto;bottom:0;opacity:.62}.hero-video-wrap:after{background:linear-gradient(180deg,var(--ink) 0%,rgba(8,9,7,.2) 50%,rgba(8,9,7,.3))}
+  .hero-content{align-items:flex-start;padding-top:150px}.hero-title{font-size:clamp(70px,20vw,105px)}.hero-title .outline{margin-left:.2em}
+  .hero-meta{bottom:23px}.hero-location{display:none}
+  .story h2,.experience h2,.menu-title{font-size:65px}
+  .story-visual{height:450px}.story-image{width:82%;height:78%}.story-image-2{width:52%;height:45%;border-width:8px}
+  .experience-stats{gap:25px}.stat strong{font-size:36px}.stat span{font-size:7px}
+  .menu-section{padding:110px 20px}.menu-head{display:block}.menu-intro{margin-top:25px}.menu-grid{grid-template-columns:1fr;gap:16px}.menu-card{height:470px}.menu-tabs{overflow:auto;flex-wrap:nowrap}
+  .gallery{padding:110px 20px}.gallery-head{display:block}.gallery-note{margin-top:25px}.gallery-strip{gap:12px}.gallery-card{width:74vw;height:105vw}
+  .visit-details{grid-template-columns:1fr}.detail:nth-child(even){padding-left:0;border-left:0;border-top:1px solid var(--line)}
+  .footer{padding-top:65px}.footer-links{display:grid;grid-template-columns:1fr 1fr;gap:35px}.footer-bottom{display:block}.footer-bottom span{display:block;margin-top:9px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+}
+.menu-reading{ position:relative; min-height:100vh; background:#0e0f0c; color:var(--cream); overflow:visible; height:500vh; margin-top: 10px; margin-left: 10px;}
+.menu-reading-intro{ position:absolute; left:clamp(25px,8vw,130px); top:10%; transform:translateY(-50%); width:min(350px,28vw); z-index:10; }
+.menu-reading-intro .kicker{ margin-bottom:25px; }
+.menu-reading-intro h2{ font-family:"Cormorant Garamond",serif; font-size:clamp(55px,6vw,95px); line-height:.84; font-weight:500; letter-spacing:-.045em; }
+.menu-reading-intro h2 em{ color:var(--gold-soft); font-style:italic; }
+.menu-reading-intro p{ margin-top:30px; max-width:320px; color:#96968c; font-size:13px; line-height:1.9; }
+.menu-scroll-hint{ margin-top:45px; display:flex; align-items:center; gap:13px; font-size:9px; text-transform:uppercase; letter-spacing:.25em; color:#77776e; }
+.menu-scroll-hint span{ width:38px; height:1px; background:var(--gold); }
+.menu-book{ position:sticky;top:0; width:100%; height:100vh; display:flex; justify-content:flex-end; align-items:center; perspective:1800px; margin-right: 20px; }
+.menu-card-stage{ position:relative; width:min(520px,38vw); height:min(720px,78vh); transform-style:preserve-3d; }
+.menu-page{ position:absolute; inset:0; overflow:hidden; background:#e9e3d6; transform-origin:left center; transform-style:preserve-3d; box-shadow: 0 35px 80px rgba(0,0,0,.45), 0 8px 20px rgba(0,0,0,.2); will-change:transform,opacity; transition: transform .15s linear, opacity .15s linear; }
+.menu-page:nth-child(1){ z-index:12; }
+.menu-page:nth-child(2){ z-index:11; }
+.menu-page:nth-child(3){ z-index:10; }
+.menu-page:nth-child(4){ z-index:9; }
+.menu-page:nth-child(5){ z-index:8; }
+.menu-page:nth-child(6){ z-index:7; }
+.menu-page:nth-child(7){ z-index:6; }
+.menu-page:nth-child(8){ z-index:5; }
+.menu-page:nth-child(9){ z-index:4; }
+.menu-page:nth-child(10){ z-index:3; }
+.menu-page:nth-child(11){ z-index:2; }
+.menu-page:nth-child(12){ z-index:1; }
+.menu-page img{ width:100%; height:100%; object-fit:contain; display:block; user-select:none; -webkit-user-drag:none; }
+.menu-page::after{ content:""; position:absolute; inset:0; pointer-events:none; background: linear-gradient( 90deg, rgba(0,0,0,.12), transparent 5%, transparent 92%, rgba(0,0,0,.08) ); }
+.menu-page-counter{ position:absolute; right:clamp(25px,8vw,130px); bottom:8%; display:flex; align-items:center; gap:14px; font-family:"Cormorant Garamond",serif; font-size:22px; color:#b6b3a8; z-index:20; }
+.menu-page-counter #menuCurrent{ color:var(--gold-soft); font-size:35px; }
+.menu-page-counter i{ width:45px; height:1px; background:rgba(198,161,91,.45); }
+.menu-page:not(:first-child){ transform: translateZ(calc(var(--page-depth, 0) * -1px)) scale(.985); }
+@media(max-width:900px){
+  .menu-reading{ min-height:100svh; }
+  .menu-reading-intro{ position:relative; left:auto; top:auto; transform:none; width:auto; padding: 100px 25px 40px; z-index: 10;}
+  .menu-reading-intro h2{ font-size:65px; }
+  .menu-reading-intro p{ max-width:390px; }
+  .menu-scroll-hint{ margin-top:25px; }
+  .menu-book{ height:75vh; min-height:600px; align-items:flex-start; padding-top:20px; }
+  .menu-card-stage{ width:min(82vw,500px); height:min(125vw,680px); }
+  .menu-page-counter{ right:25px; bottom:30px; }
+}
+@media(max-width:560px){
+  .menu-reading-intro{ padding-top:90px; }
+  .menu-reading-intro h2{ font-size:58px; }
+  .menu-book{ min-height:570px; height:78vh; }
+  .menu-card-stage{ width:86vw; height:118vw; max-height:610px; }
+  .menu-page-counter{ bottom:18px; font-size:17px; }
+  .menu-page-counter #menuCurrent{ font-size:27px; }
+}
+@media(prefers-reduced-motion:reduce){
+  .menu-page{ transition:none; }
+}
+</style>
+</head>
+
+<body class="is-locked">
+<div class="preloader" id="preloader">
+  <div class="preloader-inner">
+    <img src="{% static 'images/kolachi/assets/img/kolachi_logo.png' %}" class="preloader-logo" alt="Kolachi">
+    <div class="loader-line"><i></i></div>
+  </div>
+</div>
+
+<div class="cursor" id="cursor"></div>
+<div class="progress"><i id="progressBar"></i></div>
+
+<header class="nav" id="nav">
+  <a href="#top"><img src="{% static 'images/kolachi/assets/img/kolachi_logo.png' %}" class="nav-logo" alt="Kolachi"></a>
+  <nav class="nav-links">
+    <a href="#story">Our Story</a>
+    <a href="#menu">Menu</a>
+    <a href="#gallery">Experience</a>
+    <a href="#visit">Visit</a>
+  </nav>
+  <a class="nav-reserve" href="#visit">Reserve a Table</a>
+  <button class="menu-btn" id="menuBtn" aria-label="Open menu"><span></span><span></span><span></span></button>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <nav class="mobile-links">
+    <a href="#story">Our Story</a>
+    <a href="#menu">Menu</a>
+    <a href="#gallery">Experience</a>
+    <a href="#visit">Visit Kolachi</a>
+  </nav>
+</div>
+
+<main id="top">
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-video-wrap">
+    <video class="hero-video" autoplay muted loop playsinline preload="metadata">
+      <source src="{% static 'images/kolachi/assets/video/kolachi_high.mp4' %}" type="video/mp4">
+    </video>
+  </div>
+  <div class="hero-noise"></div>
+  <div class="hero-content">
+    <div class="hero-copy">
+      <div class="eyebrow reveal">Karachi · Since 2001</div>
+      <h1 class="hero-title">
+        <span class="reveal">The Spirit</span>
+        <span class="outline reveal">of Karachi</span>
+      </h1>
+      <p class="hero-sub reveal">Where the city meets the sea, and every table becomes part of the story.</p>
+      <div class="cta-row reveal">
+        <a class="cta fill" href="#menu">Explore the Menu</a>
+        <a class="cta" href="#visit">Reserve a Table</a>
+      </div>
+    </div>
+  </div>
+  <div class="hero-meta">
+    <div class="scroll-hint"><i></i> Scroll to discover</div>
+    <div class="hero-location">Do Darya · Karachi<br>Pakistan</div>
+  </div>
+</section>
+
+<section class="story" id="story">
+  <div class="story-grid">
+    <div>
+      <div class="kicker reveal-left">A Karachi institution</div>
+      <h2 class="reveal-left">Made for<br><em>memories.</em></h2>
+      <p class="story-copy reveal-left">For generations of Karachi diners, a meal at Kolachi has meant more than what's on the plate. It is the sea breeze, the lights across the water, the sound of a table coming alive — and food worth returning for.</p>
+      <div class="story-mark reveal-left">KOLACHI — THE SPIRIT OF KARACHI</div>
+    </div>
+    <div class="story-visual">
+      <img class="story-image parallax" data-speed=".11" src="https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=1200&q=85" alt="Dining table">
+      <img class="story-image-2 parallax" data-speed="-.06" src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=85" alt="Cuisine">
+      <div class="vertical-word">Karachi · Do Darya · Kolachi</div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee">
+  <div class="marquee-track">
+    <span>TASTE THE CITY</span><b>✦</b><span>FEEL THE SEA</span><b>✦</b><span>SHARE THE MOMENT</span><b>✦</b>
+    <span>TASTE THE CITY</span><b>✦</b><span>FEEL THE SEA</span><b>✦</b><span>SHARE THE MOMENT</span><b>✦</b>
+  </div>
+</div>
+
+<section class="experience">
+  <div class="experience-bg parallax" data-speed=".035"></div>
+  <div class="experience-inner">
+    <div class="kicker reveal">Not just dinner</div>
+    <h2 class="reveal">Come for the<br><em>experience.</em></h2>
+    <p class="experience-copy reveal">A setting shaped by Karachi. A menu shaped by generations. An evening shaped by the people around your table.</p>
+    <div class="experience-stats">
+      <div class="stat reveal"><strong>01</strong><span>The Sea</span></div>
+      <div class="stat reveal"><strong>02</strong><span>The Table</span></div>
+      <div class="stat reveal"><strong>03</strong><span>The Memory</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="menu-section" id="menu">
+  <div class="menu-head">
+    <div>
+      <div class="kicker reveal-left">From the kitchen</div>
+      <h2 class="menu-title reveal-left">A taste of<br>Kolachi.</h2>
+    </div>
+    <p class="menu-intro reveal-right">Explore a selection of dishes that bring together Pakistani favourites, grilled specialities and the flavours that have made Kolachi part of Karachi's dining culture.</p>
+  </div>
+
+  <div class="menu-tabs">
+    <button class="menu-tab active" data-filter="all">All</button>
+    <button class="menu-tab" data-filter="grill">Grills</button>
+    <button class="menu-tab" data-filter="sea">Seafood</button>
+    <button class="menu-tab" data-filter="main">Mains</button>
+    <button class="menu-tab" data-filter="sweet">Desserts</button>
+  </div>
+
+  <div class="menu-grid" id="menuGrid">
+    <article class="menu-card reveal" data-category="grill">
+      <img src="{% static 'images/kolachi/assets/img/food/food_1.jpg' %}" alt="Kolachi menu dish" loading="lazy">
+      <div class="menu-info"><span class="menu-no">01 · GRILL</span><h3 class="menu-name">Kolachi Special</h3><p class="menu-desc">A signature selection prepared for the table.</p></div>
+    </article>
+    <article class="menu-card reveal" data-category="sea">
+      <img src="{% static 'images/kolachi/assets/img/food/food_5.jpg' %}" alt="Kolachi seafood" loading="lazy">
+      <div class="menu-info"><span class="menu-no">02 · SEAFOOD</span><h3 class="menu-name">From the Sea</h3><p class="menu-desc">Fresh flavours with the character of Karachi.</p></div>
+    </article>
+    <article class="menu-card reveal" data-category="main">
+      <img src="{% static 'images/kolachi/assets/img/food/food_3.jpg' %}" alt="Kolachi main course" loading="lazy">
+      <div class="menu-info"><span class="menu-no">03 · MAIN</span><h3 class="menu-name">House Favourite</h3><p class="menu-desc">Comforting, generous and made to share.</p></div>
+    </article>
+    <article class="menu-card reveal" data-category="grill">
+      <img src="{% static 'images/kolachi/assets/img/food/food_6.jpg' %}" alt="Kolachi grilled dish" loading="lazy">
+      <div class="menu-info"><span class="menu-no">04 · GRILL</span><h3 class="menu-name">Charcoal & Fire</h3><p class="menu-desc">Smoky, rich and served straight from the grill.</p></div>
+    </article>
+    <article class="menu-card reveal" data-category="main">
+      <img src="{% static 'images/kolachi/assets/img/food/food_9.jpg' %}" alt="Kolachi cuisine" loading="lazy">
+      <div class="menu-info"><span class="menu-no">05 · MAIN</span><h3 class="menu-name">The Kolachi Table</h3><p class="menu-desc">The kind of food made for a long evening.</p></div>
+    </article>
+    <article class="menu-card reveal" data-category="sweet">
+      <img src="{% static 'images/kolachi/assets/img/food/food_2.jpg' %}" alt="Kolachi dessert" loading="lazy">
+      <div class="menu-info"><span class="menu-no">06 · SWEET</span><h3 class="menu-name">Something Sweet</h3><p class="menu-desc">A final note worth staying for.</p></div>
+    </article>
+    <article class="menu-card reveal" data-category="sea">
+      <img src="{% static 'images/kolachi/assets/img/food/food_7.jpg' %}" alt="Kolachi seafood dish" loading="lazy">
+      <div class="menu-info"><span class="menu-no">07 · SEAFOOD</span><h3 class="menu-name">Ocean Table</h3><p class="menu-desc">Bright, generous flavours from the coast.</p></div>
+    </article>
+    <article class="menu-card reveal" data-category="grill">
+      <img src="{% static 'images/kolachi/assets/img/food/food_8.jpg' %}" alt="Kolachi grill" loading="lazy">
+      <div class="menu-info"><span class="menu-no">08 · GRILL</span><h3 class="menu-name">Fire & Spice</h3><p class="menu-desc">Bold flavours built around the grill.</p></div>
+    </article>
+    <article class="menu-card reveal" data-category="main">
+      <img src="{% static 'images/kolachi/assets/img/food/food_4.jpg' %}" alt="Kolachi main dish" loading="lazy">
+      <div class="menu-info"><span class="menu-no">09 · MAIN</span><h3 class="menu-name">Karachi Classic</h3><p class="menu-desc">Familiar flavours, served with Kolachi character.</p></div>
+    </article>
+    <article class="menu-card reveal" data-category="sea">
+      <img src="{% static 'images/kolachi/assets/img/food/food_12.jpg' %}" alt="Kolachi seafood" loading="lazy">
+      <div class="menu-info"><span class="menu-no">10 · SEAFOOD</span><h3 class="menu-name">Coastal Favourite</h3><p class="menu-desc">A taste of the coast at your table.</p></div>
+    </article>
+    <article class="menu-card reveal" data-category="main">
+      <img src="{% static 'images/kolachi/assets/img/food/food_11.jpg' %}" alt="Kolachi dish" loading="lazy">
+      <div class="menu-info"><span class="menu-no">11 · MAIN</span><h3 class="menu-name">Made to Share</h3><p class="menu-desc">Because the best tables are never quiet.</p></div>
+    </article>
+    <article class="menu-card reveal" data-category="sweet">
+      <img src="{% static 'images/kolachi/assets/img/food/food_10.jpg' %}" alt="Kolachi dessert" loading="lazy">
+      <div class="menu-info"><span class="menu-no">12 · SWEET</span><h3 class="menu-name">The Last Bite</h3><p class="menu-desc">Leave room for one more memory.</p></div>
+    </article>
+  </div>
+
+  <div class="menu-bottom reveal">
+    <a class="text-link" href="#visit">View the complete menu <i></i></a>
+  </div>
+</section>
+
+<section class="menu-reading" id="menu-reading">
+  <div class="menu-reading-intro">
+    <div class="kicker">The Kolachi Menu</div>
+    <h2> Take your time.<br> <em>Read the menu.</em> </h2>
+    <p> From the first plate to the last bite, discover the flavours that make an evening at Kolachi. </p>
+    <div class="menu-scroll-hint"> <span></span> Scroll through the menu </div>
+  </div>
+  <div class="menu-book">
+    <div class="menu-card-stage"> 
+      <article class="menu-page">
+        <img src="{% static 'images/kolachi/assets/img/menu/menu_1.jpg' %}" alt="Kolachi menu page 1">
+      </article>
+      <article class="menu-page">
+        <img src="{% static 'images/kolachi/assets/img/menu/menu_2.jpg' %}" alt="Kolachi menu page 2">
+      </article>
+      <article class="menu-page">
+        <img src="{% static 'images/kolachi/assets/img/menu/menu_3.jpg' %}" alt="Kolachi menu page 3">
+      </article>
+      <article class="menu-page">
+        <img src="{% static 'images/kolachi/assets/img/menu/menu_4.jpg' %}" alt="Kolachi menu page 4"> 
+      </article>
+      <article class="menu-page">
+        <img src="{% static 'images/kolachi/assets/img/menu/menu_5.jpg' %}" alt="Kolachi menu page 5">
+      </article>
+      <article class="menu-page">
+        <img src="{% static 'images/kolachi/assets/img/menu/menu_6.jpg' %}" alt="Kolachi menu page 6">
+      </article>
+      <article class="menu-page">
+        <img src="{% static 'images/kolachi/assets/img/menu/menu_7.jpg' %}" alt="Kolachi menu page 7">
+      </article>
+      <article class="menu-page">
+        <img src="{% static 'images/kolachi/assets/img/menu/menu_8.jpg' %}" alt="Kolachi menu page 8">
+      </article>
+      <article class="menu-page">
+        <img src="{% static 'images/kolachi/assets/img/menu/menu_9.jpg' %}" alt="Kolachi menu page 9">
+      </article>
+      <article class="menu-page">
+        <img src="{% static 'images/kolachi/assets/img/menu/menu_10.jpg' %}" alt="Kolachi menu page 10">
+      </article>
+      <article class="menu-page">
+        <img src="{% static 'images/kolachi/assets/img/menu/menu_11.jpg' %}" alt="Kolachi menu page 11">
+      </article>
+      <article class="menu-page">
+        <img src="{% static 'images/kolachi/assets/img/menu/menu_12.jpg' %}" alt="Kolachi menu page 12">
+      </article>
+    </div>
+    <div class="menu-page-counter">
+      <span id="menuCurrent">01</span> <i></i> <span>12</span>
+    </div>
+  </div>
+</section>
+
+<section class="gallery" id="gallery">
+  <div class="gallery-head">
+    <div>
+      <div class="kicker reveal-left">Inside Kolachi</div>
+      <h2 class="reveal-left">See you<br><em>there.</em></h2>
+    </div>
+    <div class="gallery-note reveal-right">Move through the experience →</div>
+  </div>
+  <div class="gallery-strip" id="galleryStrip">
+    <div class="gallery-card"><img src="https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=1000&q=85" alt="Restaurant dining" loading="lazy"></div>
+    <div class="gallery-card"><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=85" alt="Restaurant interior" loading="lazy"></div>
+    <div class="gallery-card"><img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1000&q=85" alt="Dining experience" loading="lazy"></div>
+    <div class="gallery-card"><img src="https://images.unsplash.com/photo-1544148103-0773bf10d330?auto=format&fit=crop&w=1000&q=85" alt="Food at a restaurant" loading="lazy"></div>
+  </div>
+</section>
+
+<section class="visit" id="visit">
+  <div class="visit-image parallax" data-speed=".035"></div>
+  <div class="visit-content">
+    <div class="visit-inner">
+      <div class="kicker reveal-right">Your table awaits</div>
+      <h2 class="reveal-right">Meet us<br><span>by the sea.</span></h2>
+      <p class="visit-text reveal-right">Come for dinner. Stay for the view. Bring the people who make an evening worth remembering.</p>
+      <div class="visit-details reveal-right">
+        <div class="detail"><small>Location</small><p>Do Darya, Karachi<br>Pakistan</p></div>
+        <div class="detail"><small>Reservations</small><p>Call the restaurant<br>for table availability</p></div>
+        <div class="detail"><small>Hours</small><p>Daily<br>12:00 PM — Late</p></div>
+        <div class="detail"><small>Directions</small><p><a href="https://maps.google.com/?q=Kolachi+Restaurant+Karachi" target="_blank" rel="noopener">Open Google Maps →</a></p></div>
+      </div>
+      <div class="cta-row" style="margin-top:34px">
+        <a class="cta fill" href="tel:+9221111111001">Call for Reservations</a>
+        <a class="cta" href="https://maps.google.com/?q=Kolachi+Restaurant+Karachi" target="_blank" rel="noopener">Get Directions</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="footer-main">
+    <div class="footer-brand">
+      <img src="{% static 'images/kolachi/assets/img/kolachi_logo.png' %}" class="footer-logo" alt="Kolachi">
+      <p>The spirit of Karachi — brought to the table through food, atmosphere and the people who gather around it.</p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col"><small>Explore</small><a href="#story">Our Story</a><a href="#menu">Menu</a><a href="#gallery">Experience</a><a href="#visit">Visit</a></div>
+      <div class="footer-col"><small>Connect</small><a href="#" aria-label="Instagram">Instagram</a><a href="#" aria-label="Facebook">Facebook</a><a href="#visit">Reservations</a><a href="#visit">Directions</a></div>
+    </div>
+  </div>
+  <div class="footer-bottom"><span>© 2026 Kolachi Restaurant</span><span>Concept website crafted by Zafium</span></div>
+</footer>
+
+<script>
+(() => {
+  const preloader = document.getElementById('preloader');
+  const nav = document.getElementById('nav');
+  const progressBar = document.getElementById('progressBar');
+  const cursor = document.getElementById('cursor');
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      preloader.classList.add('done');
+      document.body.classList.remove('is-locked');
+      document.querySelectorAll('.hero .reveal').forEach((el,i) => {
+        setTimeout(() => el.classList.add('in'), 120 + i*90);
+      });
+    }, 650);
+  });
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('in');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {threshold:.13, rootMargin:'0px 0px -7% 0px'});
+  document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el => observer.observe(el));
+
+  const parallaxEls = [...document.querySelectorAll('.parallax')];
+  let ticking = false;
+  function update(){
+    const y = window.scrollY;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    progressBar.style.height = `${max ? (y/max)*100 : 0}%`;
+    nav.classList.toggle('scrolled', y > 40);
+
+    parallaxEls.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      const speed = parseFloat(el.dataset.speed || .05);
+      const center = rect.top + rect.height/2 - window.innerHeight/2;
+      el.style.transform = `translate3d(0,${center * -speed}px,0)`;
+    });
+    ticking=false;
+  }
+  window.addEventListener('scroll', () => {
+    if(!ticking){requestAnimationFrame(update);ticking=true}
+  }, {passive:true});
+  update();
+
+  // Subtle horizontal gallery movement based on vertical scroll.
+  const gallery = document.getElementById('gallery');
+  const galleryStrip = document.getElementById('galleryStrip');
+  function galleryMotion(){
+    const rect = gallery.getBoundingClientRect();
+    const maxMove = Math.max(0, galleryStrip.scrollWidth - window.innerWidth + 80);
+    const progress = Math.min(1, Math.max(0, (window.innerHeight - rect.top)/(window.innerHeight + rect.height)));
+    galleryStrip.style.transform = `translate3d(${-maxMove * progress * .65}px,0,0)`;
+  }
+  window.addEventListener('scroll', () => requestAnimationFrame(galleryMotion), {passive:true});
+  galleryMotion();
+
+  // Menu filtering.
+  const tabs = document.querySelectorAll('.menu-tab');
+  const cards = document.querySelectorAll('.menu-card');
+  tabs.forEach(tab => tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const filter = tab.dataset.filter;
+    cards.forEach((card,i) => {
+      const show = filter === 'all' || card.dataset.category === filter;
+      card.style.display = show ? '' : 'none';
+      if(show){
+        card.style.animation = 'none';
+        void card.offsetWidth;
+        card.style.animation = `fadeCard .55s ${i*.035}s both`;
+      }
+    });
+  }));
+
+  const style = document.createElement('style');
+  style.textContent = '@keyframes fadeCard{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}';
+  document.head.appendChild(style);
+
+  menuBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('open');
+    document.body.classList.toggle('is-locked');
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    mobileMenu.classList.remove('open');
+    document.body.classList.remove('is-locked');
+  }));
+
+  if(window.matchMedia('(pointer:fine)').matches){
+    window.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    });
+    document.querySelectorAll('a,button,.menu-card').forEach(el => {
+      el.addEventListener('mouseenter',()=>cursor.classList.add('big'));
+      el.addEventListener('mouseleave',()=>cursor.classList.remove('big'));
+    });
+  }
+})();
+/* ========================================================= KOLACHI — MENU PAGE TURNING ========================================================= */ const menuReading = document.querySelector(".menu-reading"); const menuPages = [...document.querySelectorAll(".menu-page")]; const menuCurrent = document.getElementById("menuCurrent"); if(menuReading && menuPages.length){ /* * Give the menu enough vertical space for every page. * * One viewport = approximately one menu page. */ menuReading.style.height = `${(menuPages.length + 1) * 100}vh`; function updateMenuPages(){ const rect = menuReading.getBoundingClientRect(); /* * How far the visitor has travelled through * the menu-reading section. */ const sectionHeight = menuReading.offsetHeight - window.innerHeight; const travelled = Math.min( Math.max(-rect.top, 0), sectionHeight ); const progress = sectionHeight > 0 ? travelled / sectionHeight : 0; /* * Convert overall progress into page progress. * * Example: * * 0.00 = page 1 * 0.09 = page 2 * 0.18 = page 3 * ... * 1.00 = page 12 */ const pageProgress = progress * (menuPages.length - 1); const activePage = Math.min( Math.floor(pageProgress), menuPages.length - 1 ); /* * Update counter. */ menuCurrent.textContent = String(activePage + 1).padStart(2,"0"); /* * Animate every page. */ menuPages.forEach((page,index)=>{ const distance = pageProgress - index; /* * Page hasn't been reached yet. * * Keep it stacked behind the current page. */ if(distance < 0){ page.style.transform = ` translateZ(${distance * 2}px) rotateY(0deg) translateX(0) scale(${1 + distance * .008}) `; page.style.opacity = "1"; page.style.zIndex = menuPages.length - index; return; } /* * Page is currently being turned. * * 0 → 1 */ if(distance < 1){ const turn = Math.min(Math.max(distance,0),1); /* * Slight acceleration makes the page * feel physical instead of linear. */ const eased = 1 - Math.pow(1 - turn, 2.2); const rotation = -180 * eased; const slide = -35 * eased; const scale = 1 - (.025 * eased); page.style.transform = ` rotateY(${rotation}deg) translateX(${slide}px) scale(${scale}) `; page.style.opacity = String(1 - eased * .15); page.style.zIndex = menuPages.length + 10; /* * Keep a darkening shadow on pages * while they turn. */ page.style.filter = `brightness(${1 - eased * .25})`; return; } /* * Page has already been turned. */ page.style.transform = ` rotateY(-180deg) translateX(-35px) scale(.975) `; page.style.opacity = "0"; page.style.zIndex = index; page.style.filter = "brightness(.75)"; }); } /* * Run on scroll using requestAnimationFrame * to keep the animation smooth. */ let menuTicking = false; window.addEventListener("scroll",()=>{ if(!menuTicking){ requestAnimationFrame(()=>{ updateMenuPages(); menuTicking = false; }); menuTicking = true; } },{passive:true}); /* * Initial state. */ updateMenuPages(); }
+</script>
+</body>
+</html>
