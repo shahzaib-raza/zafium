@@ -200,4 +200,9 @@ urlpatterns = [
         kolachidemo,
         name="kolachi",
     ),
+    path(
+        "website-demo/shanova/",
+        shanovademo,
+        name="shanova",
+    ),
 ]

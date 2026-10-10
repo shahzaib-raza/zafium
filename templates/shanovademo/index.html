@@ -1,0 +1,1057 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="{% static 'images/shanova/favicon-96x96.png' %}" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="{% static 'images/shanova/favicon.svg' %}" />
+  <link rel="shortcut icon" href="{% static 'images/shanova/favicon.ico' %}" />
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/shanova/apple-touch-icon.png' %}" />
+  <meta name="apple-mobile-web-app-title" content="Shanova" />
+  <link rel="manifest" href="{% static 'images/shanova/site.webmanifest' %}" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f8f3eb">
+  <meta name="description" content="Personalized nursery decorations, newborn keepsakes and meaningful custom decor by Shanova. Thoughtful creations, delivered across Pakistan.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Shanova | Personalized Home & Nursery Decor">
+  <meta property="og:description" content="Little moments, made forever. Explore personalized nursery decor, newborn keepsakes and custom creations from Shanova.">
+  <meta property="og:image" content="logo.png">
+  <title>Shanova | Personalized Home &amp; Nursery Decor</title>
+  <style>
+    :root {
+      --cream: #f8f3eb;
+      --paper: #fffdf8;
+      --paper-deep: #f0e7da;
+      --wood: #d5c7b1;
+      --oak: #c5af8c;
+      --rose: #d183b3;
+      --rose-deep: #a95788;
+      --rose-pale: #f3e0eb;
+      --blue: #5eb2cc;
+      --blue-deep: #2f819b;
+      --blue-pale: #e0f0f4;
+      --sage: #a7b7a0;
+      --ink: #43362f;
+      --muted: #7c6d62;
+      --line: rgba(91, 69, 54, .15);
+      --shadow: 0 24px 70px rgba(83, 62, 45, .12);
+      --shadow-soft: 0 12px 34px rgba(83, 62, 45, .09);
+      --serif: Georgia, "Times New Roman", serif;
+      --sans: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+      --radius-lg: 30px;
+      --radius-md: 20px;
+      --page: min(1200px, calc(100% - 56px));
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 96px; }
+    body {
+      margin: 0; color: var(--ink); background: var(--cream); font-family: var(--sans);
+      font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+      overflow-x: clip;
+    }
+    body.modal-open { overflow: hidden; }
+    img { display: block; max-width: 100%; }
+    button, input, textarea, select { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; text-decoration: none; }
+    button { color: inherit; }
+    :focus-visible { outline: 3px solid var(--blue-deep); outline-offset: 4px; }
+    ::selection { color: var(--ink); background: var(--rose-pale); }
+    .skip-link { position: fixed; top: 10px; left: 10px; z-index: 2000; padding: 10px 16px; border-radius: 10px; background: var(--ink); color: white; transform: translateY(-150%); }
+    .skip-link:focus { transform: translateY(0); }
+    .page-shell { overflow: clip; }
+    .announcement {
+      display: flex; justify-content: center; align-items: center; gap: 10px; min-height: 36px;
+      padding: 7px 16px; color: #fffaf4; background: #6c5748; font-size: 10px;
+      letter-spacing: .16em; text-transform: uppercase; text-align: center;
+    }
+    .announcement .sparkle { color: #f1c8dc; font-size: 13px; }
+    .site-header {
+      position: sticky; top: 0; z-index: 50; background: rgba(248,243,235,.86);
+      border-bottom: 1px solid transparent; backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px); transition: box-shadow .25s, border-color .25s, background .25s;
+    }
+    .site-header.scrolled { border-color: var(--line); box-shadow: 0 7px 24px rgba(71,53,40,.06); background: rgba(255,253,248,.94); }
+    .nav-wrap { width: var(--page); min-height: 78px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .brand { display: inline-flex; align-items: center; flex-shrink: 0; }
+    .brand img { width: 52px; height: 52px; object-fit: cover; object-position: left center; border-radius: 50%;}
+    .nav-links { display: flex; align-items: center; gap: clamp(18px, 2.4vw, 34px); margin-left: auto; }
+    .nav-links a { position: relative; color: #69594f; font-size: 12px; font-weight: 600; letter-spacing: .025em; transition: color .2s; }
+    .nav-links a::after { content: ""; position: absolute; left: 0; right: 100%; bottom: -7px; height: 1px; background: var(--rose-deep); transition: right .25s; }
+    .nav-links a:hover, .nav-links a[aria-current="location"] { color: var(--rose-deep); }
+    .nav-links a:hover::after { right: 0; }
+    .button {
+      min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 12px 21px; border: 1px solid transparent; border-radius: 999px; cursor: pointer;
+      font-size: 12px; font-weight: 700; letter-spacing: .025em; line-height: 1.2;
+      transition: transform .22s, box-shadow .22s, background .22s, border-color .22s;
+    }
+    .button:hover { transform: translateY(-2px); }
+    .button:active { transform: translateY(0) scale(.985); }
+    .button-primary { color: #fffaf8; background: var(--rose-deep); box-shadow: 0 8px 20px rgba(169,87,136,.2); }
+    .button-primary:hover { background: #934572; box-shadow: 0 12px 25px rgba(169,87,136,.27); }
+    .button-dark { color: #fffaf8; background: var(--ink); }
+    .button-dark:hover { background: #5a4539; }
+    .button-outline { border-color: rgba(67,54,47,.25); background: rgba(255,253,248,.5); }
+    .button-outline:hover { border-color: var(--rose-deep); background: white; }
+    .button-small { min-height: 42px; padding: 10px 17px; }
+    .nav-cta { min-height: 43px; padding: 10px 17px; white-space: nowrap; }
+    .menu-toggle { display: none; width: 46px; height: 46px; border: 1px solid var(--line); border-radius: 50%; background: var(--paper); cursor: pointer; align-items: center; justify-content: center; }
+    .menu-toggle span, .menu-toggle span::before, .menu-toggle span::after { width: 18px; height: 1.5px; display: block; position: relative; background: var(--ink); transition: transform .2s; }
+    .menu-toggle span::before, .menu-toggle span::after { content: ""; position: absolute; left: 0; }
+    .menu-toggle span::before { top: -6px; }
+    .menu-toggle span::after { top: 6px; }
+    .menu-toggle[aria-expanded="true"] span { background: transparent; }
+    .menu-toggle[aria-expanded="true"] span::before { top: 0; transform: rotate(45deg); }
+    .menu-toggle[aria-expanded="true"] span::after { top: 0; transform: rotate(-45deg); }
+
+    .hero { position: relative; isolation: isolate; padding: 50px 0 78px; }
+    .hero::before { content: ""; position: absolute; z-index: -2; width: 580px; height: 580px; top: -210px; right: -150px; border-radius: 50%; background: radial-gradient(circle, rgba(225,198,215,.4), rgba(248,243,235,0) 69%); pointer-events: none; }
+    .hero::after { content: ""; position: absolute; z-index: -2; width: 360px; height: 360px; left: -220px; bottom: -100px; border-radius: 50%; background: radial-gradient(circle, rgba(174,214,224,.35), rgba(248,243,235,0) 70%); pointer-events: none; }
+    .hero-inner { width: var(--page); margin: auto; display: grid; grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr); align-items: center; gap: clamp(28px, 5.5vw, 78px); }
+    .hero-copy { position: relative; z-index: 2; padding: 22px 0 28px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 22px; color: var(--rose-deep); font-size: 10px; line-height: 1.5; font-weight: 800; letter-spacing: .17em; text-transform: uppercase; }
+    .eyebrow::before { content: ""; width: 25px; height: 1px; background: currentColor; }
+    h1, h2, h3, p { margin-top: 0; }
+    .hero h1 { max-width: 600px; margin: 0 0 24px; font-family: var(--serif); font-weight: 400; font-size: clamp(3.35rem, 6.2vw, 6.25rem); line-height: .98; letter-spacing: -.065em; }
+    .hero h1 em { color: var(--rose-deep); font-weight: 400; }
+    .hero-description { max-width: 430px; margin-bottom: 28px; color: var(--muted); font-size: clamp(14px, 1.25vw, 16px); line-height: 1.85; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .delivery-note { display: flex; align-items: center; gap: 9px; margin-top: 28px; color: #78685c; font-size: 11px; letter-spacing: .025em; }
+    .delivery-note svg { flex: 0 0 auto; color: var(--rose-deep); }
+    .hero-art { position: relative; min-height: 535px; max-width: 620px; width: 100%; justify-self: end; }
+    .hero-halo { position: absolute; width: 76%; aspect-ratio: 1; top: 7%; left: 12%; border-radius: 49% 51% 44% 56% / 48% 42% 58% 52%; background: #ead9c6; transform: rotate(-9deg); }
+    .hero-halo::after { content: ""; position: absolute; inset: 16px; border: 1px solid rgba(255,253,248,.72); border-radius: inherit; }
+    .hero-photo { position: absolute; overflow: hidden; background: var(--paper-deep); box-shadow: var(--shadow); }
+    .hero-photo img { width: 100%; height: 100%; object-fit: contain; transition: transform .7s cubic-bezier(.2,.7,.2,1); }
+    .hero-photo:hover img { transform: scale(1.035); }
+    .hero-photo-main { width: 58%; height: 72%; top: 8%; left: 21%; border-radius: 47% 47% 15px 15px; transform: rotate(2.5deg); }
+    .hero-photo-side { width: 36%; height: 36%; right: 0; bottom: 6%; border: 7px solid var(--cream); border-radius: 50% 50% 48% 48%; transform: rotate(7deg); }
+    .hero-photo-small { width: 29%; height: 29%; left: 0; bottom: 12%; border: 6px solid var(--cream); border-radius: 50% 50% 45% 45%; transform: rotate(-8deg); }
+    .hero-sticker { position: absolute; z-index: 3; top: 3%; right: 2%; width: 94px; height: 94px; display: grid; place-content: center; text-align: center; border-radius: 50%; color: #fffaf4; background: var(--blue-deep); font-family: var(--serif); font-size: 14px; line-height: 1.1; transform: rotate(9deg); box-shadow: 0 10px 25px rgba(47,129,155,.18); }
+    .hero-sticker small { display: block; margin-top: 4px; font: 700 8px var(--sans); letter-spacing: .1em; text-transform: uppercase; }
+    .hero-star { position: absolute; color: var(--rose-deep); font-size: 31px; animation: float 5s ease-in-out infinite; }
+    .star-one { top: 17%; left: 8%; }
+    .star-two { top: 48%; right: 3%; color: var(--blue-deep); font-size: 22px; animation-delay: -2s; }
+    .hand-note { position: absolute; bottom: 0; left: 29%; color: #8b7161; font: italic 16px var(--serif); transform: rotate(-7deg); }
+    .hand-note::after { content: "↗"; display: inline-block; margin-left: 5px; color: var(--rose-deep); font: 24px var(--serif); }
+    .hero-copy > * { animation: rise-in .75s both; }
+    .hero-copy > :nth-child(2) { animation-delay: .08s; }
+    .hero-copy > :nth-child(3) { animation-delay: .16s; }
+    .hero-copy > :nth-child(4) { animation-delay: .24s; }
+    .hero-copy > :nth-child(5) { animation-delay: .32s; }
+    .hero-art { animation: art-in .9s .12s both; }
+
+    .trust-strip { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(255,253,248,.55); }
+    .trust-inner { width: var(--page); margin: auto; display: grid; grid-template-columns: repeat(4, 1fr); }
+    .trust-item { display: flex; align-items: center; justify-content: center; gap: 13px; padding: 23px 14px; border-right: 1px solid var(--line); }
+    .trust-item:first-child { border-left: 1px solid var(--line); }
+    .trust-icon { width: 40px; height: 40px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 50%; color: var(--rose-deep); background: var(--rose-pale); }
+    .trust-item:nth-child(2) .trust-icon { color: var(--blue-deep); background: var(--blue-pale); }
+    .trust-item:nth-child(3) .trust-icon { color: #657d5d; background: #e5ecdf; }
+    .trust-item strong { display: block; font-family: var(--serif); font-size: 15px; font-weight: 400; line-height: 1.3; }
+    .trust-item span { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; line-height: 1.4; }
+
+    .section { padding: 112px 0; }
+    .section-inner { width: var(--page); margin: auto; }
+    .section-head { max-width: 660px; margin: 0 auto 48px; text-align: center; }
+    .section-head .eyebrow { margin-bottom: 15px; }
+    .section h2 { margin-bottom: 17px; font-family: var(--serif); font-weight: 400; font-size: clamp(2.55rem, 4.5vw, 4.35rem); line-height: 1.04; letter-spacing: -.05em; }
+    .section-head p:not(.eyebrow) { max-width: 520px; margin: auto; color: var(--muted); font-size: 14px; line-height: 1.85; }
+    .creations-section { position: relative; }
+    .creations-section::before { content: ""; position: absolute; top: 130px; left: -130px; width: 270px; height: 270px; border-radius: 50%; background: rgba(225,198,215,.2); filter: blur(2px); pointer-events: none; }
+    .gallery { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 28px 22px; position: relative; }
+    .creation { min-width: 0; position: relative; }
+    .creation:nth-child(1) { grid-column: 1 / span 5; }
+    .creation:nth-child(2) { grid-column: 7 / span 6; margin-top: 70px; }
+    .creation:nth-child(3) { grid-column: 2 / span 4; margin-top: -6px; }
+    .creation:nth-child(4) { grid-column: 7 / span 5; margin-top: 34px; }
+    .creation:nth-child(5) { grid-column: 1 / span 4; margin-top: 15px; }
+    .creation:nth-child(6) { grid-column: 5 / span 4; margin-top: 80px; }
+    .creation:nth-child(7) { grid-column: 9 / span 4; margin-top: -15px; }
+    .creation:nth-child(8) { grid-column: 3 / span 5; margin-top: 18px; }
+    .creation-media { position: relative; overflow: hidden; min-height: 240px; aspect-ratio: 1 / 1.08; border-radius: 5px; background: #eee3d4; isolation: isolate; }
+    .creation:nth-child(2) .creation-media { aspect-ratio: 1.23 / 1; }
+    .creation:nth-child(4) .creation-media { aspect-ratio: 1.1 / 1; }
+    .creation:nth-child(6) .creation-media { aspect-ratio: .9 / 1; }
+    .creation:nth-child(8) .creation-media { aspect-ratio: 1.18 / 1; }
+    .creation-media::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, transparent 55%, rgba(49,36,27,.2)); opacity: 0; transition: opacity .35s; pointer-events: none; }
+    .creation-media img { width: 100%; height: 100%; object-fit: contain; transition: transform .7s cubic-bezier(.2,.7,.2,1); }
+    .creation:hover .creation-media img { transform: scale(1.045); }
+    .creation:hover .creation-media::after { opacity: 1; }
+    .creation-number { position: absolute; top: 13px; left: 13px; z-index: 2; width: 35px; height: 35px; display: grid; place-items: center; border-radius: 50%; background: rgba(255,253,248,.92); font-family: var(--serif); font-size: 13px; }
+    .creation-action { position: absolute; z-index: 3; right: 14px; bottom: 14px; left: 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 15px; border: 0; border-radius: 999px; background: rgba(255,253,248,.95); cursor: pointer; font-size: 11px; font-weight: 700; opacity: 0; transform: translateY(8px); transition: opacity .25s, transform .25s; }
+    .creation:hover .creation-action, .creation-action:focus-visible { opacity: 1; transform: translateY(0); }
+    .creation-action span:last-child { color: var(--rose-deep); font-size: 18px; line-height: 1; }
+    .creation-caption { display: flex; justify-content: space-between; gap: 15px; align-items: start; padding: 15px 2px 0; }
+    .creation-caption h3 { margin-bottom: 4px; font-family: var(--serif); font-weight: 400; font-size: 20px; line-height: 1.2; }
+    .creation-caption p { max-width: 300px; margin-bottom: 0; color: var(--muted); font-size: 11px; line-height: 1.7; }
+    .caption-arrow { display: grid; place-items: center; width: 35px; height: 35px; flex: 0 0 auto; margin-top: 2px; border: 1px solid var(--line); border-radius: 50%; background: transparent; cursor: pointer; transition: color .2s, background .2s, transform .2s; }
+    .caption-arrow:hover { color: white; background: var(--rose-deep); transform: rotate(45deg); }
+    .gallery-foot { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 45px; color: var(--muted); font-size: 12px; text-align: center; }
+    .gallery-foot::before, .gallery-foot::after { content: ""; width: 42px; height: 1px; background: var(--wood); }
+
+    .personalize-section { position: relative; background: var(--paper-deep); }
+    .personalize-section::before { content: ""; position: absolute; inset: 0; opacity: .35; pointer-events: none; background: repeating-linear-gradient(4deg, transparent 0 25px, rgba(145,112,75,.06) 26px, transparent 27px 52px); }
+    .personalize-section .section-inner { position: relative; }
+    .personalize-layout { display: grid; grid-template-columns: .78fr 1.22fr; gap: clamp(35px, 7vw, 100px); align-items: center; }
+    .personalize-copy .eyebrow { margin-bottom: 17px; }
+    .personalize-copy h2 { max-width: 440px; margin-bottom: 22px; font-family: var(--serif); font-weight: 400; font-size: clamp(2.6rem, 4.5vw, 4.2rem); line-height: 1.02; letter-spacing: -.05em; }
+    .personalize-copy > p { max-width: 400px; margin-bottom: 26px; color: var(--muted); font-size: 14px; line-height: 1.9; }
+    .idea-note { display: flex; gap: 12px; align-items: center; margin-top: 28px; color: #6f5b4d; font: italic 15px var(--serif); }
+    .idea-note span { display: grid; width: 35px; height: 35px; place-items: center; border-radius: 50%; color: var(--rose-deep); background: var(--rose-pale); font-style: normal; }
+    .personalize-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
+    .personalize-tile { min-height: 154px; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 15px; padding: 20px 17px; border: 1px solid rgba(91,69,54,.12); border-radius: 4px; background: rgba(255,253,248,.78); text-align: left; cursor: pointer; transition: transform .25s, box-shadow .25s, background .25s; }
+    .personalize-tile:hover, .personalize-tile[aria-pressed="true"] { transform: translateY(-4px); background: white; box-shadow: var(--shadow-soft); }
+    .tile-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; color: var(--rose-deep); background: var(--rose-pale); }
+    .personalize-tile:nth-child(2) .tile-icon, .personalize-tile:nth-child(5) .tile-icon { color: var(--blue-deep); background: var(--blue-pale); }
+    .personalize-tile:nth-child(3) .tile-icon { color: #60795a; background: #e5ecdf; }
+    .personalize-tile strong { display: block; font-family: var(--serif); font-size: 16px; font-weight: 400; line-height: 1.25; }
+    .personalize-tile small { display: block; margin-top: 5px; color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .tile-detail { grid-column: 1 / -1; min-height: 44px; margin: 3px 0 0; color: #715e51; font-size: 12px; line-height: 1.65; }
+
+    .story-section { padding: 125px 0; }
+    .story-layout { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 8vw, 112px); align-items: center; }
+    .story-art { position: relative; min-height: 500px; }
+    .story-frame { position: absolute; width: 78%; height: 88%; left: 6%; top: 3%; padding: 14px; background: #e4d2bd; transform: rotate(-3deg); box-shadow: var(--shadow-soft); }
+    .story-frame img { width: 100%; height: 100%; object-fit: contain; background: #f4eadf; }
+    .story-blob { position: absolute; z-index: -1; right: 0; bottom: 0; width: 72%; height: 65%; border-radius: 48% 52% 60% 40% / 44% 44% 56% 56%; background: var(--blue-pale); transform: rotate(9deg); }
+    .story-stamp { position: absolute; right: 1%; top: 14%; width: 104px; height: 104px; display: grid; place-items: center; border: 1px solid rgba(169,87,136,.45); border-radius: 50%; color: var(--rose-deep); background: var(--cream); text-align: center; font: italic 14px/1.2 var(--serif); transform: rotate(9deg); }
+    .story-copy h2 { max-width: 510px; margin-bottom: 23px; font-family: var(--serif); font-size: clamp(2.8rem, 4.6vw, 4.4rem); line-height: 1.02; font-weight: 400; letter-spacing: -.055em; }
+    .story-copy h2 em { color: var(--rose-deep); font-weight: 400; }
+    .story-copy p { max-width: 450px; color: var(--muted); font-size: 14px; line-height: 1.95; }
+    .story-quote { max-width: 430px; margin: 28px 0 30px; padding: 0 0 0 19px; border-left: 2px solid var(--rose); color: #735e50; font: italic 19px/1.55 var(--serif); }
+
+    .how-section { background: #fbf8f2; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; margin-top: 60px; }
+    .step { position: relative; padding: 30px 28px 28px; border-top: 1px solid var(--oak); }
+    .step-number { display: inline-grid; place-items: center; width: 42px; height: 42px; margin-bottom: 24px; border-radius: 50%; color: var(--rose-deep); background: var(--rose-pale); font-family: var(--serif); font-size: 18px; }
+    .step:nth-child(2) .step-number { color: var(--blue-deep); background: var(--blue-pale); }
+    .step:nth-child(3) .step-number { color: #617557; background: #e5ecdf; }
+    .step h3 { margin-bottom: 10px; font-family: var(--serif); font-size: 23px; font-weight: 400; }
+    .step p { max-width: 310px; margin-bottom: 0; color: var(--muted); font-size: 13px; line-height: 1.8; }
+    .step:not(:last-child)::after { content: "↗"; position: absolute; top: 37px; right: 3px; color: var(--oak); font-size: 22px; }
+
+    .final-cta { padding: 95px 0; }
+    .cta-panel { position: relative; display: grid; grid-template-columns: 1.1fr .9fr; align-items: center; min-height: 350px; overflow: hidden; padding: clamp(35px, 6vw, 72px); border-radius: 5px; background: #e7d8c6; }
+    .cta-panel::before { content: ""; position: absolute; inset: 0; opacity: .35; background: repeating-linear-gradient(3deg, transparent 0 18px, rgba(129,93,60,.09) 19px, transparent 20px 39px); pointer-events: none; }
+    .cta-copy { position: relative; z-index: 2; }
+    .cta-copy .eyebrow { margin-bottom: 14px; }
+    .cta-copy h2 { max-width: 550px; margin-bottom: 18px; font-family: var(--serif); font-weight: 400; font-size: clamp(2.8rem, 4.5vw, 4.5rem); letter-spacing: -.05em; line-height: 1.02; }
+    .cta-copy p { max-width: 410px; margin-bottom: 25px; color: #6f5d4e; font-size: 13px; line-height: 1.8; }
+    .cta-image { position: absolute; width: 36%; height: 90%; right: 5%; bottom: -8%; border: 10px solid rgba(255,253,248,.75); background: #f3e9dd; transform: rotate(5deg); box-shadow: var(--shadow); }
+    .cta-image img { width: 100%; height: 100%; object-fit: contain; }
+    .cta-flower { position: absolute; right: 37%; top: 16%; color: var(--rose-deep); font-size: 35px; transform: rotate(-12deg); }
+
+    .site-footer { padding: 58px 0 25px; background: #473a32; color: #f8f1e8; }
+    .footer-inner { width: var(--page); margin: auto; }
+    .footer-main { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.1fr; gap: 42px; padding-bottom: 45px; }
+    
+    .footer-brand img {
+        display: block;
+        width: 135px;
+        height: 135px;
+        border-radius: 50%;
+        object-fit: contain;
+        object-position: left center;
+        filter: none;
+        opacity: 1;
+    }
+    .footer-brand p { max-width: 270px; margin: 16px 0 20px; color: #d6c8ba; font-size: 12px; line-height: 1.85; }
+    .footer-heading { margin: 8px 0 18px; color: #e8c6d9; font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+    .footer-links { display: grid; gap: 10px; }
+    .footer-links a, .footer-links span { width: fit-content; color: #ded2c7; font-size: 12px; transition: color .2s; }
+    .footer-links a:hover { color: white; }
+    .footer-contact { display: flex; flex-direction: column; gap: 13px; color: #ded2c7; font-size: 12px; }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; gap: 15px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.15); color: #c7b9ad; font-size: 10px; }
+    .footer-bottom p { margin: 0; }
+    .footer-social { display: inline-flex; align-items: center; gap: 8px; }
+    .footer-social svg { color: #e8c6d9; }
+
+    .whatsapp-float { position: fixed; z-index: 40; right: 23px; bottom: 22px; display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 10px 17px 10px 12px; border: 1px solid rgba(255,255,255,.6); border-radius: 999px; color: white; background: #287f60; box-shadow: 0 10px 28px rgba(35,89,66,.25); font-size: 11px; font-weight: 700; transition: transform .2s, box-shadow .2s; }
+    .whatsapp-float:hover { transform: translateY(-3px); box-shadow: 0 14px 32px rgba(35,89,66,.3); }
+    .whatsapp-float svg { width: 24px; height: 24px; }
+
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: .08s; }
+    .reveal-delay-2 { transition-delay: .16s; }
+    .reveal-delay-3 { transition-delay: .24s; }
+
+    .modal-backdrop { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 24px; background: rgba(48,37,30,.58); backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px); opacity: 0; visibility: hidden; transition: opacity .25s, visibility .25s; }
+    .modal-backdrop.is-open { opacity: 1; visibility: visible; }
+    .order-modal { position: relative; width: min(760px, 100%); max-height: min(90svh, 900px); overflow: auto; overscroll-behavior: contain; border: 1px solid rgba(255,255,255,.7); border-radius: 22px; background: var(--paper); box-shadow: 0 30px 100px rgba(30,22,17,.3); transform: translateY(18px) scale(.985); transition: transform .3s cubic-bezier(.2,.7,.2,1); scrollbar-width: thin; scrollbar-color: var(--wood) transparent; }
+    .modal-backdrop.is-open .order-modal { transform: translateY(0) scale(1); }
+    .modal-header { position: sticky; top: 0; z-index: 4; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; padding: 27px 30px 22px; border-bottom: 1px solid var(--line); background: rgba(255,253,248,.96); backdrop-filter: blur(12px); }
+    .modal-header .eyebrow { margin-bottom: 8px; font-size: 9px; }
+    .modal-header h2 { margin: 0 0 7px; font: 400 clamp(1.8rem, 4vw, 2.35rem)/1.1 var(--serif); letter-spacing: -.04em; }
+    .modal-header p { max-width: 520px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+    .modal-close { flex: 0 0 auto; display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid var(--line); border-radius: 50%; background: transparent; cursor: pointer; font-size: 24px; line-height: 1; transition: background .2s, transform .2s; }
+    .modal-close:hover { background: var(--rose-pale); transform: rotate(90deg); }
+    .order-form { padding: 25px 30px 30px; }
+    .form-section-title { display: flex; align-items: center; gap: 10px; margin: 0 0 16px; font: 400 19px var(--serif); }
+    .form-section-title span { color: var(--rose-deep); font: 700 9px var(--sans); letter-spacing: .12em; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 17px 16px; }
+    .field { min-width: 0; }
+    .field.full { grid-column: 1 / -1; }
+    .field label, .field-label { display: block; margin-bottom: 7px; color: #55463d; font-size: 11px; font-weight: 750; }
+    .required { color: var(--rose-deep); }
+    .field input, .field textarea, .field select { width: 100%; min-height: 47px; padding: 12px 14px; border: 1px solid rgba(91,69,54,.2); border-radius: 9px; outline: none; color: var(--ink); background: #fffefa; font-size: 13px; transition: border-color .2s, box-shadow .2s, background .2s; }
+    .field textarea { min-height: 96px; resize: vertical; line-height: 1.6; }
+    .field input::placeholder, .field textarea::placeholder { color: #a99a8d; }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--blue-deep); box-shadow: 0 0 0 3px rgba(94,178,204,.15); background: white; }
+    .field [aria-invalid="true"] { border-color: #b64b60; box-shadow: 0 0 0 2px rgba(182,75,96,.08); }
+    .field-error { min-height: 0; margin: 5px 0 0; color: #a83c50; font-size: 10px; line-height: 1.4; }
+    .field-error:empty { display: none; }
+    .field-hint { margin: 6px 0 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .reference-section { margin: 25px 0 27px; }
+    .reference-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+    .reference-option { position: relative; min-width: 0; padding: 0; overflow: hidden; border: 2px solid transparent; border-radius: 9px; background: #f0e7da; text-align: left; cursor: pointer; transition: border-color .2s, transform .2s, box-shadow .2s; }
+    .reference-option:hover { transform: translateY(-2px); }
+    .reference-option[aria-pressed="true"] { border-color: var(--rose-deep); box-shadow: 0 0 0 2px rgba(169,87,136,.12); }
+    .reference-option img { width: 100%; aspect-ratio: 1.15 / 1; object-fit: contain; background: #f3e9dd; }
+    .reference-option span { display: block; padding: 7px 8px 8px; background: #fffdf8; font-size: 10px; font-weight: 700; line-height: 1.3; }
+    .reference-option[aria-pressed="true"] span { color: var(--rose-deep); }
+    .reference-option.custom-option { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 13px 8px; border: 1px dashed #bba998; background: #f7f0e7; text-align: center; }
+    .custom-symbol { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; color: var(--blue-deep); background: var(--blue-pale); font-size: 22px; }
+    .reference-error { margin: 8px 0 0; color: #a83c50; font-size: 10px; }
+    .reference-error:empty { display: none; }
+    .form-divider { height: 1px; margin: 25px 0; background: var(--line); }
+    .whatsapp-note { display: flex; align-items: flex-start; gap: 10px; margin: 20px 0; padding: 13px 14px; border-radius: 10px; color: #4f6d5e; background: #eaf3ec; font-size: 11px; line-height: 1.65; }
+    .whatsapp-note svg { flex: 0 0 auto; margin-top: 1px; }
+    .form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+    .form-actions .button { min-height: 50px; }
+    .form-footnote { margin: 12px 0 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
+    .whatsapp-fallback { display: none; margin-top: 18px; padding: 16px; border: 1px solid #c5dfce; border-radius: 12px; background: #f0f8f1; }
+    .whatsapp-fallback.is-visible { display: block; }
+    .whatsapp-fallback h3 { margin-bottom: 5px; font: 400 18px var(--serif); }
+    .whatsapp-fallback p { margin-bottom: 12px; color: #536a5a; font-size: 11px; }
+    .fallback-link { display: inline-flex; align-items: center; gap: 7px; color: #176b4b; font-size: 12px; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+    .noscript-note { padding: 12px; background: #fff0d7; text-align: center; font-size: 12px; }
+
+    @keyframes rise-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes art-in { from { opacity: 0; transform: translateY(18px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-9px) rotate(7deg); } }
+
+    @media (min-width: 1440px) { :root { --page: min(1280px, calc(100% - 100px)); } .hero { padding-top: 64px; } }
+    @media (max-width: 1050px) {
+      :root { --page: calc(100% - 44px); }
+      .nav-wrap { gap: 16px; }
+      .brand img { width: 52px; }
+      .nav-links { gap: 18px; }
+      .nav-links a { font-size: 11px; }
+      .nav-cta { padding: 10px 14px; font-size: 11px; }
+      .hero-inner { gap: 25px; }
+      .hero-art { min-height: 460px; }
+      .trust-item { gap: 9px; padding-inline: 9px; }
+      .trust-item strong { font-size: 14px; }
+      .personalize-layout { grid-template-columns: .7fr 1.3fr; gap: 40px; }
+      .personalize-tile { padding: 16px 13px; }
+      .footer-main { gap: 26px; }
+    }
+    @media (max-width: 800px) {
+      :root { --page: calc(100% - 40px); }
+      .nav-wrap { min-height: 70px; }
+      .brand img { width: 52px; height: 52px; }
+      .menu-toggle { display: flex; }
+      .nav-cta { display: none; }
+      .nav-links { position: absolute; top: calc(100% + 1px); left: 0; right: 0; display: flex; flex-direction: column; align-items: stretch; gap: 0; padding: 8px 20px 20px; border-bottom: 1px solid var(--line); background: rgba(255,253,248,.98); box-shadow: 0 18px 28px rgba(71,53,40,.08); opacity: 0; visibility: hidden; transform: translateY(-7px); transition: opacity .2s, transform .2s, visibility .2s; }
+      .nav-links.is-open { opacity: 1; visibility: visible; transform: translateY(0); }
+      .nav-links a { padding: 13px 4px; border-bottom: 1px solid rgba(91,69,54,.09); font-size: 13px; }
+      .nav-links a::after { display: none; }
+      .nav-links .mobile-order { display: block; margin-top: 14px; padding: 13px 18px; border: 0; border-radius: 999px; color: white; background: var(--rose-deep); text-align: center; font-weight: 700; }
+      .hero { padding: 35px 0 55px; }
+      .hero-inner { grid-template-columns: 1fr; gap: 14px; }
+      .hero-copy { padding: 10px 0 0; }
+      .hero h1 { max-width: 590px; font-size: clamp(3.25rem, 10vw, 5.4rem); }
+      .hero-description { max-width: 500px; }
+      .hero-art { width: min(100%, 560px); min-height: min(78vw, 480px); justify-self: center; margin-top: 8px; }
+      .hero-photo-main { width: 53%; height: 78%; left: 23%; top: 4%; }
+      .hero-photo-side { width: 33%; height: 35%; right: 2%; bottom: 3%; }
+      .hero-photo-small { width: 28%; height: 29%; left: 4%; bottom: 11%; }
+      .hero-sticker { width: 78px; height: 78px; font-size: 12px; }
+      .hand-note { bottom: -3px; left: 30%; font-size: 13px; }
+      .trust-inner { grid-template-columns: repeat(2, 1fr); }
+      .trust-item { justify-content: flex-start; padding: 16px 14px; border-bottom: 1px solid var(--line); }
+      .trust-item:nth-child(odd) { border-left: 1px solid var(--line); }
+      .trust-item:nth-child(even) { border-right: 1px solid var(--line); }
+      .trust-item:nth-child(3), .trust-item:nth-child(4) { border-bottom: 0; }
+      .section { padding: 82px 0; }
+      .section-head { margin-bottom: 35px; }
+      .gallery { gap: 25px 15px; }
+      .creation:nth-child(1) { grid-column: 1 / span 6; }
+      .creation:nth-child(2) { grid-column: 7 / span 6; margin-top: 45px; }
+      .creation:nth-child(3) { grid-column: 1 / span 5; margin-top: 0; }
+      .creation:nth-child(4) { grid-column: 7 / span 6; margin-top: 15px; }
+      .creation:nth-child(5) { grid-column: 1 / span 5; margin-top: 8px; }
+      .creation:nth-child(6) { grid-column: 6 / span 7; margin-top: 45px; }
+      .creation:nth-child(7) { grid-column: 1 / span 6; margin-top: 5px; }
+      .creation:nth-child(8) { grid-column: 6 / span 7; margin-top: 38px; }
+      .creation-media { min-height: 0; }
+      .creation-action { display: none; }
+      .creation-caption h3 { font-size: 17px; }
+      .creation-caption p { font-size: 10px; }
+      .caption-arrow { width: 31px; height: 31px; }
+      .personalize-layout { grid-template-columns: 1fr; gap: 35px; }
+      .personalize-copy h2 { max-width: 600px; }
+      .personalize-copy > p { max-width: 600px; }
+      .personalize-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .personalize-tile { min-height: 138px; }
+      .story-layout { gap: 35px; }
+      .story-art { min-height: 410px; }
+      .story-stamp { width: 82px; height: 82px; font-size: 12px; }
+      .steps { gap: 14px; }
+      .step { padding: 25px 15px 20px; }
+      .step h3 { font-size: 20px; }
+      .step:not(:last-child)::after { right: -4px; }
+      .cta-panel { min-height: 320px; }
+      .cta-image { width: 35%; right: 3%; }
+      .footer-main { grid-template-columns: 1.2fr 1fr; row-gap: 32px; }
+    }
+    @media (max-width: 560px) {
+      :root { --page: calc(100% - 36px); }
+      body { font-size: 15px; }
+      .announcement { min-height: 33px; font-size: 8px; letter-spacing: .12em; gap: 7px; }
+      .nav-wrap { min-height: 65px; }
+      .brand img { width: 52px; height: 52px; }
+      .hero { padding-top: 26px; padding-bottom: 40px; }
+      .hero-inner { gap: 5px; }
+      .eyebrow { gap: 8px; margin-bottom: 17px; font-size: 8px; letter-spacing: .14em; }
+      .eyebrow::before { width: 18px; }
+      .hero h1 { max-width: 400px; margin-bottom: 17px; font-size: clamp(3rem, 13.3vw, 4.1rem); line-height: .99; }
+      .hero-description { max-width: 430px; margin-bottom: 21px; font-size: 13px; line-height: 1.75; }
+      .hero-actions { gap: 9px; }
+      .button { min-height: 46px; padding: 12px 17px; font-size: 11px; }
+      .hero-actions .button { flex: 1 1 auto; }
+      .hero-actions .button-outline { flex: 0 1 auto; }
+      .delivery-note { margin-top: 20px; font-size: 10px; }
+      .hero-art { min-height: 93vw; max-height: 405px; margin-top: 8px; }
+      .hero-halo { width: 78%; top: 6%; left: 11%; }
+      .hero-photo-main { width: 58%; height: 76%; top: 5%; left: 21%; border-radius: 44% 44% 9px 9px; }
+      .hero-photo-side { width: 34%; height: 34%; right: 0; bottom: 3%; border-width: 5px; }
+      .hero-photo-small { width: 29%; height: 28%; left: 0; bottom: 10%; border-width: 5px; }
+      .hero-sticker { width: 68px; height: 68px; top: 1%; right: 0; font-size: 10px; }
+      .hero-sticker small { font-size: 6px; }
+      .hero-star { font-size: 24px; }
+      .star-one { top: 13%; left: 3%; }
+      .star-two { right: 1%; top: 43%; font-size: 18px; }
+      .hand-note { left: 29%; bottom: -2px; font-size: 11px; }
+      .trust-inner { width: 100%; }
+      .trust-item { gap: 9px; padding: 13px 12px; }
+      .trust-icon { width: 34px; height: 34px; }
+      .trust-icon svg { width: 17px; height: 17px; }
+      .trust-item strong { font-size: 13px; }
+      .trust-item span { font-size: 9px; }
+      .section { padding: 70px 0; }
+      .section h2 { font-size: clamp(2.45rem, 11vw, 3.4rem); }
+      .section-head { margin-bottom: 30px; }
+      .section-head p:not(.eyebrow) { font-size: 12px; }
+      .gallery { gap: 22px 12px; }
+      .creation:nth-child(1) { grid-column: 1 / span 7; }
+      .creation:nth-child(2) { grid-column: 6 / span 7; margin-top: 40px; }
+      .creation:nth-child(3) { grid-column: 1 / span 6; }
+      .creation:nth-child(4) { grid-column: 6 / span 7; margin-top: 22px; }
+      .creation:nth-child(5) { grid-column: 1 / span 6; }
+      .creation:nth-child(6) { grid-column: 6 / span 7; margin-top: 30px; }
+      .creation:nth-child(7) { grid-column: 1 / span 7; }
+      .creation:nth-child(8) { grid-column: 5 / span 8; margin-top: 25px; }
+      .creation-caption { gap: 6px; padding-top: 10px; }
+      .creation-caption h3 { font-size: 15px; }
+      .creation-caption p { font-size: 9px; line-height: 1.5; }
+      .caption-arrow { width: 28px; height: 28px; }
+      .gallery-foot { gap: 8px; margin-top: 30px; font-size: 10px; }
+      .gallery-foot::before, .gallery-foot::after { width: 22px; }
+      .personalize-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .personalize-tile { min-height: 128px; padding: 15px; }
+      .personalize-tile strong { font-size: 15px; }
+      .personalize-tile small { font-size: 9px; }
+      .tile-detail { font-size: 11px; }
+      .story-layout { grid-template-columns: 1fr; gap: 34px; }
+      .story-art { min-height: 100vw; max-height: 410px; }
+      .story-frame { width: 77%; height: 87%; left: 7%; }
+      .story-copy h2 { font-size: clamp(2.7rem, 11vw, 3.5rem); }
+      .story-copy p { font-size: 13px; }
+      .story-quote { font-size: 17px; }
+      .steps { grid-template-columns: 1fr; gap: 10px; margin-top: 35px; }
+      .step { display: grid; grid-template-columns: 48px 1fr; column-gap: 13px; padding: 20px 0; border-top: 1px solid var(--line); }
+      .step-number { grid-row: 1 / span 2; margin: 0; }
+      .step h3 { margin-bottom: 6px; font-size: 21px; }
+      .step p { max-width: none; }
+      .step:not(:last-child)::after { content: "↓"; top: auto; right: 6px; bottom: -16px; z-index: 2; padding: 3px 6px; background: #fbf8f2; }
+      .final-cta { padding: 58px 0; }
+      .cta-panel { display: block; min-height: 520px; padding: 34px 26px; }
+      .cta-copy { max-width: 100%; }
+      .cta-copy h2 { max-width: 340px; font-size: clamp(2.7rem, 11vw, 3.5rem); }
+      .cta-copy p { max-width: 330px; font-size: 12px; }
+      .cta-image { width: 49%; height: 44%; right: 8%; bottom: -3%; border-width: 7px; }
+      .cta-flower { right: 50%; top: auto; bottom: 28%; font-size: 26px; }
+      .site-footer { padding-top: 45px; }
+      .footer-main { grid-template-columns: 1fr 1fr; gap: 30px 18px; padding-bottom: 32px; }
+      .footer-brand { grid-column: 1 / -1; }
+      .footer-brand p { max-width: 330px; }
+      .footer-heading { margin-bottom: 13px; font-size: 9px; }
+      .footer-links { gap: 8px; }
+      .footer-links a, .footer-links span, .footer-contact { font-size: 11px; }
+      .footer-bottom { align-items: flex-start; flex-direction: column; gap: 8px; font-size: 9px; }
+      .whatsapp-float { right: 13px; bottom: max(12px, env(safe-area-inset-bottom)); min-height: 47px; padding: 9px 13px 9px 10px; font-size: 10px; }
+      .whatsapp-float svg { width: 22px; height: 22px; }
+      .modal-backdrop { align-items: end; padding: 0; }
+      .order-modal { width: 100%; max-height: 94svh; border-radius: 20px 20px 0 0; padding-bottom: env(safe-area-inset-bottom); transform: translateY(25px); }
+      .modal-header { padding: 22px 19px 17px; }
+      .modal-header h2 { font-size: 1.85rem; }
+      .modal-header p { font-size: 11px; }
+      .modal-close { width: 38px; height: 38px; }
+      .order-form { padding: 20px 19px 24px; }
+      .form-grid { grid-template-columns: 1fr; gap: 14px; }
+      .field.full { grid-column: auto; }
+      .field input, .field textarea, .field select { font-size: 16px; }
+      .field textarea { min-height: 100px; }
+      .reference-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+      .reference-option span { padding: 7px 5px; font-size: 9px; }
+      .reference-option.custom-option { min-height: 90px; }
+      .form-actions { flex-direction: column; align-items: stretch; }
+      .form-actions .button { width: 100%; }
+    }
+    @media (max-width: 350px) {
+      :root { --page: calc(100% - 28px); }
+      .hero h1 { font-size: 2.85rem; }
+      .hero-actions .button { padding-inline: 13px; font-size: 10px; }
+      .trust-item { padding-inline: 8px; }
+      .trust-item strong { font-size: 12px; }
+      .creation-caption h3 { font-size: 14px; }
+      .personalize-tile { padding: 12px; }
+      .modal-header { padding-inline: 15px; }
+      .order-form { padding-inline: 15px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="page-shell">
+    <div class="announcement"><span class="sparkle" aria-hidden="true">✳</span> Handcrafted with Love <span aria-hidden="true">•</span> Home & Nursery Decor <span class="sparkle" aria-hidden="true">✳</span></div>
+
+    <header class="site-header" id="top">
+      <div class="nav-wrap">
+        <a class="brand" href="#top" aria-label="Shanova home"><img src="{% static 'images/shanova/logo.png' %}" alt="Shanova"></a>
+        <nav class="nav-links" id="primary-navigation" aria-label="Main navigation">
+          <a href="#top">Home</a>
+          <a href="#creations">Our Creations</a>
+          <a href="#personalization">Personalization</a>
+          <a href="#story">Our Story</a>
+          <a href="#contact">Contact</a>
+          <a class="mobile-order" href="#order" data-order-trigger>Create Your Order ↗</a>
+        </nav>
+        <button class="button button-primary nav-cta" type="button" data-order-trigger>Create Your Order <span aria-hidden="true">↗</span></button>
+        <button class="menu-toggle" type="button" aria-label="Open navigation menu" aria-controls="primary-navigation" aria-expanded="false"><span></span></button>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <p class="eyebrow">Personalized home &amp; nursery decor</p>
+            <h1 id="hero-title">Little moments,<br><em>made forever.</em></h1>
+            <p class="hero-description">Names, milestones, and tiny details that mean everything. Discover thoughtful personalized keepsakes made to bring a little more love into your little one's world.</p>
+            <div class="hero-actions">
+              <button class="button button-primary" type="button" data-order-trigger>Create Your Order <span aria-hidden="true">↗</span></button>
+              <a class="button button-outline" href="#creations">Explore Our Creations <span aria-hidden="true">↓</span></a>
+            </div>
+            <div class="delivery-note">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Made with love · Delivered across Pakistan
+            </div>
+          </div>
+          <div class="hero-art" aria-label="A little inspiration from Shanova's creations">
+            <div class="hero-halo" aria-hidden="true"></div>
+            <span class="hero-star star-one" aria-hidden="true">✳</span>
+            <span class="hero-star star-two" aria-hidden="true">✦</span>
+            <div class="hero-photo hero-photo-main"><img src="{% static 'images/shanova/portfolio/p1.jpg' %}" alt="Shanova personalized nursery keepsake" width="700" height="850" fetchpriority="high"></div>
+            <div class="hero-photo hero-photo-small"><img src="{% static 'images/shanova/portfolio/p2.jpg' %}" alt="A second Shanova creation for little milestones" width="420" height="420" loading="eager"></div>
+            <div class="hero-photo hero-photo-side"><img src="{% static 'images/shanova/portfolio/p3.jpg' %}" alt="Personalized decor inspiration from Shanova" width="420" height="420" loading="eager"></div>
+            <div class="hero-sticker">made for<small>your little love</small></div>
+            <div class="hand-note" aria-hidden="true">the sweetest details</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="trust-strip" aria-label="Shanova highlights">
+        <div class="trust-inner">
+          <div class="trust-item reveal"><div class="trust-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 20s-8-4.5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 9c0 6.5-8 11-8 11Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></div><div><strong>Made just for you</strong><span>Personal details, your way</span></div></div>
+          <div class="trust-item reveal reveal-delay-1"><div class="trust-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m12 3 2.2 5.2L20 10l-5.8 1.8L12 17l-2.2-5.2L4 10l5.8-1.8L12 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="m19 16 .9 2.1L22 19l-2.1.9L19 22l-.9-2.1L16 19l2.1-.9L19 16Z" fill="currentColor"/></svg></div><div><strong>Thoughtful details</strong><span>Considered for your keepsake</span></div></div>
+          <div class="trust-item reveal reveal-delay-2"><div class="trust-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3.5 14 8l4.5 2-4.5 2L12 16.5 10 12l-4.5-2L10 8l2-4.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M18.5 15.5 20 19l3.5 1.5L20 22l-1.5 3.5L17 22l-3.5-1.5L17 19l1.5-3.5Z" transform="translate(-1 -2) scale(.9)" stroke="currentColor" stroke-width="1.2"/></svg></div><div><strong>Little milestones</strong><span>Made meaningful</span></div></div>
+          <div class="trust-item reveal reveal-delay-3"><div class="trust-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 7h11v10H3zM14 10h4l3 3v4h-7z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="7" cy="18" r="2" fill="currentColor"/><circle cx="18" cy="18" r="2" fill="currentColor"/></svg></div><div><strong>Across Pakistan</strong><span>Delivery arrangements confirmed</span></div></div>
+        </div>
+      </section>
+
+      <section class="section creations-section" id="creations" aria-labelledby="creations-title">
+        <div class="section-inner">
+          <div class="section-head reveal">
+            <p class="eyebrow">A little gallery of lovely things</p>
+            <h2 id="creations-title">Creations with<br>a story to tell.</h2>
+            <p>Every family has its own little details. Explore these creations for inspiration, then tell us what would make yours feel special.</p>
+          </div>
+          <div class="gallery">
+            <article class="creation reveal">
+              <div class="creation-media"><span class="creation-number">01</span><img src="{% static 'images/shanova/portfolio/p1.jpg' %}" alt="Shanova creation 01, personalized decor reference" width="700" height="800" loading="lazy"><button class="creation-action" type="button" data-order-trigger data-reference="1"><span>Personalize this creation</span><span aria-hidden="true">↗</span></button></div>
+              <div class="creation-caption"><div><h3>Little Keepsake</h3><p>A meaningful detail for a memory worth keeping.</p></div><button class="caption-arrow" type="button" aria-label="Choose creation 01 as your reference" data-order-trigger data-reference="1">↗</button></div>
+            </article>
+            <article class="creation reveal reveal-delay-1">
+              <div class="creation-media"><span class="creation-number">02</span><img src="{% static 'images/shanova/portfolio/p4.jpg' %}" alt="Shanova creation 02, nursery and milestone decor reference" width="800" height="650" loading="lazy"><button class="creation-action" type="button" data-order-trigger data-reference="2"><span>Personalize this creation</span><span aria-hidden="true">↗</span></button></div>
+              <div class="creation-caption"><div><h3>Growing Memories</h3><p>Inspiration for celebrating the little things as they grow.</p></div><button class="caption-arrow" type="button" aria-label="Choose creation 02 as your reference" data-order-trigger data-reference="2">↗</button></div>
+            </article>
+            <article class="creation reveal">
+              <div class="creation-media"><span class="creation-number">03</span><img src="{% static 'images/shanova/portfolio/p3.jpg' %}" alt="Shanova creation 03, personalized keepsake inspiration" width="600" height="700" loading="lazy"><button class="creation-action" type="button" data-order-trigger data-reference="3"><span>Personalize this creation</span><span aria-hidden="true">↗</span></button></div>
+              <div class="creation-caption"><div><h3>Made Personal</h3><p>Your name, colors, and little ideas can make it your own.</p></div><button class="caption-arrow" type="button" aria-label="Choose creation 03 as your reference" data-order-trigger data-reference="3">↗</button></div>
+            </article>
+            <article class="creation reveal reveal-delay-1">
+              <div class="creation-media"><span class="creation-number">04</span><img src="{% static 'images/shanova/portfolio/p2.jpg' %}" alt="Shanova creation 04, custom decor reference" width="700" height="650" loading="lazy"><button class="creation-action" type="button" data-order-trigger data-reference="4"><span>Personalize this creation</span><span aria-hidden="true">↗</span></button></div>
+              <div class="creation-caption"><div><h3>Sweet Beginnings</h3><p>A starting point for a thoughtful newborn or family gift.</p></div><button class="caption-arrow" type="button" aria-label="Choose creation 04 as your reference" data-order-trigger data-reference="4">↗</button></div>
+            </article>
+            <article class="creation reveal">
+              <div class="creation-media"><span class="creation-number">05</span><img src="{% static 'images/shanova/portfolio/p5.jpg' %}" alt="Shanova creation 05, personalized home decor reference" width="600" height="700" loading="lazy"><button class="creation-action" type="button" data-order-trigger data-reference="5"><span>Personalize this creation</span><span aria-hidden="true">↗</span></button></div>
+              <div class="creation-caption"><div><h3>A Little Wonder</h3><p>For a nursery corner that feels unmistakably yours.</p></div><button class="caption-arrow" type="button" aria-label="Choose creation 05 as your reference" data-order-trigger data-reference="5">↗</button></div>
+            </article>
+            <article class="creation reveal reveal-delay-1">
+              <div class="creation-media"><span class="creation-number">06</span><img src="{% static 'images/shanova/portfolio/p6.jpg' %}" alt="Shanova creation 06, personalized decorative keepsake reference" width="600" height="700" loading="lazy"><button class="creation-action" type="button" data-order-trigger data-reference="6"><span>Personalize this creation</span><span aria-hidden="true">↗</span></button></div>
+              <div class="creation-caption"><div><h3>Milestone Magic</h3><p>Celebrate a chapter in your little one's story.</p></div><button class="caption-arrow" type="button" aria-label="Choose creation 06 as your reference" data-order-trigger data-reference="6">↗</button></div>
+            </article>
+            <article class="creation reveal">
+              <div class="creation-media"><span class="creation-number">07</span><img src="{% static 'images/shanova/portfolio/p7.jpg' %}" alt="Shanova creation 07, nursery decor inspiration" width="650" height="700" loading="lazy"><button class="creation-action" type="button" data-order-trigger data-reference="7"><span>Personalize this creation</span><span aria-hidden="true">↗</span></button></div>
+              <div class="creation-caption"><div><h3>Room for Wonder</h3><p>A personal touch for a space filled with possibility.</p></div><button class="caption-arrow" type="button" aria-label="Choose creation 07 as your reference" data-order-trigger data-reference="7">↗</button></div>
+            </article>
+            <article class="creation reveal reveal-delay-1">
+              <div class="creation-media"><span class="creation-number">08</span><img src="{% static 'images/shanova/portfolio/p8.jpg' %}" alt="Shanova creation 08, custom keepsake inspiration" width="750" height="650" loading="lazy"><button class="creation-action" type="button" data-order-trigger data-reference="8"><span>Personalize this creation</span><span aria-hidden="true">↗</span></button></div>
+              <div class="creation-caption"><div><h3>Just for Your Little One</h3><p>Use this as a reference or bring us a brand-new idea.</p></div><button class="caption-arrow" type="button" aria-label="Choose creation 08 as your reference" data-order-trigger data-reference="8">↗</button></div>
+            </article>
+          </div>
+          <div class="gallery-foot">Your idea is always welcome <span aria-hidden="true">♡</span></div>
+        </div>
+      </section>
+
+      <section class="section personalize-section" id="personalization" aria-labelledby="personalize-title">
+        <div class="section-inner personalize-layout">
+          <div class="personalize-copy reveal">
+            <p class="eyebrow">Your idea, thoughtfully made</p>
+            <h2 id="personalize-title">The little details are what make it yours.</h2>
+            <p>Start with a name, a date, a favorite color, or simply a feeling. Tell us what you have in mind and we can discuss the possibilities for your chosen creation.</p>
+            <button class="button button-primary" type="button" data-order-trigger>I Have an Idea <span aria-hidden="true">↗</span></button>
+            <div class="idea-note"><span aria-hidden="true">✳</span> Not sure where to begin? We can start with a conversation.</div>
+          </div>
+          <div class="personalize-grid reveal reveal-delay-1" aria-label="Personalization inspiration">
+            <button class="personalize-tile" type="button" data-personalization="A child's name" aria-pressed="false"><span class="tile-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 19 10 5h4l6 14M7 13h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>A little name</strong><small>Make it unmistakably theirs</small></span></button>
+            <button class="personalize-tile" type="button" data-personalization="Birth details" aria-pressed="false"><span class="tile-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M8 3v4m8-4v4M4 10h16m-9 4h2m-2 3h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><span><strong>Birth details</strong><small>Remember their very first day</small></span></button>
+            <button class="personalize-tile" type="button" data-personalization="Gender reveal theme" aria-pressed="false"><span class="tile-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s-7-4.3-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.7-7 10-7 10Z" stroke="currentColor" stroke-width="1.5"/><path d="M12 4v4m-2-2h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><span><strong>Reveal &amp; celebrate</strong><small>A theme for a big little surprise</small></span></button>
+            <button class="personalize-tile" type="button" data-personalization="Nursery decorations" aria-pressed="false"><span class="tile-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10M9 20v-6h6v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>A cozy nursery</strong><small>Details for their little world</small></span></button>
+            <button class="personalize-tile" type="button" data-personalization="Growth and milestone tracking" aria-pressed="false"><span class="tile-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 3v18m0-15h5M6 10h3m-3 4h5m-5 4h3M14 5h5m-5 5h3m-3 5h5m-5 4h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><span><strong>Growing up</strong><small>Little milestones, year by year</small></span></button>
+            <button class="personalize-tile" type="button" data-personalization="Personalized calendar or wall display" aria-pressed="false"><span class="tile-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 8h2m4 0h2M8 12h2m4 0h2M8 16h2m4 0h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><span><strong>Everyday reminders</strong><small>Calendars and name displays</small></span></button>
+            <p class="tile-detail" id="personalization-detail" aria-live="polite">Choose an idea to explore it, or tell us about something entirely your own. Options depend on the product and will be discussed before confirmation.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section story-section" id="story" aria-labelledby="story-title">
+        <div class="section-inner story-layout">
+          <div class="story-art reveal">
+            <div class="story-blob" aria-hidden="true"></div>
+            <div class="story-frame"><img src="{% static 'images/shanova/portfolio/p5.jpg' %}" alt="A Shanova decorative creation, made to inspire a meaningful keepsake" width="700" height="850" loading="lazy"></div>
+            <div class="story-stamp">little things<br>♡ big feelings</div>
+          </div>
+          <div class="story-copy reveal reveal-delay-1">
+            <p class="eyebrow">For the moments that matter</p>
+            <h2 id="story-title">More than decor.<br><em>A memory that stays.</em></h2>
+            <p>Some moments deserve more than a photograph tucked away on a phone. A name on the wall, the details of a first day, a small reminder of just how much someone is loved — these are the things that make a house feel like your family's home.</p>
+            <p>Shanova is here to help you turn those meaningful details into personalized pieces for your nursery, your celebrations, and the people you love.</p>
+            <blockquote class="story-quote">“Because the smallest moments often become our biggest memories.”</blockquote>
+            <button class="button button-outline" type="button" data-order-trigger>Make a Memory <span aria-hidden="true">↗</span></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section how-section" id="how-to-order" aria-labelledby="how-title">
+        <div class="section-inner">
+          <div class="section-head reveal">
+            <p class="eyebrow">A simple little process</p>
+            <h2 id="how-title">From your idea<br>to something treasured.</h2>
+            <p>Have a reference in mind or an idea you have not seen anywhere yet? Starting a conversation is easy.</p>
+          </div>
+          <div class="steps">
+            <article class="step reveal"><span class="step-number">01</span><h3>Explore the creations</h3><p>Choose a portfolio piece for inspiration, or start with your own idea and the feeling you want to capture.</p></article>
+            <article class="step reveal reveal-delay-1"><span class="step-number">02</span><h3>Share your details</h3><p>Tell us the name, dates, colors, theme, or other details that will make your keepsake personal.</p></article>
+            <article class="step reveal reveal-delay-2"><span class="step-number">03</span><h3>Continue on WhatsApp</h3><p>Your details open as a prepared WhatsApp message. Shanova can confirm pricing, product details, and delivery arrangements with you.</p></article>
+          </div>
+          <div style="text-align:center;margin-top:42px" class="reveal"><button class="button button-primary" type="button" data-order-trigger>Start Your Order <span aria-hidden="true">↗</span></button></div>
+        </div>
+      </section>
+
+      <section class="final-cta" aria-labelledby="cta-title">
+        <div class="section-inner">
+          <div class="cta-panel reveal">
+            <div class="cta-copy">
+              <p class="eyebrow">A keepsake with your name on it</p>
+              <h2 id="cta-title">Let’s make something special.</h2>
+              <p>Bring us a little idea, a big milestone, or a name you love. Let’s talk about turning it into something meaningful.</p>
+              <button class="button button-primary" type="button" data-order-trigger>Create Your Order <span aria-hidden="true">↗</span></button>
+            </div>
+            <span class="cta-flower" aria-hidden="true">✳</span>
+            <div class="cta-image"><img src="{% static 'images/shanova/portfolio/p8.jpg' %}" alt="Shanova keepsake inspiration for a personal gift" width="700" height="650" loading="lazy"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer" id="contact">
+      <div class="footer-inner">
+        <div class="footer-main">
+          <div class="footer-brand">
+            <a href="#top" aria-label="Shanova home"><img src="{% static 'images/shanova/logo.png' %}" alt="Shanova"></a>
+            <p>Personalized nursery and home decor for little names, lovely milestones, and memories worth keeping.</p>
+            <a class="footer-social" href="https://www.instagram.com/shanova.pk" target="_blank" rel="noopener noreferrer" aria-label="Visit Shanova on Instagram">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/><circle cx="17.5" cy="6.8" r="1" fill="currentColor"/></svg>
+              Find us on Instagram
+            </a>
+          </div>
+          <div><h2 class="footer-heading">Explore</h2><nav class="footer-links" aria-label="Footer navigation"><a href="#top">Home</a><a href="#creations">Our Creations</a><a href="#personalization">Personalization</a><a href="#story">Our Story</a><a href="#how-to-order">How to Order</a></nav></div>
+          <div><h2 class="footer-heading">The Shanova touch</h2><div class="footer-links"><span>Home &amp; Nursery Decor</span><span>Personalized Keepsakes</span><span>Thoughtful Gift Ideas</span><span>Delivery Across Pakistan</span></div></div>
+          <div><h2 class="footer-heading">Let’s talk</h2><div class="footer-contact"><span>WhatsApp: +92 327 8607827</span><span>Share your idea and we’ll discuss the details together.</span><button class="button button-primary button-small" type="button" data-order-trigger>Order on WhatsApp ↗</button></div></div>
+        </div>
+        <div class="footer-bottom"><p>© <span id="current-year"></span> Shanova. Made with love for little moments.</p><p>Personalized with care · Delivered across Pakistan</p></div>
+      </div>
+    </footer>
+  </div>
+
+  <a class="whatsapp-float" href="https://wa.me/923278607827" target="_blank" rel="noopener noreferrer" aria-label="Chat with Shanova on WhatsApp">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.2 11.8a8.2 8.2 0 0 1-12.1 7.1L3 20l1.2-4.8A8.2 8.2 0 1 1 20.2 11.8Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8.4 7.9c.2-.5.5-.5.8-.5h.5c.2 0 .4.1.5.4l.7 1.7c.1.2.1.4-.1.6l-.5.6c-.2.2-.2.4-.1.6.4.8 1.1 1.5 1.9 1.9.2.1.4.1.6-.1l.7-.8c.2-.2.4-.2.6-.1l1.6.8c.2.1.3.3.3.5 0 .4-.2 1-.6 1.3-.5.5-1.2.7-2 .5-1-.2-2.3-.8-3.6-2-1.1-1.1-1.8-2.4-2-3.3-.2-.9.1-1.6.7-2.1Z" fill="currentColor"/></svg>
+    Chat on WhatsApp
+  </a>
+
+  <div class="modal-backdrop" id="order-modal-backdrop" aria-hidden="true">
+    <section class="order-modal" id="order-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description" tabindex="-1">
+      <div class="modal-header">
+        <div><p class="eyebrow">A little something made personal</p><h2 id="modal-title">Create your custom keepsake</h2><p id="modal-description">Share a few details below. We’ll prepare a message for WhatsApp so you can review it and send it to Shanova.</p></div>
+        <button class="modal-close" type="button" id="modal-close" aria-label="Close order form">×</button>
+      </div>
+      <form class="order-form" id="order-form" novalidate>
+        <h3 class="form-section-title"><span>01</span> Your details</h3>
+        <div class="form-grid">
+          <div class="field"><label for="customer-name">Your name <span class="required">*</span></label><input id="customer-name" name="customerName" autocomplete="name" required maxlength="100" placeholder="What should we call you?"><p class="field-error" id="name-error"></p></div>
+          <div class="field"><label for="customer-phone">WhatsApp / phone number <span class="required">*</span></label><input id="customer-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required maxlength="35" placeholder="+92 3XX XXXXXXX" aria-describedby="phone-hint phone-error"><p class="field-hint" id="phone-hint">Pakistani numbers with spaces, dashes, or a country code are welcome.</p><p class="field-error" id="phone-error"></p></div>
+          <div class="field full"><label for="delivery-address">Delivery address <span class="required">*</span></label><textarea id="delivery-address" name="address" autocomplete="street-address" required maxlength="700" placeholder="House / street, area, city, and any helpful delivery details..."></textarea><p class="field-error" id="address-error"></p></div>
+        </div>
+
+        <div class="form-divider"></div>
+        <div class="reference-section">
+          <h3 class="form-section-title"><span>02</span> Choose your reference <span class="required">*</span></h3>
+          <p class="field-hint" style="margin: -8px 0 14px">Select one creation as inspiration, or choose Custom Idea / No Reference.</p>
+          <div class="reference-grid" id="reference-grid" role="group" aria-label="Choose a portfolio reference">
+            <button class="reference-option" type="button" data-reference-option="1" aria-pressed="false"><img src="{% static 'images/shanova/portfolio/p1.jpg' %}" alt="" width="150" height="130" loading="lazy"><span>Creation 01</span></button>
+            <button class="reference-option" type="button" data-reference-option="2" aria-pressed="false"><img src="{% static 'images/shanova/portfolio/p2.jpg' %}" alt="" width="150" height="130" loading="lazy"><span>Creation 02</span></button>
+            <button class="reference-option" type="button" data-reference-option="3" aria-pressed="false"><img src="{% static 'images/shanova/portfolio/p3.jpg' %}" alt="" width="150" height="130" loading="lazy"><span>Creation 03</span></button>
+            <button class="reference-option" type="button" data-reference-option="4" aria-pressed="false"><img src="{% static 'images/shanova/portfolio/p4.jpg' %}" alt="" width="150" height="130" loading="lazy"><span>Creation 04</span></button>
+            <button class="reference-option" type="button" data-reference-option="5" aria-pressed="false"><img src="{% static 'images/shanova/portfolio/p5.jpg' %}" alt="" width="150" height="130" loading="lazy"><span>Creation 05</span></button>
+            <button class="reference-option" type="button" data-reference-option="6" aria-pressed="false"><img src="{% static 'images/shanova/portfolio/p6.jpg' %}" alt="" width="150" height="130" loading="lazy"><span>Creation 06</span></button>
+            <button class="reference-option" type="button" data-reference-option="7" aria-pressed="false"><img src="{% static 'images/shanova/portfolio/p7.jpg' %}" alt="" width="150" height="130" loading="lazy"><span>Creation 07</span></button>
+            <button class="reference-option" type="button" data-reference-option="8" aria-pressed="false"><img src="{% static 'images/shanova/portfolio/p8.jpg' %}" alt="" width="150" height="130" loading="lazy"><span>Creation 08</span></button>
+            <button class="reference-option custom-option" type="button" data-reference-option="custom" aria-pressed="false"><span class="custom-symbol" aria-hidden="true">＋</span><span>Custom Idea /<br>No Reference</span></button>
+          </div>
+          <p class="reference-error" id="reference-error" role="status"></p>
+        </div>
+
+        <div class="form-divider"></div>
+        <h3 class="form-section-title"><span>03</span> Your idea</h3>
+        <div class="form-grid">
+          <div class="field full"><label for="personalization-details">Personalization instructions <span class="required">*</span></label><textarea id="personalization-details" name="details" required maxlength="1500" placeholder="Tell us the name, birth details, colors, theme, size, or any special requirements..."></textarea><p class="field-error" id="details-error"></p></div>
+          <div class="field full"><label for="occasion">Occasion or theme <span style="color:var(--muted);font-weight:500">(optional)</span></label><input id="occasion" name="occasion" maxlength="150" list="occasion-options" placeholder="e.g. newborn gift, birthday, nursery decor"><datalist id="occasion-options"><option value="Newborn gift"><option value="Birthday"><option value="Gender reveal"><option value="Nursery decor"><option value="Milestone keepsake"><option value="Personalized gift"><option value="Other"></datalist><p class="field-hint">Any occasion or theme you have in mind.</p></div>
+        </div>
+
+        <div class="whatsapp-note">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.7-1.2A9 9 0 1 0 12 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="m8 8 8 8m0-8-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".0"/><path d="M8.5 12.2 10.7 14l4.8-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>This form does not place an order on its own. It prepares a WhatsApp message for you to review and send. Shanova will confirm final pricing, customization details, and delivery arrangements directly.</span>
+        </div>
+        <div class="form-actions"><button class="button button-primary" id="submit-order" type="submit">Continue to WhatsApp <span aria-hidden="true">↗</span></button><button class="button button-outline" type="button" id="cancel-order">Maybe later</button></div>
+        <p class="form-footnote">Your details stay in this page and are not saved to browser storage. Nothing is sent until you choose to send the WhatsApp message.</p>
+        <div class="whatsapp-fallback" id="whatsapp-fallback" role="status" aria-live="polite"><h3>Your message is ready</h3><p>If WhatsApp did not open, use the link below to continue. Your details are still here.</p><a class="fallback-link" id="fallback-link" href="https://wa.me/923278607827" target="_blank" rel="noopener noreferrer">Open Shanova on WhatsApp ↗</a></div>
+      </form>
+    </section>
+  </div>
+
+  <noscript><div class="noscript-note">For the interactive order form, please enable JavaScript. You can still contact Shanova directly on WhatsApp at +92 327 8607827.</div></noscript>
+
+  <script>
+    (() => {
+      "use strict";
+      const WHATSAPP_NUMBER = "923278607827";
+      const $ = (selector, root = document) => root.querySelector(selector);
+      const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+
+      // Current year in footer.
+      const year = $("#current-year");
+      if (year) year.textContent = String(new Date().getFullYear());
+
+      // Sticky header and mobile navigation.
+      const header = $(".site-header");
+      const menuToggle = $(".menu-toggle");
+      const nav = $("#primary-navigation");
+      const closeMenu = () => {
+        if (!menuToggle || !nav) return;
+        menuToggle.setAttribute("aria-expanded", "false");
+        menuToggle.setAttribute("aria-label", "Open navigation menu");
+        nav.classList.remove("is-open");
+      };
+      if (menuToggle && nav) {
+        menuToggle.addEventListener("click", () => {
+          const expanded = menuToggle.getAttribute("aria-expanded") === "true";
+          menuToggle.setAttribute("aria-expanded", String(!expanded));
+          menuToggle.setAttribute("aria-label", expanded ? "Open navigation menu" : "Close navigation menu");
+          nav.classList.toggle("is-open", !expanded);
+        });
+        $$("a", nav).forEach(link => link.addEventListener("click", closeMenu));
+        document.addEventListener("click", event => {
+          if (nav.classList.contains("is-open") && !nav.contains(event.target) && !menuToggle.contains(event.target)) closeMenu();
+        });
+        document.addEventListener("keydown", event => { if (event.key === "Escape") closeMenu(); });
+      }
+      const updateHeader = () => {
+        if (header) header.classList.toggle("scrolled", window.scrollY > 12);
+      };
+      updateHeader();
+      window.addEventListener("scroll", updateHeader, { passive: true });
+
+      // Reveal content as it enters view. Content remains visible if IntersectionObserver is unavailable.
+      const revealItems = $$(".reveal");
+      if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: "0px 0px -25px 0px" });
+        revealItems.forEach(item => observer.observe(item));
+      } else {
+        revealItems.forEach(item => item.classList.add("is-visible"));
+      }
+
+      // Interactive personalization idea tiles.
+      const personalizationDetail = $("#personalization-detail");
+      const personalizationTiles = $$(".personalize-tile");
+      personalizationTiles.forEach(tile => {
+        tile.addEventListener("click", () => {
+          personalizationTiles.forEach(other => other.setAttribute("aria-pressed", String(other === tile)));
+          if (personalizationDetail) {
+            personalizationDetail.textContent = tile.dataset.personalization + " is a lovely place to start. Options depend on your chosen product; share the details with Shanova to discuss what may be possible.";
+          }
+        });
+      });
+
+      // Reusable order modal with reference selection, validation, and WhatsApp handoff.
+      const backdrop = $("#order-modal-backdrop");
+      const modal = $("#order-modal");
+      const form = $("#order-form");
+      const closeButton = $("#modal-close");
+      const cancelButton = $("#cancel-order");
+      const submitButton = $("#submit-order");
+      const fallback = $("#whatsapp-fallback");
+      const fallbackLink = $("#fallback-link");
+      const nameInput = $("#customer-name");
+      const phoneInput = $("#customer-phone");
+      const addressInput = $("#delivery-address");
+      const detailsInput = $("#personalization-details");
+      const occasionInput = $("#occasion");
+      const referenceOptions = $$("[data-reference-option]");
+      let selectedReference = "";
+      let opener = null;
+      let previousBodyOverflow = "";
+      let lastMessageUrl = "";
+      let closeTimer = null;
+
+      const referenceLabel = value => value === "custom" ? "Custom Idea / No Reference" : (value ? "Creation " + String(value).padStart(2, "0") : "");
+      const setReference = value => {
+        selectedReference = String(value || "");
+        referenceOptions.forEach(option => {
+          const selected = option.dataset.referenceOption === selectedReference;
+          option.setAttribute("aria-pressed", String(selected));
+        });
+        const error = $("#reference-error");
+        if (error) error.textContent = "";
+      };
+
+      const clearErrors = () => {
+        ["customer-name", "customer-phone", "delivery-address", "personalization-details"].forEach(id => {
+          const input = $("#" + id);
+          if (input) input.removeAttribute("aria-invalid");
+        });
+        $$(".field-error").forEach(el => { el.textContent = ""; });
+        const referenceError = $("#reference-error");
+        if (referenceError) referenceError.textContent = "";
+      };
+
+      const showError = (input, errorId, message) => {
+        if (input) input.setAttribute("aria-invalid", "true");
+        const error = $("#" + errorId);
+        if (error) error.textContent = message;
+      };
+
+      const normalizePhone = value => value.trim().replace(/[\s().-]/g, "");
+      const isPlausiblePakistaniPhone = value => {
+        const normalized = normalizePhone(value);
+        // Accept local 03XXXXXXXXX, 3XXXXXXXXX, 92XXXXXXXXXX, +92XXXXXXXXXX, and 0092XXXXXXXXXX forms.
+        const digits = normalized.replace(/^\+/, "");
+        if (!/^\+?\d+$/.test(normalized)) return false;
+        return /^(?:03\d{9}|3\d{9}|923\d{9}|00923\d{9})$/.test(digits);
+      };
+
+      const validateForm = () => {
+        clearErrors();
+        let firstInvalid = null;
+        const name = nameInput ? nameInput.value.trim() : "";
+        const phone = phoneInput ? phoneInput.value.trim() : "";
+        const address = addressInput ? addressInput.value.trim() : "";
+        const details = detailsInput ? detailsInput.value.trim() : "";
+        if (!name) { showError(nameInput, "name-error", "Please enter your name."); firstInvalid = firstInvalid || nameInput; }
+        else if (name.length < 2) { showError(nameInput, "name-error", "Please enter at least 2 characters."); firstInvalid = firstInvalid || nameInput; }
+        if (!phone) { showError(phoneInput, "phone-error", "Please enter a WhatsApp or phone number."); firstInvalid = firstInvalid || phoneInput; }
+        else if (!isPlausiblePakistaniPhone(phone)) { showError(phoneInput, "phone-error", "Enter a valid Pakistani number, such as 03XX XXXXXXX or +92 3XX XXXXXXX."); firstInvalid = firstInvalid || phoneInput; }
+        if (!address) { showError(addressInput, "address-error", "Please add your delivery address, including your city."); firstInvalid = firstInvalid || addressInput; }
+        else if (address.length < 8) { showError(addressInput, "address-error", "Please add a little more address detail, including your city."); firstInvalid = firstInvalid || addressInput; }
+        if (!selectedReference) {
+          const refError = $("#reference-error");
+          if (refError) refError.textContent = "Please choose a creation or select Custom Idea / No Reference.";
+          firstInvalid = firstInvalid || referenceOptions[0];
+        }
+        if (!details) { showError(detailsInput, "details-error", "Please tell us a little about the personalization you have in mind."); firstInvalid = firstInvalid || detailsInput; }
+        else if (details.length < 3) { showError(detailsInput, "details-error", "Please add a few more details so Shanova understands your idea."); firstInvalid = firstInvalid || detailsInput; }
+        if (firstInvalid && typeof firstInvalid.focus === "function") firstInvalid.focus();
+        return !firstInvalid;
+      };
+
+      const makeWhatsAppMessage = () => {
+        const name = nameInput.value.trim();
+        const phone = phoneInput.value.trim();
+        const address = addressInput.value.trim();
+        const details = detailsInput.value.trim();
+        const occasion = occasionInput.value.trim();
+        return [
+          "Assalam-o-Alaikum Shanova! I would like to discuss placing an order.",
+          "",
+          "Customer Name: " + name,
+          "Contact Number: " + phone,
+          "Delivery Address: " + address,
+          "Selected Reference: " + referenceLabel(selectedReference),
+          "Occasion / Theme: " + (occasion || "Not specified"),
+          "Customization Details: " + details,
+          "",
+          "Please confirm the final price, customization details, and delivery arrangements. Thank you!"
+        ].join("\n");
+      };
+
+      const openModal = reference => {
+        if (!backdrop || !modal || !form) return;
+        if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+        opener = document.activeElement;
+        if (reference !== undefined && reference !== null && reference !== "") setReference(reference);
+        else setReference("custom");
+        if (fallback) fallback.classList.remove("is-visible");
+        backdrop.classList.add("is-open");
+        backdrop.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+        previousBodyOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        window.setTimeout(() => { if (nameInput) nameInput.focus({ preventScroll: true }); }, 70);
+      };
+
+      const closeModal = () => {
+        if (!backdrop || !modal || !backdrop.classList.contains("is-open")) return;
+        backdrop.classList.remove("is-open");
+        backdrop.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("modal-open");
+        document.body.style.overflow = previousBodyOverflow;
+        if (closeTimer) clearTimeout(closeTimer);
+        closeTimer = window.setTimeout(() => {
+          if (opener && typeof opener.focus === "function" && document.contains(opener)) opener.focus({ preventScroll: true });
+        }, 80);
+      };
+
+      $$("[data-order-trigger]").forEach(trigger => {
+        trigger.addEventListener("click", event => {
+          event.preventDefault();
+          closeMenu();
+          const ref = trigger.dataset.reference;
+          openModal(ref || undefined);
+        });
+      });
+      referenceOptions.forEach(option => option.addEventListener("click", () => setReference(option.dataset.referenceOption)));
+      if (closeButton) closeButton.addEventListener("click", closeModal);
+      if (cancelButton) cancelButton.addEventListener("click", closeModal);
+      if (backdrop) {
+        backdrop.addEventListener("click", event => { if (event.target === backdrop) closeModal(); });
+      }
+      document.addEventListener("keydown", event => {
+        if (!backdrop || !backdrop.classList.contains("is-open")) return;
+        if (event.key === "Escape") { event.preventDefault(); closeModal(); return; }
+        if (event.key === "Tab" && modal) {
+          const focusable = $$('button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])', modal)
+            .filter(el => el.offsetWidth || el.offsetHeight || el === document.activeElement);
+          if (!focusable.length) return;
+          const first = focusable[0], last = focusable[focusable.length - 1];
+          if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+          else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+        }
+      });
+
+      // Clear a field's inline error as the customer corrects it.
+      [[nameInput, "name-error"], [phoneInput, "phone-error"], [addressInput, "address-error"], [detailsInput, "details-error"]].forEach(([input, errorId]) => {
+        if (!input) return;
+        input.addEventListener("input", () => {
+          if (input.getAttribute("aria-invalid") === "true") {
+            input.removeAttribute("aria-invalid");
+            const error = $("#" + errorId);
+            if (error) error.textContent = "";
+          }
+        });
+      });
+
+      let submitting = false;
+      if (form) {
+        form.addEventListener("submit", event => {
+          event.preventDefault();
+          if (submitting) return;
+          if (!validateForm()) return;
+          submitting = true;
+          if (submitButton) { submitButton.disabled = true; submitButton.textContent = "Preparing your message…"; }
+          const message = makeWhatsAppMessage();
+          lastMessageUrl = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(message);
+          if (fallbackLink) fallbackLink.href = lastMessageUrl;
+          if (fallback) fallback.classList.add("is-visible");
+
+          // Open a new tab synchronously from the submit gesture. If blocked, the visible fallback remains available.
+          let opened = null;
+          try { opened = window.open(lastMessageUrl, "_blank", "noopener,noreferrer"); } catch (error) { opened = null; }
+          if (opened) {
+            closeModal();
+          } else if (fallback) {
+            fallback.scrollIntoView({ block: "nearest", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+            const link = fallbackLink;
+            if (link) link.focus({ preventScroll: true });
+          }
+          if (submitButton) { submitButton.disabled = false; submitButton.innerHTML = 'Continue to WhatsApp <span aria-hidden="true">↗</span>'; }
+          submitting = false;
+        });
+      }
+
+      // Defensive: if the browser blocks window.open, the fallback link remains actionable and retains the form data.
+      if (fallbackLink) {
+        fallbackLink.addEventListener("click", () => {
+          if (lastMessageUrl) fallbackLink.href = lastMessageUrl;
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
