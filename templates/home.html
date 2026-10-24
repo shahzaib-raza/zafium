@@ -6,6 +6,12 @@
 {% block content %}
 
 {% block extra_css %}
+<link
+    rel="preload"
+    as="image"
+    href="{% static 'images/hero_bg.jpeg' %}"
+    fetchpriority="high">
+
 <style>
 .hero{
     padding:120px 0;
@@ -28,6 +34,10 @@
 
     .hero-grid {
         grid-template-columns: 1fr;
+    }
+
+    .hero {
+        background-attachment: scroll;
     }
 
 }
