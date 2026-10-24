@@ -754,8 +754,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 {% block extra_js %}{% endblock %}
 
-{% if messages %}
-
 <script>
     document.addEventListener("DOMContentLoaded", function () {
 
@@ -771,6 +769,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     })
 </script>
+
+{% if messages %}
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
