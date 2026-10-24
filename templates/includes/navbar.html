@@ -1,8 +1,161 @@
 {% load static %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/navbar.css' %}"/>
+<style>
+    /* =========================
+    NAV DROPDOWN
+    ========================= */
+
+    .logo {
+        display: inline-flex;
+        align-items: center;      /* Vertically centers logo and text */
+        gap: 0px;
+    }
+
+    .logo img {
+        width: 50px;
+        height: auto;
+    }
+
+    .logo-text{
+        margin-bottom: -1px;
+        font-size:2rem;
+        font-weight:700;
+        font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        letter-spacing:2px;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+        line-height: 1;
+        margin-top: 5px;
+
+        background:linear-gradient(
+            90deg,
+            #6D5EF9,
+            #38BDF8,
+            #22D3EE
+        );
+
+        -webkit-background-clip:text;
+        -webkit-text-fill-color:transparent;
+
+        text-transform:uppercase;
+    }
+
+    .dropdown {
+        position: relative;
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+
+        min-width: 220px;
+
+        background: rgba(15, 23, 42, 0.900);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+
+        padding: 10px 0;
+
+        display: none;
+
+        backdrop-filter: blur(12px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.600);
+        z-index: 9999;
+    }
+
+    .dropdown-menu li {
+        list-style: none;
+    }
+
+    .dropdown-menu a {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 10px 16px;
+
+        color: var(--muted);
+        transition: 0.2s ease;
+    }
+
+    .dropdown-menu a:hover {
+        color: var(--text);
+        background: rgba(99, 102, 241, 0.1);
+    }
+
+    /* hover behavior */
+    .dropdown:hover .dropdown-menu {
+        display: block;
+    }
+
+    .dropdown-menu svg{
+        width:18px;
+        height:18px;
+        fill:currentColor;
+    }
+
+    .currency-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        cursor: pointer;
+        user-select: none;
+        white-space: nowrap;
+    }
+
+    .currency-toggle-item {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+    }
+
+    .currency-label {
+        font-size: 13px;
+        line-height: 1;
+        color: var(--muted);
+        transition: var(--transition);
+    }
+
+    .currency-toggle input {
+        display: none;
+    }
+
+    .currency-slider {
+        position: relative;
+        display: block;
+        width: 38px;
+        height: 20px;
+        flex-shrink: 0;
+        border-radius: 20px;
+        background: var(--border-strong);
+        transition: var(--transition);
+    }
+
+    .currency-slider::after {
+        content: "";
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        top: 2px;
+        left: 2px;
+        border-radius: 50%;
+        background: var(--text);
+        transition: var(--transition);
+    }
+
+    .currency-toggle input:checked + .currency-slider {
+        background: var(--accent);
+    }
+
+    .currency-toggle input:checked + .currency-slider::after {
+        transform: translateX(18px);
+    }
+</style>
 {% endblock %}
+
 
 <header class="site-header">
 
@@ -235,27 +388,78 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    const toggle = document.getElementById("currencyToggle");
+    // =========================
+    // HAMBURGER MENU
+    // =========================
+    const menuToggle = document.getElementById("menuToggle");
+    const navLinks = document.getElementById("navLinks");
 
-    if (!toggle) return;
+    if (menuToggle && navLinks) {
+        menuToggle.addEventListener("click", function () {
+            const isOpen = navLinks.classList.toggle("active");
 
-    toggle.addEventListener("change", function () {
-
-        const currency = this.checked ? "PKR" : "USD";
-
-        fetch("{% url 'core:set_currency' %}?currency=" + currency, {
-            method: "GET",
-            headers: {
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        })
-        .then(response => {
-            if (response.ok) {
-                window.location.reload();
-            }
+            menuToggle.classList.toggle("active", isOpen);
+            menuToggle.setAttribute("aria-expanded", String(isOpen));
         });
 
-    });
+        // Close menu when a regular navigation link is clicked.
+        navLinks.querySelectorAll("a").forEach(function (link) {
+            link.addEventListener("click", function () {
+                // Allow dropdown parent links to retain their behavior.
+                if (
+                    link.parentElement.classList.contains("dropdown") &&
+                    window.matchMedia("(max-width: 768px)").matches
+                ) {
+                    return;
+                }
+
+                navLinks.classList.remove("active");
+                menuToggle.classList.remove("active");
+                menuToggle.setAttribute("aria-expanded", "false");
+            });
+        });
+
+        // Close the menu when clicking outside it.
+        document.addEventListener("click", function (event) {
+            if (
+                !menuToggle.contains(event.target) &&
+                !navLinks.contains(event.target)
+            ) {
+                navLinks.classList.remove("active");
+                menuToggle.classList.remove("active");
+                menuToggle.setAttribute("aria-expanded", "false");
+            }
+        });
+    }
+
+    // =========================
+    // CURRENCY SWITCH
+    // =========================
+    const currencyToggle = document.getElementById("currencyToggle");
+
+    if (currencyToggle) {
+        currencyToggle.addEventListener("change", function () {
+            const currency = this.checked ? "PKR" : "USD";
+
+            fetch(
+                "{% url 'core:set_currency' %}?currency=" + currency,
+                {
+                    method: "GET",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                }
+            )
+            .then(function (response) {
+                if (response.ok) {
+                    window.location.reload();
+                }
+            })
+            .catch(function (error) {
+                console.error("Currency update failed:", error);
+            });
+        });
+    }
 
 });
 </script>
